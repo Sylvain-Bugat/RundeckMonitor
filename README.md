@@ -14,7 +14,7 @@ To install RundeckMonitor you just have to clone the repository:
 
 ## Configuration
 
-Copy the sample configuration file `rundeckMonitor.properties` in the 'target\' directory and configure these parameters:
+Copy the sample configuration file `rundeckMonitor.properties` in the 'target\' directory and configure these parameters:  
 
 	rundeck.monitor.url=
 	
@@ -58,10 +58,10 @@ Date format of the failed jobs in the popup menu
 
 Just execute this jar file: 'target\RundeckMonitor-1.0-SNAPSHOT-jar-with-dependencies.jar'.
 
-The tray icon can be in 3 colors:
-* green when no failed jobs has failed since the launch or the last alert reset.
-* red when a new failed jobs is detected
-* yellow if the connection with rundeck is lost
+The tray icon can be in 3 colors:  
+![RundeckMonitor OK](src/main/resources/OK.png) green when no failed jobs has failed since the launch or the last alert reset  
+![RundeckMonitor KO](src/main/resources/KO.png) red when a new failed jobs is detected  
+![RundeckMonitor disconnected](src/main/resources/DISCONNECTED.png) yellow if the connection with rundeck is lost  
 
 When the tray icon is red, it can be reset to get back to green.
 
