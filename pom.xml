@@ -4,7 +4,7 @@
 	<prerequisites>
 		<maven>3.0.3</maven>
 	</prerequisites>
-	
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rundeck.monitor</groupId>
 	<artifactId>RundeckMonitor</artifactId>
@@ -16,11 +16,11 @@
 	<properties>
 		<!-- Source Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 		<!-- JDK/JRE Version -->
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
-		
+
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>2.5</maven.pluginclean.version>
 		<maven.plugininstall.version>2.4</maven.plugininstall.version>
@@ -33,7 +33,7 @@
 		<maven.plugindeploy.version>2.7</maven.plugindeploy.version>
 		<maven.pluginassembly.version>2.4</maven.pluginassembly.version>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.rundeck</groupId>
@@ -41,7 +41,7 @@
 			<version>2.0</version>
 		</dependency>
 	</dependencies>
-	
+
 	<!-- Profiles -->
 	<profiles>
 		<profile>
@@ -108,7 +108,7 @@
 						<artifactId>maven-resources-plugin</artifactId>
 						<version>${maven.pluginresources.version}</version>
 					</plugin>
-					
+
 					<!-- Jar Plugins configuration -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -123,7 +123,7 @@
 							</archive>
 						</configuration>
 					</plugin>
-					
+
 					<!-- Assembly Plugins configuration -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -151,7 +151,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<!-- Dependencies checker profile -->
 			<id>dependencies.check</id>
