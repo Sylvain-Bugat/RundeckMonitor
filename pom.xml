@@ -66,6 +66,9 @@
 							<compilerVersion>${maven.compiler.source}</compilerVersion>
 							<source>${maven.compiler.source}</source>
 							<target>${maven.compiler.target}</target>
+							<compilerArgs>
+								<arg>-Xlint</arg>
+							</compilerArgs>
 						</configuration>
 						<inherited>true</inherited>
 					</plugin>
