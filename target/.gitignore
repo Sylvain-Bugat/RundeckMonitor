@@ -1,0 +1,5 @@
+archive-tmp/
+classes/
+generated-sources/
+maven-archiver/
+maven-status/
