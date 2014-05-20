@@ -14,7 +14,7 @@ To install RundeckMonitor you just have to clone the repository:
 
 ## Configuration
 
-Copy the sample configuration file `rundeckMonitor.properties` in the 'target\' directory and configure these parameters:  
+Edit the sample configuration file `rundeckMonitor.properties` in the 'target\' directory and configure these parameters:  
 
 	rundeck.monitor.url=
 	
