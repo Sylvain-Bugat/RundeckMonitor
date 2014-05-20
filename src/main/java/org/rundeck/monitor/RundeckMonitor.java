@@ -52,6 +52,8 @@ public class RundeckMonitor implements Runnable {
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER = "rundeck.monitor.failed.job.number"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
 
+	private static final String RUNDECK_MONITOR_PROJECT_URL = "https://github.com/Sylvain-Bugat/RundeckMonitor"; //$NON-NLS-1$
+
 	private final String rundeckUrl;
 	private final String rundeckLogin;
 	private final String rundeckPassword;
@@ -147,6 +149,23 @@ public class RundeckMonitor implements Runnable {
 					}
 				}
 			};
+			//Rundeck monitor about
+			final ActionListener aboutListener = new ActionListener() {
+				@SuppressWarnings("synthetic-access")
+				public void actionPerformed( final ActionEvent e) {
+
+					try {
+						final URI executionURI = new URI( RUNDECK_MONITOR_PROJECT_URL );
+						desktop.browse( executionURI );
+					}
+					catch ( final URISyntaxException exception) {
+						exception.printStackTrace();
+					}
+					catch ( final IOException exception ) {
+						exception.printStackTrace();
+					}
+				}
+			};
 			//Rundeck monitor exit
 			final ActionListener exitListener = new ActionListener() {
 				@SuppressWarnings("synthetic-access")
@@ -171,6 +190,9 @@ public class RundeckMonitor implements Runnable {
 			final MenuItem reinitItem = new MenuItem( "Reset alert" ); //$NON-NLS-1$
 			popupMenu.add( reinitItem );
 			reinitItem.addActionListener( reinitListener );
+			final MenuItem aboutItem = new MenuItem( "About RundeckMonitor" ); //$NON-NLS-1$
+			popupMenu.add( aboutItem );
+			aboutItem.addActionListener( aboutListener );
 			final MenuItem exitItem = new MenuItem( "Quit" ); //$NON-NLS-1$
 			popupMenu.add( exitItem );
 			exitItem.addActionListener( exitListener );
