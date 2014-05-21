@@ -7,7 +7,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rundeck.monitor</groupId>
-	<artifactId>RundeckMonitor</artifactId>
+	<artifactId>rundeck-monitor</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
 	<name>Rundeck monitor</name>
