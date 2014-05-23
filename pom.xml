@@ -125,7 +125,7 @@
 							<archive>
 								<manifest>
 									<addClasspath>true</addClasspath>
-									<mainClass>org.rundeck.monitor.RundeckMonitor</mainClass>
+									<mainClass>com.github.sbugat.rundeckmonitor.RundeckMonitor</mainClass>
 								</manifest>
 							</archive>
 						</configuration>
@@ -142,7 +142,7 @@
 							</descriptorRefs>
 							<archive>
 								<manifest>
-									<mainClass>org.rundeck.monitor.RundeckMonitor</mainClass>
+									<mainClass>com.github.sbugat.rundeckmonitor.RundeckMonitor</mainClass>
 								</manifest>
 							</archive>
 						</configuration>

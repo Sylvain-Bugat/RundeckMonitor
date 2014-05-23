@@ -1,4 +1,4 @@
-package org.rundeck.monitor;
+package com.github.sbugat.rundeckmonitor;
 
 import java.awt.AWTException;
 import java.awt.Desktop;
