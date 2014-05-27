@@ -42,7 +42,11 @@ Set the name of the application
 
 	rundeck.monitor.refresh.delay=60
 	
-Delay between 2 scans of failed jobs
+Delay between 2 scans of failed jobs(unit: seconds)
+
+	rundeck.monitor.execution.late.threshold=1800
+	
+Delay after a running jobs is flagged as late(unit: seconds)
 
 	rundeck.monitor.failed.job.number=10
 	
