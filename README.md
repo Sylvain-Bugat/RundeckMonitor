@@ -1,6 +1,6 @@
 # RundeckMonitor
 
-System tray icon tools that indicates only failed rundeck jobs.
+System tray icon tools that indicates failed rundeck jobs and jobs running for a too long time.
 
 ![RundeckMonitor screenshot](Screenshot.png)
 
@@ -62,11 +62,13 @@ Date format of the failed jobs in the popup menu
 
 Just execute this jar file: `target\RundeckMonitor-1.0-SNAPSHOT-jar-with-dependencies.jar`.
 
-The tray icon can be in 3 colors:  
-![RundeckMonitor OK](src/main/resources/OK.png) green when no failed jobs has failed since the launch or the last alert reset  
-![RundeckMonitor KO](src/main/resources/KO.png) red when a new failed jobs is detected  
+The tray icon can be in these colors:  
+![RundeckMonitor OK](src/main/resources/OK.png) green when no failed jobs has failed since the launch or the last alert reset and no long execution is detected  
+![RundeckMonitor KO](src/main/resources/KO.png) red when only a new failed jobs is detected since the launch or the last alert reset  
+![RundeckMonitor late](src/main/resources/LATE.png) black when is running for too long  
+![RundeckMonitor KO and late](src/main/resources/KO_LATE.png) black and red when a new failed jobs is detected since the launch or the last alert reset and another job is running for too long  
 ![RundeckMonitor disconnected](src/main/resources/DISCONNECTED.png) yellow if the connection with rundeck is lost  
 
-When the tray icon is red, it can be reset to get back to green.
+When the tray icon is marqued with red, this alert can be reset to get back to green/black.
 
-Failed jobs list can be clicked in order to see the rundeck execution detail. This is done by opening a default browser tab/window with the execution URL.
+Failed and long  jobs list can be clicked in order to see the rundeck execution detail. This is done by opening a default browser tab/window with the execution URL.
