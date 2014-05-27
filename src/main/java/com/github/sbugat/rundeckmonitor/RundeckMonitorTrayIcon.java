@@ -2,7 +2,6 @@ package com.github.sbugat.rundeckmonitor;
 
 import java.awt.AWTException;
 import java.awt.Desktop;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -11,7 +10,6 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,17 +24,21 @@ import java.util.Map.Entry;
 import javax.swing.JOptionPane;
 
 /**
+ * Tray icon management class
  *
  * @author Sylvain Bugat
  *
  */
 public class RundeckMonitorTrayIcon {
 
-	/**  */
+	/** URL to access job execution details */
 	private static final String RUNDECK_JOB_EXECUTION_URL = "/execution/show/"; //$NON-NLS-1$
 
 	/** GitHub Project URL */
 	private static final String RUNDECK_MONITOR_PROJECT_URL = "https://github.com/Sylvain-Bugat/RundeckMonitor"; //$NON-NLS-1$
+
+	/** Marker on the job when it is too long*/
+	private static final String LONG_EXECUTION_MARKER = " - LONG EXECUTION"; //$NON-NLS-1$
 
 	/** OK image*/
 	private final Image IMAGE_OK = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "OK.png" ) ); //$NON-NLS-1$
@@ -56,13 +58,25 @@ public class RundeckMonitorTrayIcon {
 	/** System default browser to open execution details*/
 	private final Desktop desktop = Desktop.getDesktop();
 
+	/**Date format to use for printing the Job start date*/
 	private final String dateFormat;
 
+	/**Current state of the trayIcon */
 	private RundeckMonitorState rundeckMonitorState;
 
+	/**MenuItem for lasts late/failed jobs*/
 	private final Map<MenuItem, Long> failedMenuItems = new LinkedHashMap<MenuItem, Long>();
 
-	public RundeckMonitorTrayIcon( final String rundeckUrl, final String rundeckMonitorName, final int failedJobNumber, final String dateFormatArg, final RundeckMonitorState rundeckMonitorStateArg ) throws FileNotFoundException, IOException {
+	/**
+	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it
+	 *
+	 * @param rundeckUrl
+	 * @param rundeckMonitorName name of the application
+	 * @param failedJobNumber size of the failed jobs list
+	 * @param dateFormatArg date format to print jobs start date
+	 * @param rundeckMonitorStateArg state of the rundeck monitor
+	 */
+	public RundeckMonitorTrayIcon( final String rundeckUrl, final String rundeckMonitorName, final int failedJobNumber, final String dateFormatArg, final RundeckMonitorState rundeckMonitorStateArg ) {
 
 		dateFormat = dateFormatArg;
 		rundeckMonitorState = rundeckMonitorStateArg;
@@ -91,12 +105,11 @@ public class RundeckMonitorTrayIcon {
 					}
 				}
 			};
-			//Alert reset
+			//Alert reset of the failed jobs state
 			final ActionListener reinitListener = new ActionListener() {
 				@SuppressWarnings("synthetic-access")
 				public void actionPerformed( final ActionEvent e) {
 					rundeckMonitorState.setFailedJobs( false );
-					rundeckMonitorState.setLateJobs( false );
 
 					updateTrayIcon();
 				}
@@ -175,6 +188,11 @@ public class RundeckMonitorTrayIcon {
 		}
 	}
 
+	/**
+	 * Update the list of failed/late jobs
+	 *
+	 * @param listJobExecutionInfo list of failed and late jobs informations
+	 */
 	public void updateExecutionIdsList( final List<JobExecutionInfo> listJobExecutionInfo ) {
 
 		int i=0;
@@ -185,11 +203,12 @@ public class RundeckMonitorTrayIcon {
 				break;
 			}
 
-			final JobExecutionInfo jobExecutionInfo= listJobExecutionInfo.get( i );
+			final JobExecutionInfo jobExecutionInfo = listJobExecutionInfo.get( i );
 
 			entry.setValue( jobExecutionInfo.getExecutionId() );
 			final SimpleDateFormat formatter = new SimpleDateFormat( dateFormat );
-			entry.getKey().setLabel( formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription() ); //$NON-NLS-1$
+			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
+			entry.getKey().setLabel( formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription() + longExecution ); //$NON-NLS-1$
 			i++;
 		}
 	}

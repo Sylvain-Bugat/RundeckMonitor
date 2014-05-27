@@ -1,7 +1,11 @@
 package com.github.sbugat.rundeckmonitor;
 
-import java.awt.Image;
-
+/**
+ * Class containing the current state of the monitor
+ *
+ * @author Sylvain Bugat
+ *
+ */
 public class RundeckMonitorState {
 
 	private boolean failedJobs;

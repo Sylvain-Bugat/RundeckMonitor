@@ -1,31 +1,15 @@
 package com.github.sbugat.rundeckmonitor;
 
-import java.awt.AWTException;
-import java.awt.Desktop;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -45,7 +29,6 @@ import org.rundeck.api.domain.RundeckHistory;
 public class RundeckMonitor implements Runnable {
 
 	private static final String PROPERTIES_FILE = "rundeckMonitor.properties"; //$NON-NLS-1$
-	private static final String RUNDECK_JOB_EXECUTION_URL = "/execution/show/"; //$NON-NLS-1$
 	private static final String RUNDECK_FAILED_JOB = "fail"; //$NON-NLS-1$
 
 	private static final String RUNDECK_PROPERTY_URL = "rundeck.monitor.url"; //$NON-NLS-1$
@@ -54,10 +37,9 @@ public class RundeckMonitor implements Runnable {
 	private static final String RUNDECK_PROPERTY_PROJECT = "rundeck.monitor.project"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_NAME = "rundeck.monitor.name"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY = "rundeck.monitor.refresh.delay"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD = "rundeck.monitor.execution.late.threshold"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER = "rundeck.monitor.failed.job.number"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
-
-	private static final String RUNDECK_MONITOR_PROJECT_URL = "https://github.com/Sylvain-Bugat/RundeckMonitor"; //$NON-NLS-1$
 
 	private final String rundeckUrl;
 	private final String rundeckLogin;
@@ -66,19 +48,9 @@ public class RundeckMonitor implements Runnable {
 
 	private final String rundeckMonitorName;
 	private final int refreshDelay;
+	private final int lateThreshold;
 	private final int failedJobNumber;
 	private final String dateFormat;
-
-	boolean monitorOK = true;
-
-	/** OK image*/
-	private final Image IMAGE_OK = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "OK.png" ) ); //$NON-NLS-1$
-	/** WARNING image when a job seems to be blocked*/
-	private final Image IMAGE_WARNING = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "KO.png" ) ); //$NON-NLS-1$
-	/** KO image when a job has failed*/
-	private final Image IMAGE_KO = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "KO.png" ) ); //$NON-NLS-1$
-	/** Disconnected from rundeck image */
-	private final Image imageDisconnect = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "DISCONNECTED.png" ) ); //$NON-NLS-1$
 
 	private final RundeckMonitorClient rundeckClient;
 
@@ -86,16 +58,13 @@ public class RundeckMonitor implements Runnable {
 
 	private final RundeckMonitorState rundeckMonitorState= new RundeckMonitorState();
 
-	private Map<Long, RundeckEvent> failedMap = new LinkedHashMap<Long, RundeckEvent>();
+	private Set<Long> knownLateExecutionIds = new LinkedHashSet<>();
 
-	private Set<Long> knownExecutionIds = new LinkedHashSet<>();
-
-	private Map<MenuItem, Long> failedMenuItems = new LinkedHashMap<MenuItem, Long>();
+	private Set<Long> knownFailedExecutionIds = new LinkedHashSet<>();
 
 	public RundeckMonitor() throws FileNotFoundException, IOException {
 
 		//Configuration loading
-		final Properties prop = new Properties();
 		final File propertyFile = new File( PROPERTIES_FILE );
 		if( ! propertyFile.exists() ){
 
@@ -104,6 +73,8 @@ public class RundeckMonitor implements Runnable {
 			System.exit( 1 );
 		}
 
+		//Load the configuration file and extract properties
+		final Properties prop = new Properties();
 		prop.load( new FileInputStream( propertyFile ) );
 
 		rundeckUrl = prop.getProperty( RUNDECK_PROPERTY_URL );
@@ -113,26 +84,29 @@ public class RundeckMonitor implements Runnable {
 
 		rundeckMonitorName = prop.getProperty( RUNDECK_MONITOR_PROPERTY_NAME );
 		refreshDelay = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY ) );
+		lateThreshold = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD ) );
 		failedJobNumber = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER ) );
 		dateFormat = prop.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT );
 
-		//Rundeck connection
+		//Initialize the rundeck connection
 		rundeckClient = new RundeckMonitorClient( rundeckUrl, rundeckLogin, rundeckPassword );
 
 		//Init the tray icon
 		rundeckMonitorTrayIcon = new RundeckMonitorTrayIcon( rundeckUrl, rundeckMonitorName, failedJobNumber, dateFormat, rundeckMonitorState );
 
+		//Initialize and update the rundeck monitor failed/late jobs
 		updateRundeckHistory( true );
 	}
 
 	/**
-	 * RundeckMonitor main loop method
+	 * RundeckMonitor background process method executing the main loop
 	 */
 	public void run() {
 
 		while( true ){
 			try {
 
+				//
 				updateRundeckHistory( false );
 
 				try {
@@ -143,6 +117,7 @@ public class RundeckMonitor implements Runnable {
 					//Nothing to do
 				}
 			}
+			//If an exception is catch, consider the monitor as disconnected
 			catch ( final Exception e ) {
 
 				rundeckMonitorState.setDisconnected( true );
@@ -160,40 +135,54 @@ public class RundeckMonitor implements Runnable {
 		}
 	}
 
+	/**
+	 * Call Rundeck rest API and update the monitor state and displayed jobs if there are new failed/late jobs
+	 *
+	 * @param init boolean to indicate if it's the first call to this method for the monitor initialization
+	 */
 	private void updateRundeckHistory( final boolean init ) {
 
+		//call Rundeck rest API
 		final RundeckHistory lastFailedJobs = rundeckClient.getHistory( rundeckProject, RUNDECK_FAILED_JOB, Long.valueOf( failedJobNumber ), Long.valueOf(0) );
 		final List<RundeckExecution> currentExecutions= rundeckClient.getRunningExecutions( rundeckProject );
 
+		//Rundeck calls are OK
 		rundeckMonitorState.setDisconnected( false );
 
 		final Date currentTime = new Date();
 
 		final List<JobExecutionInfo> listJobExecutionInfo = new ArrayList<>();
 
+		boolean lateExecutionFound = false;
+
+		//Scan runnings jobs to detect if they are late
 		for( final RundeckExecution rundeckExecution : currentExecutions ) {
 
-			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() > 0 ) {
-				listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), rundeckExecution.getDescription() ) );
+			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() > lateThreshold * 1000 ) {
+				listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), rundeckExecution.getDescription(), true ) );
 
-				if( ! knownExecutionIds.contains( rundeckExecution.getId() ) ) {
+				if( ! knownLateExecutionIds.contains( rundeckExecution.getId() ) ) {
 
-					rundeckMonitorState.setLateJobs( true );
+					lateExecutionFound = true;
 				}
 			}
 		}
 
+		rundeckMonitorState.setLateJobs( lateExecutionFound );
+
+		//Add all lasts failed jobs to the list
 		for( final RundeckEvent rundeckEvent : lastFailedJobs.getEvents() ) {
 
-			listJobExecutionInfo.add( new JobExecutionInfo( Long.valueOf( rundeckEvent.getExecutionId() ), rundeckEvent.getStartedAt(), rundeckEvent.getTitle() ) );
+			listJobExecutionInfo.add( new JobExecutionInfo( Long.valueOf( rundeckEvent.getExecutionId() ), rundeckEvent.getStartedAt(), rundeckEvent.getTitle(), false ) );
 
-			if( ! knownExecutionIds.contains( rundeckEvent.getExecutionId() ) ) {
+			if( ! knownFailedExecutionIds.contains( rundeckEvent.getExecutionId() ) ) {
 
 				rundeckMonitorState.setFailedJobs( true );
-				knownExecutionIds.add( rundeckEvent.getExecutionId() );
+				knownFailedExecutionIds.add( rundeckEvent.getExecutionId() );
 			}
 		}
 
+		//Display failed/late jobs on the trayIcon menu
 		rundeckMonitorTrayIcon.updateExecutionIdsList( listJobExecutionInfo );
 
 		if( init ) {
@@ -201,14 +190,21 @@ public class RundeckMonitor implements Runnable {
 			rundeckMonitorState.setFailedJobs( false );
 		}
 
+		//Update the tray icon color
 		rundeckMonitorTrayIcon.updateTrayIcon();
 	}
 
+	/**
+	 * RundeckMonitor main method
+	 *
+	 * @param args program arguments: none is expected and used
+	 */
 	public static void main( final String args[] ){
 
 		try {
 			new Thread( new RundeckMonitor() ).start();
-		} catch ( final Exception e) {
+		}
+		catch ( final Exception e) {
 
 			final StringWriter stringWriter = new StringWriter();
 			e.printStackTrace( new PrintWriter( stringWriter ) );
