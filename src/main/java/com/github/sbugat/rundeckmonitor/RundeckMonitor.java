@@ -15,7 +15,7 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.rundeck.api.RundeckMonitorClient;
+import org.rundeck.api.RundeckClient;
 import org.rundeck.api.domain.RundeckEvent;
 import org.rundeck.api.domain.RundeckExecution;
 import org.rundeck.api.domain.RundeckHistory;
@@ -52,7 +52,7 @@ public class RundeckMonitor implements Runnable {
 	private final int failedJobNumber;
 	private final String dateFormat;
 
-	private final RundeckMonitorClient rundeckClient;
+	private final RundeckClient rundeckClient;
 
 	private final RundeckMonitorTrayIcon rundeckMonitorTrayIcon;
 
@@ -89,7 +89,7 @@ public class RundeckMonitor implements Runnable {
 		dateFormat = prop.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT );
 
 		//Initialize the rundeck connection
-		rundeckClient = new RundeckMonitorClient( rundeckUrl, rundeckLogin, rundeckPassword );
+		rundeckClient = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword ).build();
 
 		//Init the tray icon
 		rundeckMonitorTrayIcon = new RundeckMonitorTrayIcon( rundeckUrl, rundeckMonitorName, failedJobNumber, dateFormat, rundeckMonitorState );
