@@ -22,6 +22,6 @@ public class RundeckMonitorClient extends RundeckClient{
 
 		AssertUtil.notBlank(project, "project is mandatory to get the history !"); //$NON-NLS-1$
 
-		return new ApiCall(this).get( new ApiPathBuilder( "/history" ).param( "project", project).param( "statFilter", statut ).param( "max", max ).param("offset", offset), new HistoryParser( "result/events" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		return new ApiCall(this).get( new ApiPathBuilder( "/history" ).param( "project", project).param( "statFilter", statut ).param( "max", max ).param("offset", offset), new HistoryParser( "/events" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 }
