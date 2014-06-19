@@ -40,6 +40,12 @@ public class RundeckMonitorTrayIcon {
 	/** Marker on the job when it is too long*/
 	private static final String LONG_EXECUTION_MARKER = " - LONG EXECUTION"; //$NON-NLS-1$
 
+	/** Alert message when a new failed job is detected*/
+	private static final String NEW_FAILED_JOB_ALERT = "New failed job"; //$NON-NLS-1$
+
+	/** Alert message when a new long execution is detected*/
+	private static final String NEW_LONG_EXECUTION_ALERT = "New long execution"; //$NON-NLS-1$
+
 	/** OK image*/
 	private final Image IMAGE_OK = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "OK.png" ) ); //$NON-NLS-1$
 	/** WARNING image when a job seems to be blocked*/
@@ -208,8 +214,19 @@ public class RundeckMonitorTrayIcon {
 			entry.setValue( jobExecutionInfo.getExecutionId() );
 			final SimpleDateFormat formatter = new SimpleDateFormat( dateFormat );
 			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
-			entry.getKey().setLabel( formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription() + longExecution ); //$NON-NLS-1$
+			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription();
+			entry.getKey().setLabel( message + longExecution ); //$NON-NLS-1$
 			i++;
+
+			if( jobExecutionInfo.isNewJob() ) {
+
+				if( jobExecutionInfo.isLongExecution() ) {
+					trayIcon.displayMessage( NEW_LONG_EXECUTION_ALERT, message, TrayIcon.MessageType.WARNING ); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				else {
+					trayIcon.displayMessage( NEW_FAILED_JOB_ALERT, message, TrayIcon.MessageType.ERROR ); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
 		}
 	}
 

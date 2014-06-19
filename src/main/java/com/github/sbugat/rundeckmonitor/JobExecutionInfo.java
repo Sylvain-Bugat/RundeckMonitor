@@ -18,11 +18,14 @@ public class JobExecutionInfo {
 
 	private final boolean longExecution;
 
-	public JobExecutionInfo( final Long executionIdArg, final Date startedAtArg, final String descriptionArg, final boolean longExecutionArg ){
+	private final boolean newJob;
+
+	public JobExecutionInfo( final Long executionIdArg, final Date startedAtArg, final String descriptionArg, final boolean longExecutionArg, final boolean newJobArg ){
 		executionId = executionIdArg;
 		startedAt = startedAtArg;
 		description = descriptionArg;
 		longExecution = longExecutionArg;
+		newJob = newJobArg;
 	}
 
 	public Long getExecutionId() {
@@ -39,5 +42,9 @@ public class JobExecutionInfo {
 
 	public boolean isLongExecution() {
 		return longExecution;
+	}
+
+	public boolean isNewJob() {
+		return newJob;
 	}
 }

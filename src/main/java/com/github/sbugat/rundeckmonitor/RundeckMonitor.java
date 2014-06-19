@@ -159,12 +159,13 @@ public class RundeckMonitor implements Runnable {
 		for( final RundeckExecution rundeckExecution : currentExecutions ) {
 
 			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() > lateThreshold * 1000 ) {
-				listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), rundeckExecution.getDescription(), true ) );
 
-				if( ! knownLateExecutionIds.contains( rundeckExecution.getId() ) ) {
-
+				final boolean newLongExecution = ! knownLateExecutionIds.contains( rundeckExecution.getId() );
+				if( newLongExecution ) {
 					lateExecutionFound = true;
 				}
+
+				listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), rundeckExecution.getDescription(), true, newLongExecution ) );
 			}
 		}
 
@@ -173,13 +174,14 @@ public class RundeckMonitor implements Runnable {
 		//Add all lasts failed jobs to the list
 		for( final RundeckEvent rundeckEvent : lastFailedJobs.getEvents() ) {
 
-			listJobExecutionInfo.add( new JobExecutionInfo( Long.valueOf( rundeckEvent.getExecutionId() ), rundeckEvent.getStartedAt(), rundeckEvent.getTitle(), false ) );
-
-			if( ! knownFailedExecutionIds.contains( rundeckEvent.getExecutionId() ) ) {
+			final boolean newFailedJob = ! knownFailedExecutionIds.contains( rundeckEvent.getExecutionId() );
+			if( newFailedJob ) {
 
 				rundeckMonitorState.setFailedJobs( true );
 				knownFailedExecutionIds.add( rundeckEvent.getExecutionId() );
 			}
+
+			listJobExecutionInfo.add( new JobExecutionInfo( Long.valueOf( rundeckEvent.getExecutionId() ), rundeckEvent.getStartedAt(), rundeckEvent.getTitle(), false, newFailedJob && ! init ) );
 		}
 
 		//Display failed/late jobs on the trayIcon menu
