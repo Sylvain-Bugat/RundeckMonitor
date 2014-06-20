@@ -40,6 +40,7 @@ public class RundeckMonitor implements Runnable {
 	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD = "rundeck.monitor.execution.late.threshold"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER = "rundeck.monitor.failed.job.number"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
 
 	private final String rundeckUrl;
 	private final String rundeckLogin;
@@ -87,9 +88,16 @@ public class RundeckMonitor implements Runnable {
 		lateThreshold = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD ) );
 		failedJobNumber = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER ) );
 		dateFormat = prop.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT );
+		final String version = prop.getProperty( RUNDECK_MONITOR_PROPERTY_API_VERSION );
 
-		//Initialize the rundeck connection
-		rundeckClient = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword ).build();
+		//Initialize the rundeck connection with or without version
+		if( null != version && ! version.isEmpty() ) {
+			 Integer.parseInt( version );
+			rundeckClient = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword ).version( Integer.parseInt( version ) ).build();
+		}
+		else {
+			rundeckClient = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword ).build();
+		}
 
 		//Init the tray icon
 		rundeckMonitorTrayIcon = new RundeckMonitorTrayIcon( rundeckUrl, rundeckMonitorName, failedJobNumber, dateFormat, rundeckMonitorState );
