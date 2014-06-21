@@ -42,12 +42,8 @@ public class RundeckMonitor implements Runnable {
 	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
 
-	private final String rundeckUrl;
-	private final String rundeckLogin;
-	private final String rundeckPassword;
 	private final String rundeckProject;
 
-	private final String rundeckMonitorName;
 	private final int refreshDelay;
 	private final int lateThreshold;
 	private final int failedJobNumber;
@@ -70,7 +66,6 @@ public class RundeckMonitor implements Runnable {
 		if( ! propertyFile.exists() ){
 
 			JOptionPane.showMessageDialog( null, "Copy and configure " + PROPERTIES_FILE + " file", PROPERTIES_FILE + " file is missing", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
-
 			System.exit( 1 );
 		}
 
@@ -78,12 +73,12 @@ public class RundeckMonitor implements Runnable {
 		final Properties prop = new Properties();
 		prop.load( new FileInputStream( propertyFile ) );
 
-		rundeckUrl = prop.getProperty( RUNDECK_PROPERTY_URL );
-		rundeckLogin = prop.getProperty( RUNDECK_PROPERTY_LOGIN );
-		rundeckPassword = prop.getProperty( RUNDECK_PROPERTY_PASSWORD );
+		final String rundeckUrl = prop.getProperty( RUNDECK_PROPERTY_URL );
+		final String rundeckLogin = prop.getProperty( RUNDECK_PROPERTY_LOGIN );
+		final String rundeckPassword = prop.getProperty( RUNDECK_PROPERTY_PASSWORD );
 		rundeckProject = prop.getProperty( RUNDECK_PROPERTY_PROJECT );
 
-		rundeckMonitorName = prop.getProperty( RUNDECK_MONITOR_PROPERTY_NAME );
+		final String rundeckMonitorName = prop.getProperty( RUNDECK_MONITOR_PROPERTY_NAME );
 		refreshDelay = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY ) );
 		lateThreshold = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD ) );
 		failedJobNumber = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER ) );

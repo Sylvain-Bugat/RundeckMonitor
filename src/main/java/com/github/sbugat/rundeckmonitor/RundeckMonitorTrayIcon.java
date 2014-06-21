@@ -59,10 +59,6 @@ public class RundeckMonitorTrayIcon {
 
 	/** Task bar tray icon*/
 	private final TrayIcon trayIcon;
-	/** System tray */
-	private final SystemTray tray = SystemTray.getSystemTray();
-	/** System default browser to open execution details*/
-	private final Desktop desktop = Desktop.getDesktop();
 
 	/**Date format to use for printing the Job start date*/
 	private final String dateFormat;
@@ -88,6 +84,9 @@ public class RundeckMonitorTrayIcon {
 		rundeckMonitorState = rundeckMonitorStateArg;
 
 		if( SystemTray.isSupported() ) {
+
+			// Get the system default browser to open execution details
+			final Desktop desktop = Desktop.getDesktop();
 
 			//Action listener to get job execution detail on the rundeck URL
 			final ActionListener menuListener = new ActionListener() {
@@ -137,6 +136,10 @@ public class RundeckMonitorTrayIcon {
 					}
 				}
 			};
+
+			//Get the system tray
+			final SystemTray tray = SystemTray.getSystemTray();
+
 			//Rundeck monitor exit
 			final ActionListener exitListener = new ActionListener() {
 				@SuppressWarnings("synthetic-access")
@@ -241,7 +244,7 @@ public class RundeckMonitorTrayIcon {
 		}
 		else if( rundeckMonitorState.isFailedJobs() ) {
 
-			if(  rundeckMonitorState.isLateJobs() ) {
+			if( rundeckMonitorState.isLateJobs() ) {
 				trayIcon.setImage( IMAGE_KO_LATE );
 			}
 			else {
