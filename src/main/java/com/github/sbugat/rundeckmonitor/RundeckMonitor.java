@@ -2,7 +2,6 @@ package com.github.sbugat.rundeckmonitor;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -16,6 +15,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.rundeck.api.RundeckClient;
+import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.domain.RundeckExecution;
 import org.rundeck.api.domain.RundeckExecution.ExecutionStatus;
 import org.rundeck.api.query.ExecutionQuery;
@@ -37,18 +37,22 @@ public class RundeckMonitor implements Runnable {
 	private static final String RUNDECK_PROPERTY_PASSWORD = "rundeck.monitor.password"; //$NON-NLS-1$
 	private static final String RUNDECK_PROPERTY_PROJECT = "rundeck.monitor.project"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_NAME = "rundeck.monitor.name"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE = "Rundeck monitor"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY = "rundeck.monitor.refresh.delay"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE = "60"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD = "rundeck.monitor.execution.late.threshold"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE = "1800"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER = "rundeck.monitor.failed.job.number"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE = "10"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = "10"; //$NON-NLS-1$
 
 	private final String rundeckProject;
 
 	private final int refreshDelay;
 	private final int lateThreshold;
-	private final int failedJobNumber;
-	private final String dateFormat;
 
 	private final RundeckClient rundeckClient;
 
@@ -56,11 +60,12 @@ public class RundeckMonitor implements Runnable {
 
 	private final RundeckMonitorState rundeckMonitorState= new RundeckMonitorState();
 
+	/**Set for all known late execution identifiers*/
 	private Set<Long> knownLateExecutionIds = new LinkedHashSet<>();
-
+	/**Set for all known failed execution identifiers*/
 	private Set<Long> knownFailedExecutionIds = new LinkedHashSet<>();
 
-	public RundeckMonitor() throws FileNotFoundException, IOException {
+	public RundeckMonitor() throws IOException {
 
 		//Configuration loading
 		final File propertyFile = new File( RUNDECK_MONITOR_PROPERTIES_FILE );
@@ -79,23 +84,23 @@ public class RundeckMonitor implements Runnable {
 		final String rundeckPassword = prop.getProperty( RUNDECK_PROPERTY_PASSWORD );
 		rundeckProject = prop.getProperty( RUNDECK_PROPERTY_PROJECT );
 
-		final String rundeckMonitorName = prop.getProperty( RUNDECK_MONITOR_PROPERTY_NAME );
-		refreshDelay = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY ) );
-		lateThreshold = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD ) );
-		failedJobNumber = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER ) );
-		dateFormat = prop.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT );
-		final String version = prop.getProperty( RUNDECK_MONITOR_PROPERTY_API_VERSION );
+		final String rundeckMonitorName = prop.getProperty( RUNDECK_MONITOR_PROPERTY_NAME, RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE );
+		refreshDelay = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY, RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE ) );
+		lateThreshold = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD, RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE ) );
+		final int failedJobNumber = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE ) );
+		final String dateFormat = prop.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
+		final String version = prop.getProperty( RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
 
 		//Initialize the rundeck connection with or without version
+		final RundeckClientBuilder rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword );
 		if( null != version && ! version.isEmpty() ) {
-			 Integer.parseInt( version );
-			rundeckClient = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword ).version( Integer.parseInt( version ) ).build();
+			rundeckClient = rundeckClientBuilder.version( Integer.parseInt( version ) ).build();
 		}
 		else {
-			rundeckClient = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword ).build();
+			rundeckClient = rundeckClientBuilder.build();
 		}
 
-		//Init the tray icon
+		//Initialize the tray icon
 		rundeckMonitorTrayIcon = new RundeckMonitorTrayIcon( rundeckUrl, rundeckMonitorName, failedJobNumber, dateFormat, rundeckMonitorState );
 
 		//Initialize and update the rundeck monitor failed/late jobs
@@ -168,6 +173,7 @@ public class RundeckMonitor implements Runnable {
 				final boolean newLongExecution = ! knownLateExecutionIds.contains( rundeckExecution.getId() );
 				if( newLongExecution ) {
 					lateExecutionFound = true;
+					knownLateExecutionIds.add( rundeckExecution.getId() );
 				}
 
 				final String jobName;
