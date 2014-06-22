@@ -16,10 +16,8 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.rundeck.api.RundeckClient;
-import org.rundeck.api.domain.RundeckEvent;
 import org.rundeck.api.domain.RundeckExecution;
 import org.rundeck.api.domain.RundeckExecution.ExecutionStatus;
-import org.rundeck.api.domain.RundeckHistory;
 import org.rundeck.api.query.ExecutionQuery;
 import org.rundeck.api.util.PagedResults;
 
