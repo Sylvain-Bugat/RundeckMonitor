@@ -18,7 +18,10 @@ import javax.swing.JOptionPane;
 import org.rundeck.api.RundeckClient;
 import org.rundeck.api.domain.RundeckEvent;
 import org.rundeck.api.domain.RundeckExecution;
+import org.rundeck.api.domain.RundeckExecution.ExecutionStatus;
 import org.rundeck.api.domain.RundeckHistory;
+import org.rundeck.api.query.ExecutionQuery;
+import org.rundeck.api.util.PagedResults;
 
 /**
  * Primary and main class of the Rundeck Monitor
@@ -28,8 +31,8 @@ import org.rundeck.api.domain.RundeckHistory;
  */
 public class RundeckMonitor implements Runnable {
 
-	private static final String PROPERTIES_FILE = "rundeckMonitor.properties"; //$NON-NLS-1$
-	private static final String RUNDECK_FAILED_JOB = "fail"; //$NON-NLS-1$
+	/**Configuration file name*/
+	private static final String RUNDECK_MONITOR_PROPERTIES_FILE = "rundeckMonitor.properties"; //$NON-NLS-1$
 
 	private static final String RUNDECK_PROPERTY_URL = "rundeck.monitor.url"; //$NON-NLS-1$
 	private static final String RUNDECK_PROPERTY_LOGIN = "rundeck.monitor.login"; //$NON-NLS-1$
@@ -62,10 +65,10 @@ public class RundeckMonitor implements Runnable {
 	public RundeckMonitor() throws FileNotFoundException, IOException {
 
 		//Configuration loading
-		final File propertyFile = new File( PROPERTIES_FILE );
+		final File propertyFile = new File( RUNDECK_MONITOR_PROPERTIES_FILE );
 		if( ! propertyFile.exists() ){
 
-			JOptionPane.showMessageDialog( null, "Copy and configure " + PROPERTIES_FILE + " file", PROPERTIES_FILE + " file is missing", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+			JOptionPane.showMessageDialog( null, "Copy and configure " + RUNDECK_MONITOR_PROPERTIES_FILE + " file", RUNDECK_MONITOR_PROPERTIES_FILE + " file is missing", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
 			System.exit( 1 );
 		}
 
@@ -146,7 +149,8 @@ public class RundeckMonitor implements Runnable {
 	private void updateRundeckHistory( final boolean init ) {
 
 		//call Rundeck rest API
-		final RundeckHistory lastFailedJobs = rundeckClient.getHistory( rundeckProject, RUNDECK_FAILED_JOB, Long.valueOf( failedJobNumber ), Long.valueOf(0) );
+		final ExecutionQuery executionQuery = ExecutionQuery.builder().project( rundeckProject ).status( ExecutionStatus.FAILED ).build();
+		final PagedResults<RundeckExecution> lastFailedJobs = rundeckClient.getExecutions( executionQuery, Long.valueOf( 10 ), null );
 		final List<RundeckExecution> currentExecutions= rundeckClient.getRunningExecutions( rundeckProject );
 
 		//Rundeck calls are OK
@@ -168,23 +172,37 @@ public class RundeckMonitor implements Runnable {
 					lateExecutionFound = true;
 				}
 
-				listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), rundeckExecution.getDescription(), true, newLongExecution ) );
+				final String jobName;
+				if( null != rundeckExecution.getJob() ) {
+					jobName = rundeckExecution.getJob().getName();
+				}
+				else {
+					jobName = rundeckExecution.getDescription();
+				}
+				listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), jobName, true, newLongExecution ) );
 			}
 		}
 
 		rundeckMonitorState.setLateJobs( lateExecutionFound );
 
 		//Add all lasts failed jobs to the list
-		for( final RundeckEvent rundeckEvent : lastFailedJobs.getEvents() ) {
+		for( final RundeckExecution rundeckExecution : lastFailedJobs.getResults() ) {
 
-			final boolean newFailedJob = ! knownFailedExecutionIds.contains( rundeckEvent.getExecutionId() );
+			final boolean newFailedJob = ! knownFailedExecutionIds.contains( rundeckExecution.getId() );
 			if( newFailedJob ) {
 
 				rundeckMonitorState.setFailedJobs( true );
-				knownFailedExecutionIds.add( rundeckEvent.getExecutionId() );
+				knownFailedExecutionIds.add( rundeckExecution.getId() );
 			}
 
-			listJobExecutionInfo.add( new JobExecutionInfo( Long.valueOf( rundeckEvent.getExecutionId() ), rundeckEvent.getStartedAt(), rundeckEvent.getTitle(), false, newFailedJob && ! init ) );
+			final String jobName;
+			if( null != rundeckExecution.getJob() ) {
+				jobName = rundeckExecution.getJob().getName();
+			}
+			else {
+				jobName = rundeckExecution.getDescription();
+			}
+			listJobExecutionInfo.add( new JobExecutionInfo( Long.valueOf( rundeckExecution.getId() ), rundeckExecution.getStartedAt(), jobName, false, newFailedJob && ! init ) );
 		}
 
 		//Display failed/late jobs on the trayIcon menu
