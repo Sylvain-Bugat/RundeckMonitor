@@ -54,7 +54,7 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			
+
 			<build>
 				<plugins>
 
