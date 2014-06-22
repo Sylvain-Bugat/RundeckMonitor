@@ -12,6 +12,8 @@ To install RundeckMonitor you just have to clone the repository:
 
 	git clone https://github.com/Sylvain-Bugat/RundeckMonitor.git
 
+Or download the master reposotory at this URL: https://github.com/Sylvain-Bugat/RundeckMonitor/archive/master.zip
+
 ## Configuration
 
 Edit the sample configuration file `rundeckMonitor.properties` in the `target\` directory and configure these parameters:  
@@ -56,18 +58,25 @@ Number of failed jobs to see in the popup menu
 	
 Date format of the failed jobs in the popup menu
 
+	rundeck.monitor.api.version=10
+
+Optional rundeck rest API version to use	
+
 ***
 
 ## Launch RundeckMonitor
 
-Just execute this jar file: `target\RundeckMonitor-1.0-SNAPSHOT-jar-with-dependencies.jar`.
+Just execute this jar file: `target/RundeckMonitor-1.0-SNAPSHOT-jar-with-dependencies.jar`.
 
-The tray icon can be in these colors:  
-![RundeckMonitor OK](src/main/resources/OK.png) green when no failed jobs has failed since the launch or the last alert reset and no long execution is detected  
-![RundeckMonitor KO](src/main/resources/KO.png) red when only a new failed jobs is detected since the launch or the last alert reset  
-![RundeckMonitor late](src/main/resources/LATE.png) black when is running for too long  
-![RundeckMonitor KO and late](src/main/resources/KO_LATE.png) black and red when a new failed jobs is detected since the launch or the last alert reset and another job is running for too long  
-![RundeckMonitor disconnected](src/main/resources/DISCONNECTED.png) yellow if the connection with rundeck is lost  
+The tray icon can be in these colors:
+
+| color | description |
+| ---------- | ---------- |
+| ![RundeckMonitor OK](src/main/resources/OK.png) | no failed jobs has failed since the launch or the last alert reset and no long execution is detected |
+| ![RundeckMonitor KO](src/main/resources/KO.png) | a new failed job is detected since the launch or the last alert reset |
+| ![RundeckMonitor late](src/main/resources/LATE.png) | a job is running for too long |
+| ![RundeckMonitor KO and late](src/main/resources/KO_LATE.png) | a new failed job is detected since the launch or the last alert reset and another job is running for too long |
+| ![RundeckMonitor disconnected](src/main/resources/DISCONNECTED.png) | the connection with rundeck is lost |
 
 When the tray icon is marqued with red, this alert can be reset to get back to green/black.
 
