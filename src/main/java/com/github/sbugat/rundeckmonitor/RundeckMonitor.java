@@ -54,6 +54,9 @@ public class RundeckMonitor implements Runnable {
 	private final int refreshDelay;
 	private final int lateThreshold;
 
+	/**Time zone difference between local machine and rundeck server to correctly detect late execution*/
+	private final long dateDelta;
+
 	private final RundeckClient rundeckClient;
 
 	private final RundeckMonitorTrayIcon rundeckMonitorTrayIcon;
@@ -99,6 +102,8 @@ public class RundeckMonitor implements Runnable {
 		else {
 			rundeckClient = rundeckClientBuilder.build();
 		}
+
+		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
 
 		//Initialize the tray icon
 		rundeckMonitorTrayIcon = new RundeckMonitorTrayIcon( rundeckUrl, rundeckMonitorName, failedJobNumber, dateFormat, rundeckMonitorState );
@@ -168,11 +173,12 @@ public class RundeckMonitor implements Runnable {
 		//Scan runnings jobs to detect if they are late
 		for( final RundeckExecution rundeckExecution : currentExecutions ) {
 
-			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() > lateThreshold * 1000 ) {
+			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > lateThreshold * 1000 ) {
+
+				lateExecutionFound = true;
 
 				final boolean newLongExecution = ! knownLateExecutionIds.contains( rundeckExecution.getId() );
 				if( newLongExecution ) {
-					lateExecutionFound = true;
 					knownLateExecutionIds.add( rundeckExecution.getId() );
 				}
 
