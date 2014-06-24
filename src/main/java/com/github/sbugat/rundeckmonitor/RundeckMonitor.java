@@ -49,25 +49,37 @@ public class RundeckMonitor implements Runnable {
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = "10"; //$NON-NLS-1$
 
+	/**Name of the rundeck project to access*/
 	private final String rundeckProject;
 
+	/**Delay between 2 refresh of rundeck's data*/
 	private final int refreshDelay;
+
+	/**Threshold for detecting long execution*/
 	private final int lateThreshold;
 
 	/**Time zone difference between local machine and rundeck server to correctly detect late execution*/
 	private final long dateDelta;
 
+	/**Rundeck client API used to interact with rundeck rest API*/
 	private final RundeckClient rundeckClient;
 
+	/**Tray icon and his menu for updating jobs and state displayed*/
 	private final RundeckMonitorTrayIcon rundeckMonitorTrayIcon;
 
-	private final RundeckMonitorState rundeckMonitorState= new RundeckMonitorState();
+	/**Current state (failed job/long process/disconnected) of the rundeck monitor*/
+	private final RundeckMonitorState rundeckMonitorState = new RundeckMonitorState();
 
 	/**Set for all known late execution identifiers*/
 	private Set<Long> knownLateExecutionIds = new LinkedHashSet<>();
 	/**Set for all known failed execution identifiers*/
 	private Set<Long> knownFailedExecutionIds = new LinkedHashSet<>();
 
+	/**
+	 * Initialize the rundeck monitor, load configuration and try to connect to the configured rundeck
+	 *
+	 * @throws IOException in case of loading configuration error
+	 */
 	public RundeckMonitor() throws IOException {
 
 		//Configuration loading
