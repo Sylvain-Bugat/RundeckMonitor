@@ -247,6 +247,7 @@ public class RundeckMonitor implements Runnable {
 	public static void main( final String args[] ){
 
 		try {
+			new VersionChecker( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL, "rundeck-monitor-1.0-SNAPSHOT.jar" );
 			new Thread( new RundeckMonitor() ).start();
 		}
 		catch ( final Exception e) {
