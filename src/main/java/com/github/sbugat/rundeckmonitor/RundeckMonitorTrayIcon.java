@@ -57,6 +57,9 @@ public class RundeckMonitorTrayIcon {
 	/** Disconnected from rundeck image */
 	private final Image IMAGE_DISCONNECTED = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "DISCONNECTED.png" ) ); //$NON-NLS-1$
 
+	/** System tray */
+	private final SystemTray tray;
+
 	/** Task bar tray icon*/
 	private final TrayIcon trayIcon;
 
@@ -138,7 +141,7 @@ public class RundeckMonitorTrayIcon {
 			};
 
 			//Get the system tray
-			final SystemTray tray = SystemTray.getSystemTray();
+			tray = SystemTray.getSystemTray();
 
 			//Rundeck monitor exit
 			final ActionListener exitListener = new ActionListener() {
@@ -189,6 +192,7 @@ public class RundeckMonitorTrayIcon {
 		}
 		else {
 			//if the System is not compatible with SystemTray
+			tray = null;
 			trayIcon = null;
 
 			JOptionPane.showMessageDialog( null, "SystemTray cannot be initialized", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -257,5 +261,13 @@ public class RundeckMonitorTrayIcon {
 		else {
 			trayIcon.setImage( IMAGE_OK );
 		}
+	}
+
+	/**
+	 * remove the RundeckMonitor icon from the system tray
+	 */
+	public void disposeTrayIcon() {
+
+		tray.remove( trayIcon );
 	}
 }

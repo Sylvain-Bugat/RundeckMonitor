@@ -49,6 +49,8 @@ public class RundeckMonitor implements Runnable {
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = "10"; //$NON-NLS-1$
 
+	private final VersionChecker versionChecker;
+
 	/**Name of the rundeck project to access*/
 	private final String rundeckProject;
 
@@ -80,7 +82,9 @@ public class RundeckMonitor implements Runnable {
 	 *
 	 * @throws IOException in case of loading configuration error
 	 */
-	public RundeckMonitor() throws IOException {
+	public RundeckMonitor( final VersionChecker versionCheckerArg ) throws IOException {
+
+		versionChecker = versionCheckerArg;
 
 		//Configuration loading
 		final File propertyFile = new File( RUNDECK_MONITOR_PROPERTIES_FILE );
@@ -134,6 +138,16 @@ public class RundeckMonitor implements Runnable {
 
 				//
 				updateRundeckHistory( false );
+
+				if( versionChecker.isDownloadDone() ) {
+
+					//Restart, remove the tray icon and exit
+					rundeckMonitorTrayIcon.disposeTrayIcon();
+					if( versionChecker.restart() ) {
+						rundeckMonitorTrayIcon.disposeTrayIcon();
+						System.exit( 0 );
+					}
+				}
 
 				try {
 					Thread.sleep( refreshDelay * 1000 );
@@ -246,18 +260,23 @@ public class RundeckMonitor implements Runnable {
 	 */
 	public static void main( final String args[] ){
 
+		final VersionChecker versionChecker = new VersionChecker( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL, "rundeck-monitor-1.0-SNAPSHOT.jar" );
+
+		//If the rundecl monitor just restart with the new jar
 		if( args.length > 0 && args[0].equals( "update" ) ) {
 
-			VersionChecker.replaceJar( "rundeck-monitor-1.0-SNAPSHOT.jar" );
+			versionChecker.replaceJarAndRestart();
 		}
-		else if( args.length > 0 && args[0].equals( "clean" ) ) {
 
-			VersionChecker.cleanDownloadedJar( "rundeck-monitor-1.0-SNAPSHOT.jar" );
-		}
+		//Clean any temporary downloaded jar
+		versionChecker.cleanDownloadedJar();
 
 		try {
-			new VersionChecker( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL, "rundeck-monitor-1.0-SNAPSHOT.jar" );
-			new Thread( new RundeckMonitor() ).start();
+			//Start the main thread
+			new Thread( new RundeckMonitor( versionChecker ) ).start();
+
+			//Start the version checker thread
+			new Thread( versionChecker ).start();
 		}
 		catch ( final Exception e) {
 

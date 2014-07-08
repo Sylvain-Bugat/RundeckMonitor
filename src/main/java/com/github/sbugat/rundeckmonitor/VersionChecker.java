@@ -20,19 +20,33 @@ import java.util.zip.ZipInputStream;
 
 import javax.swing.JOptionPane;
 
-public class VersionChecker {
+public class VersionChecker implements Runnable{
 
 	private static final String MAVEN_META_INF_DATE_COMMENT_FORMAT = "EEE MMM d HH:mm:ss zzz yyyy"; //$NON-NLS-1$
 
 	private static final SimpleDateFormat BUILD_DATE_FORMAT = new SimpleDateFormat( MAVEN_META_INF_DATE_COMMENT_FORMAT, Locale.ENGLISH );
 
-	public VersionChecker( final String gitHubProjectRootUrl, final String jarFileName ) {
+	private final String gitHubProjectRootUrl;
 
-		final String jarWithDependenciesFileName = jarFileName.replaceFirst( ".jar$" , "-jar-with-dependencies.jar" );
+	private final String jarFileName;
 
-		try {
-			final URL url = new URL( gitHubProjectRootUrl + "/blob/master/target/" + jarFileName + "?raw=true" );
-			final ZipInputStream zis = new ZipInputStream( url.openStream() );
+	private final String jarWithDependenciesFileName;
+
+	private boolean downloadDone;
+
+	public VersionChecker( final String gitHubProjectRootUrlArg, final String jarFileNameArg ) {
+
+		gitHubProjectRootUrl = gitHubProjectRootUrlArg;
+		jarFileName = jarFileNameArg;
+		jarWithDependenciesFileName = jarFileName.replaceFirst( ".jar$" , "-jar-with-dependencies.jar" );
+	}
+
+	@Override
+	public void run() {
+
+		try( final InputStream remoteJarInputStream = new URL( gitHubProjectRootUrl + "/blob/master/target/" + jarFileName + "?raw=true" ).openStream() ) {
+
+			final ZipInputStream zis = new ZipInputStream( remoteJarInputStream );
 
 			ZipEntry entry = zis.getNextEntry();
 
@@ -50,7 +64,7 @@ public class VersionChecker {
 
 						if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
 
-							downloadFile( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL + "/blob/master/target/" + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + ".update.tmp" );
+							downloadFile( gitHubProjectRootUrl + "/blob/master/target/" + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + ".update.tmp" );
 
 							Files.move( Paths.get( jarWithDependenciesFileName + ".update.tmp" ), Paths.get( jarWithDependenciesFileName + ".update" ) );
 
@@ -61,7 +75,7 @@ public class VersionChecker {
 						}
 					}
 
-					break;
+					return;
 				}
 
 				entry = zis.getNextEntry();
@@ -70,39 +84,76 @@ public class VersionChecker {
 		catch ( final Exception e) {
 
 			//Ignore any error during update process
+			//Just delete the temporary file
 			new File( jarWithDependenciesFileName + ".update.tmp" ).delete();
+			new File( jarWithDependenciesFileName + ".update" ).delete();
 		}
 	}
 
-	public static void replaceJar( final String jarFileName ) {
+	public boolean restart() {
 
-		final String jarWithDependenciesFileName = jarFileName.replaceFirst( ".jar$" , "-jar-with-dependencies.jar" );
+		if( Files.exists( Paths.get( jarWithDependenciesFileName ) ) ) {
+
+			try {
+
+				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable().toString(), "-jar", jarWithDependenciesFileName + ".update", "update" );
+
+				processBuilder.start();
+				return true;
+			}
+			catch( final IOException e ) {
+
+				//Ignore any error during restart process
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isDownloadDone() {
+
+		return downloadDone;
+	}
+
+	public void replaceJarAndRestart() {
 
 		try {
 			Files.copy( Paths.get( jarWithDependenciesFileName + ".update" ), Paths.get( jarWithDependenciesFileName ), StandardCopyOption.REPLACE_EXISTING );
 
 			//Restart again the process and exit
-			final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable().toString(), "-jar", jarWithDependenciesFileName , "clean" );
+			final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable().toString(), "-jar", jarWithDependenciesFileName );
 			processBuilder.start();
 
 			System.exit( 0 );
 		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		catch ( final IOException e) {
+
+			//Ignore any error during replacing and restart process
 		}
 	}
 
-	public static void cleanDownloadedJar( final String jarFileName ) {
+	public void cleanDownloadedJar() {
 
-		final String jarWithDependenciesFileName = jarFileName.replaceFirst( ".jar$" , "-jar-with-dependencies.jar" );
+		if( Files.exists( Paths.get( jarWithDependenciesFileName + ".update" ) ) ) {
 
-		try {
-			Files.delete( Paths.get( jarWithDependenciesFileName + ".update" ) );
+			try {
+				Files.delete( Paths.get( jarWithDependenciesFileName + ".update" ) );
+			}
+			catch ( final IOException e ) {
+
+				//Ignore any error during the cleanup
+			}
 		}
-		catch ( final IOException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		if( Files.exists( Paths.get( jarWithDependenciesFileName + ".update.tmp" ) ) ) {
+
+			try {
+				Files.delete( Paths.get( jarWithDependenciesFileName + ".update.tmp" ) );
+			}
+			catch ( final IOException e ) {
+
+				//Ignore any error during the cleanup
+			}
 		}
 	}
 
