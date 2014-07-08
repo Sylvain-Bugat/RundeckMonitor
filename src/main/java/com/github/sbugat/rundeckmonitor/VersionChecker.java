@@ -1,14 +1,14 @@
 package com.github.sbugat.rundeckmonitor;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
@@ -67,11 +67,6 @@ public class VersionChecker implements Runnable{
 							downloadFile( gitHubProjectRootUrl + "/blob/master/target/" + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + ".update.tmp" );
 
 							Files.move( Paths.get( jarWithDependenciesFileName + ".update.tmp" ), Paths.get( jarWithDependenciesFileName + ".update" ) );
-
-							final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable().toString(), "-jar", jarWithDependenciesFileName + ".update", "update" );
-							processBuilder.start();
-
-							System.exit( 0 );
 						}
 					}
 
@@ -85,8 +80,19 @@ public class VersionChecker implements Runnable{
 
 			//Ignore any error during update process
 			//Just delete the temporary file
-			new File( jarWithDependenciesFileName + ".update.tmp" ).delete();
-			new File( jarWithDependenciesFileName + ".update" ).delete();
+			try {
+				Files.delete( Paths.get( jarWithDependenciesFileName + ".update.tmp" ) );
+			}
+			catch( final IOException e1) {
+				//Ignore any error
+			}
+
+			try {
+				Files.delete( Paths.get( jarWithDependenciesFileName + ".update" ) );
+			}
+			catch( final IOException e1 ) {
+				//Ignore any error
+			}
 		}
 	}
 
@@ -96,7 +102,7 @@ public class VersionChecker implements Runnable{
 
 			try {
 
-				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable().toString(), "-jar", jarWithDependenciesFileName + ".update", "update" );
+				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), "-jar", jarWithDependenciesFileName + ".update", "update" );
 
 				processBuilder.start();
 				return true;
@@ -121,7 +127,7 @@ public class VersionChecker implements Runnable{
 			Files.copy( Paths.get( jarWithDependenciesFileName + ".update" ), Paths.get( jarWithDependenciesFileName ), StandardCopyOption.REPLACE_EXISTING );
 
 			//Restart again the process and exit
-			final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable().toString(), "-jar", jarWithDependenciesFileName );
+			final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), "-jar", jarWithDependenciesFileName );
 			processBuilder.start();
 
 			System.exit( 0 );
@@ -176,7 +182,7 @@ public class VersionChecker implements Runnable{
 		Files.copy( url.openStream(), Paths.get( destFile ) );
 	}
 
-	private static File getJavaExecutable() throws FileNotFoundException {
+	private static String getJavaExecutable() throws NoSuchFileException {
 
 		final String javaDirectory = System.getProperty( "java.home" );
 
@@ -184,18 +190,18 @@ public class VersionChecker implements Runnable{
 			throw new IllegalStateException("java.home");
 		}
 
-		final File javaExeFile;
-		if (isWindows()) {
-			javaExeFile = new File( javaDirectory, "bin/java.exe" );
-		} else {
-			javaExeFile = new File( javaDirectory, "bin/java" );
+		final String directorySeparator = FileSystems.getDefault().getSeparator();
+		String javaExecutablePath = javaDirectory + directorySeparator + "bin" + directorySeparator + "java";
+
+		if ( isWindows() ) {
+			javaExecutablePath = javaExecutablePath + ".exe";
 		}
 
-		if ( ! javaExeFile.isFile() ) {
-			throw new FileNotFoundException( javaExeFile.toString() );
+		if ( ! Files.exists( Paths.get(javaExecutablePath ) ) ) {
+			throw new NoSuchFileException( javaExecutablePath );
 		}
 
-		return javaExeFile;
+		return javaExecutablePath;
 	}
 
 	private static boolean isWindows() {
