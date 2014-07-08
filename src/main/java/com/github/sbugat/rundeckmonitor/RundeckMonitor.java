@@ -246,6 +246,15 @@ public class RundeckMonitor implements Runnable {
 	 */
 	public static void main( final String args[] ){
 
+		if( args.length > 0 && args[0].equals( "update" ) ) {
+
+			VersionChecker.replaceJar( "rundeck-monitor-1.0-SNAPSHOT.jar" );
+		}
+		else if( args.length > 0 && args[0].equals( "clean" ) ) {
+
+			VersionChecker.cleanDownloadedJar( "rundeck-monitor-1.0-SNAPSHOT.jar" );
+		}
+
 		try {
 			new VersionChecker( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL, "rundeck-monitor-1.0-SNAPSHOT.jar" );
 			new Thread( new RundeckMonitor() ).start();

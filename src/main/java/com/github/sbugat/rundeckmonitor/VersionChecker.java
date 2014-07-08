@@ -2,6 +2,7 @@ package com.github.sbugat.rundeckmonitor;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +10,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,18 +46,19 @@ public class VersionChecker {
 
 					if( lastBuildDate.after( currentBuildDate) ) {
 
-						JOptionPane.showMessageDialog( null, "", "Update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					else {
+						final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (8-9MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$
 
-						JOptionPane.showConfirmDialog( null, "", "OK!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$
-						//JOptionPane.YES_OPTION
+						if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
 
-						downloadFile( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL + "/blob/master/target/" + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + ".download.tmp" );
+							downloadFile( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL + "/blob/master/target/" + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + ".update.tmp" );
 
-						new File( jarWithDependenciesFileName + ".download.tmp" ).renameTo( new File( jarWithDependenciesFileName + ".download" ) );
+							Files.move( Paths.get( jarWithDependenciesFileName + ".update.tmp" ), Paths.get( jarWithDependenciesFileName + ".update" ) );
 
-						new File( jarWithDependenciesFileName ).renameTo( new File( jarWithDependenciesFileName + ".tmp" ) );
+							final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable().toString(), "-jar", jarWithDependenciesFileName + ".update", "update" );
+							processBuilder.start();
+
+							System.exit( 0 );
+						}
 					}
 
 					break;
@@ -67,7 +70,39 @@ public class VersionChecker {
 		catch ( final Exception e) {
 
 			//Ignore any error during update process
-			new File( jarWithDependenciesFileName + ".download.tmp" ).delete();
+			new File( jarWithDependenciesFileName + ".update.tmp" ).delete();
+		}
+	}
+
+	public static void replaceJar( final String jarFileName ) {
+
+		final String jarWithDependenciesFileName = jarFileName.replaceFirst( ".jar$" , "-jar-with-dependencies.jar" );
+
+		try {
+			Files.copy( Paths.get( jarWithDependenciesFileName + ".update" ), Paths.get( jarWithDependenciesFileName ), StandardCopyOption.REPLACE_EXISTING );
+
+			//Restart again the process and exit
+			final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable().toString(), "-jar", jarWithDependenciesFileName , "clean" );
+			processBuilder.start();
+
+			System.exit( 0 );
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void cleanDownloadedJar( final String jarFileName ) {
+
+		final String jarWithDependenciesFileName = jarFileName.replaceFirst( ".jar$" , "-jar-with-dependencies.jar" );
+
+		try {
+			Files.delete( Paths.get( jarWithDependenciesFileName + ".update" ) );
+		}
+		catch ( final IOException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -88,5 +123,38 @@ public class VersionChecker {
 		final URL url = new URL( sourceFile );
 
 		Files.copy( url.openStream(), Paths.get( destFile ) );
+	}
+
+	private static File getJavaExecutable() throws FileNotFoundException {
+
+		final String javaDirectory = System.getProperty( "java.home" );
+
+		if ( javaDirectory == null ) {
+			throw new IllegalStateException("java.home");
+		}
+
+		final File javaExeFile;
+		if (isWindows()) {
+			javaExeFile = new File( javaDirectory, "bin/java.exe" );
+		} else {
+			javaExeFile = new File( javaDirectory, "bin/java" );
+		}
+
+		if ( ! javaExeFile.isFile() ) {
+			throw new FileNotFoundException( javaExeFile.toString() );
+		}
+
+		return javaExeFile;
+	}
+
+	private static boolean isWindows() {
+
+		final String operatingSystem = System.getProperty( "os.name" );
+
+		if( null == operatingSystem ) {
+			return false;
+		}
+
+		return operatingSystem.toLowerCase().startsWith("windows");
 	}
 }
