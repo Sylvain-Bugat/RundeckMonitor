@@ -22,9 +22,24 @@ import javax.swing.JOptionPane;
 
 public class VersionChecker implements Runnable{
 
-	private static final String MAVEN_META_INF_DATE_COMMENT_FORMAT = "EEE MMM d HH:mm:ss zzz yyyy"; //$NON-NLS-1$
+	public static final String UPDATE_MARKER_ARGUMENT = "update"; //$NON-NLS-1$
 
+	private static final String MAVEN_META_INF_DATE_COMMENT_FORMAT = "EEE MMM d HH:mm:ss zzz yyyy"; //$NON-NLS-1$
 	private static final SimpleDateFormat BUILD_DATE_FORMAT = new SimpleDateFormat( MAVEN_META_INF_DATE_COMMENT_FORMAT, Locale.ENGLISH );
+
+	private static final String GITHUB_MASTER_DIRECTORY = "/blob/master/target/"; //$NON-NLS-1$
+
+	private static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
+	private static final String UPDATE_EXTENSION = ".update"; //$NON-NLS-1$
+	private static final String TMP_EXTENSION = ".tmp"; //$NON-NLS-1$
+	private static final String WINDOWS_EXE_EXTENSION = ".exe"; //$NON-NLS-1$
+	private static final String JAVA_HOME_PROPERTY = "java.home"; //$NON-NLS-1$
+	private static final String OS_NAME_PROPERTY = "os.name"; //$NON-NLS-1$
+	private static final String WINDOWS_OS_NAME = "windows"; //$NON-NLS-1$
+
+	private static final String BIN_DIRECTORY_AND_JAVA = "bin" + FileSystems.getDefault().getSeparator() + "java"; //$NON-NLS-1$
+
+	private static final String JAR_ARGUMENT = "-jar"; //$NON-NLS-1$
 
 	private final String gitHubProjectRootUrl;
 
@@ -34,17 +49,24 @@ public class VersionChecker implements Runnable{
 
 	private boolean downloadDone;
 
-	public VersionChecker( final String gitHubProjectRootUrlArg, final String jarFileNameArg ) {
+	/**
+	 * Initialize the version checker with jar names and path to GitHub
+	 *
+	 * @param gitHubProjectRootUrlArg
+	 * @param jarFileNameArg
+	 * @param jarWithDependenciesSuffix
+	 */
+	public VersionChecker( final String gitHubProjectRootUrlArg, final String jarFileNameArg, final String jarWithDependenciesSuffix ) {
 
 		gitHubProjectRootUrl = gitHubProjectRootUrlArg;
 		jarFileName = jarFileNameArg;
-		jarWithDependenciesFileName = jarFileName.replaceFirst( ".jar$" , "-jar-with-dependencies.jar" );
+		jarWithDependenciesFileName = jarFileName.replaceFirst( JAR_EXTENSION + '$', jarWithDependenciesSuffix + JAR_EXTENSION );
 	}
 
 	@Override
 	public void run() {
 
-		try( final InputStream remoteJarInputStream = new URL( gitHubProjectRootUrl + "/blob/master/target/" + jarFileName + "?raw=true" ).openStream() ) {
+		try( final InputStream remoteJarInputStream = new URL( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarFileName + "?raw=true" ).openStream() ) {
 
 			final ZipInputStream zis = new ZipInputStream( remoteJarInputStream );
 
@@ -52,7 +74,8 @@ public class VersionChecker implements Runnable{
 
 			while( null != entry ) {
 
-				if( entry.getName().matches( "META-INF/maven/.*/pom.properties" ) ) {
+				System.out.println( entry.getName() );
+				if( entry.getName().matches( "META-INF/maven/org.rundeck.monitor/rundeck-monitor/pom.properties" ) ) {
 
 					final Date lastBuildDate = extractBuildDate( zis );
 
@@ -64,9 +87,9 @@ public class VersionChecker implements Runnable{
 
 						if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
 
-							downloadFile( gitHubProjectRootUrl + "/blob/master/target/" + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + ".update.tmp" );
+							downloadFile( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + UPDATE_EXTENSION + UPDATE_EXTENSION );
 
-							Files.move( Paths.get( jarWithDependenciesFileName + ".update.tmp" ), Paths.get( jarWithDependenciesFileName + ".update" ) );
+							Files.move( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ), Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
 						}
 					}
 
@@ -81,14 +104,14 @@ public class VersionChecker implements Runnable{
 			//Ignore any error during update process
 			//Just delete the temporary file
 			try {
-				Files.delete( Paths.get( jarWithDependenciesFileName + ".update.tmp" ) );
+				Files.delete( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + UPDATE_EXTENSION) );
 			}
 			catch( final IOException e1) {
 				//Ignore any error
 			}
 
 			try {
-				Files.delete( Paths.get( jarWithDependenciesFileName + ".update" ) );
+				Files.delete( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
 			}
 			catch( final IOException e1 ) {
 				//Ignore any error
@@ -102,7 +125,7 @@ public class VersionChecker implements Runnable{
 
 			try {
 
-				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), "-jar", jarWithDependenciesFileName + ".update", "update" );
+				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), JAR_ARGUMENT, jarWithDependenciesFileName + UPDATE_EXTENSION, UPDATE_MARKER_ARGUMENT );
 
 				processBuilder.start();
 				return true;
@@ -124,10 +147,10 @@ public class VersionChecker implements Runnable{
 	public void replaceJarAndRestart() {
 
 		try {
-			Files.copy( Paths.get( jarWithDependenciesFileName + ".update" ), Paths.get( jarWithDependenciesFileName ), StandardCopyOption.REPLACE_EXISTING );
+			Files.copy( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ), Paths.get( jarWithDependenciesFileName ), StandardCopyOption.REPLACE_EXISTING );
 
 			//Restart again the process and exit
-			final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), "-jar", jarWithDependenciesFileName );
+			final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), JAR_ARGUMENT, jarWithDependenciesFileName );
 			processBuilder.start();
 
 			System.exit( 0 );
@@ -140,10 +163,10 @@ public class VersionChecker implements Runnable{
 
 	public void cleanDownloadedJar() {
 
-		if( Files.exists( Paths.get( jarWithDependenciesFileName + ".update" ) ) ) {
+		if( Files.exists( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) ) ) {
 
 			try {
-				Files.delete( Paths.get( jarWithDependenciesFileName + ".update" ) );
+				Files.delete( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
 			}
 			catch ( final IOException e ) {
 
@@ -151,10 +174,10 @@ public class VersionChecker implements Runnable{
 			}
 		}
 
-		if( Files.exists( Paths.get( jarWithDependenciesFileName + ".update.tmp" ) ) ) {
+		if( Files.exists( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ) ) ) {
 
 			try {
-				Files.delete( Paths.get( jarWithDependenciesFileName + ".update.tmp" ) );
+				Files.delete( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ) );
 			}
 			catch ( final IOException e ) {
 
@@ -184,17 +207,16 @@ public class VersionChecker implements Runnable{
 
 	private static String getJavaExecutable() throws NoSuchFileException {
 
-		final String javaDirectory = System.getProperty( "java.home" );
+		final String javaDirectory = System.getProperty( JAVA_HOME_PROPERTY );
 
 		if ( javaDirectory == null ) {
-			throw new IllegalStateException("java.home");
+			throw new IllegalStateException( JAVA_HOME_PROPERTY );
 		}
 
-		final String directorySeparator = FileSystems.getDefault().getSeparator();
-		String javaExecutablePath = javaDirectory + directorySeparator + "bin" + directorySeparator + "java";
+		String javaExecutablePath = javaDirectory + FileSystems.getDefault().getSeparator() + BIN_DIRECTORY_AND_JAVA;
 
 		if ( isWindows() ) {
-			javaExecutablePath = javaExecutablePath + ".exe";
+			javaExecutablePath = javaExecutablePath + WINDOWS_EXE_EXTENSION;
 		}
 
 		if ( ! Files.exists( Paths.get(javaExecutablePath ) ) ) {
@@ -206,12 +228,12 @@ public class VersionChecker implements Runnable{
 
 	private static boolean isWindows() {
 
-		final String operatingSystem = System.getProperty( "os.name" );
+		final String operatingSystem = System.getProperty( OS_NAME_PROPERTY );
 
 		if( null == operatingSystem ) {
 			return false;
 		}
 
-		return operatingSystem.toLowerCase().startsWith("windows");
+		return operatingSystem.toLowerCase().startsWith( WINDOWS_OS_NAME );
 	}
 }
