@@ -256,8 +256,9 @@ public class RundeckMonitor implements Runnable {
 	 * RundeckMonitor main method
 	 *
 	 * @param args program arguments: none is expected and used
+	 * @throws InterruptedException
 	 */
-	public static void main( final String args[] ){
+	public static void main( final String args[] ) throws InterruptedException{
 
 		final VersionChecker versionChecker = new VersionChecker( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL, "rundeck-monitor", "1.0-SNAPSHOT", "com.github.sbugat", "-jar-with-dependencies" );
 

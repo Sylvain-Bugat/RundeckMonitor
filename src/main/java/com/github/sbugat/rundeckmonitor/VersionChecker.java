@@ -60,7 +60,9 @@ public class VersionChecker implements Runnable{
 	 * Initialize the version checker with jar names and path to GitHub
 	 *
 	 * @param gitHubProjectRootUrlArg
-	 * @param jarFileNameArg
+	 * @param mavenArtifactIdArg
+	 * @param mavenVersion
+	 * @param mavenGroupIdArg
 	 * @param jarWithDependenciesSuffix
 	 */
 	public VersionChecker( final String gitHubProjectRootUrlArg, final String mavenArtifactIdArg, final String mavenVersion, final String mavenGroupIdArg, final String jarWithDependenciesSuffix ) {
@@ -140,20 +142,38 @@ public class VersionChecker implements Runnable{
 		return downloadDone;
 	}
 
-	public void replaceJarAndRestart() {
+	public void replaceJarAndRestart() throws InterruptedException {
 
-		try {
-			Files.copy( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ), Paths.get( jarWithDependenciesFileName ), StandardCopyOption.REPLACE_EXISTING );
+		boolean replacementDone = false;
 
-			//Restart again the process and exit
-			final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), JAR_ARGUMENT, jarWithDependenciesFileName );
-			processBuilder.start();
+		//Try to replace 3 times the old jar with the updated jar
+		for( int i=1 ; i<=3 ; i++ ) {
 
-			System.exit( 0 );
+			try {
+				Files.copy( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ), Paths.get( jarWithDependenciesFileName ), StandardCopyOption.REPLACE_EXISTING );
+				replacementDone = true;
+			}
+			catch ( final IOException e) {
+
+				//Ignore any error during replacing and retry after witing a little
+				Thread.sleep( 1 );
+			}
 		}
-		catch ( final IOException e) {
 
-			//Ignore any error during replacing and restart process
+		//If the old jar is now replaced
+		if( replacementDone ) {
+
+			try {
+				//Restart again the process and exit
+				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), JAR_ARGUMENT, jarWithDependenciesFileName );
+				processBuilder.start();
+
+				System.exit( 0 );
+			}
+			catch ( final IOException e) {
+
+				//Ignore any error during the restart process
+			}
 		}
 	}
 
