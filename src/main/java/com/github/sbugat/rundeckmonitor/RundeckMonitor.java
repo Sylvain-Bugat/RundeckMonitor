@@ -259,7 +259,7 @@ public class RundeckMonitor implements Runnable {
 	 */
 	public static void main( final String args[] ){
 
-		final VersionChecker versionChecker = new VersionChecker( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL, "rundeck-monitor-1.0-SNAPSHOT.jar", "-jar-with-dependencies" );
+		final VersionChecker versionChecker = new VersionChecker( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL, "rundeck-monitor", "1.0-SNAPSHOT", "com.github.sbugat", "-jar-with-dependencies" );
 
 		//If the rundecl monitor just restart with the new jar
 		if( args.length > 0 && VersionChecker.UPDATE_MARKER_ARGUMENT.equals( args[0] ) ) {

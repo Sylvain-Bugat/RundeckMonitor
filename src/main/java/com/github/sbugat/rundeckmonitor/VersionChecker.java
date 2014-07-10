@@ -29,6 +29,10 @@ public class VersionChecker implements Runnable{
 	private static final SimpleDateFormat BUILD_DATE_FORMAT = new SimpleDateFormat( MAVEN_META_INF_DATE_COMMENT_FORMAT, Locale.ENGLISH );
 
 	private static final String GITHUB_MASTER_DIRECTORY = "/blob/master/target/"; //$NON-NLS-1$
+	private static final String GITHUB_FULL_FILE_GET_ARGUMENT = "?raw=true"; //$NON-NLS-1$
+
+	private static final String JAR_META_INT_ROOT = "META-INF/maven"; //$NON-NLS-1$
+	private static final String JAR_POM_PROPERTIES_FILE_NAME = "pom.properties"; //$NON-NLS-1$
 
 	private static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 	private static final String UPDATE_EXTENSION = ".update"; //$NON-NLS-1$
@@ -45,8 +49,10 @@ public class VersionChecker implements Runnable{
 	private final String gitHubProjectRootUrl;
 
 	private final String jarFileName;
-
 	private final String jarWithDependenciesFileName;
+
+	private final String mavenArtifactId;
+	private final String mavenGroupId;
 
 	private boolean downloadDone;
 
@@ -57,17 +63,20 @@ public class VersionChecker implements Runnable{
 	 * @param jarFileNameArg
 	 * @param jarWithDependenciesSuffix
 	 */
-	public VersionChecker( final String gitHubProjectRootUrlArg, final String jarFileNameArg, final String jarWithDependenciesSuffix ) {
+	public VersionChecker( final String gitHubProjectRootUrlArg, final String mavenArtifactIdArg, final String mavenVersion, final String mavenGroupIdArg, final String jarWithDependenciesSuffix ) {
 
 		gitHubProjectRootUrl = gitHubProjectRootUrlArg;
-		jarFileName = jarFileNameArg;
-		jarWithDependenciesFileName = jarFileName.replaceFirst( JAR_EXTENSION + '$', jarWithDependenciesSuffix + JAR_EXTENSION );
+		jarFileName = mavenArtifactIdArg + '-' + mavenVersion + mavenGroupIdArg + JAR_EXTENSION;
+		jarWithDependenciesFileName =  mavenArtifactIdArg + '-' + mavenVersion + mavenGroupIdArg + jarWithDependenciesSuffix + JAR_EXTENSION;
+
+		mavenArtifactId = mavenArtifactIdArg;
+		mavenGroupId = mavenGroupIdArg;
 	}
 
 	@Override
 	public void run() {
 
-		try( final InputStream remoteJarInputStream = new URL( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarFileName + "?raw=true" ).openStream() ) {
+		try( final InputStream remoteJarInputStream = new URL( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarFileName + GITHUB_FULL_FILE_GET_ARGUMENT ).openStream() ) {
 
 			final ZipInputStream zis = new ZipInputStream( remoteJarInputStream );
 
@@ -75,19 +84,17 @@ public class VersionChecker implements Runnable{
 
 			while( null != entry ) {
 
-				if( entry.getName().matches( "META-INF/maven/org.rundeck.monitor/rundeck-monitor/pom.properties" ) ) {
+				if( entry.getName().matches( JAR_META_INT_ROOT + '/' + mavenGroupId + '/' + mavenArtifactId + '/' + JAR_POM_PROPERTIES_FILE_NAME ) ) {
 
 					final Date lastBuildDate = extractBuildDate( zis );
-
-					final Date currentBuildDate = extractBuildDate( VersionChecker.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.rundeck.monitor/rundeck-monitor/pom.properties" ) );
+					final Date currentBuildDate = extractBuildDate( VersionChecker.class.getClassLoader().getResourceAsStream( JAR_META_INT_ROOT + '/' + mavenGroupId + '/' + mavenArtifactId + '/' + JAR_POM_PROPERTIES_FILE_NAME  ) );
 
 					if( lastBuildDate.after( currentBuildDate) ) {
 
 						final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (8-9MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$
-
 						if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
 
-							downloadFile( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION );
+							downloadFile( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarWithDependenciesFileName + GITHUB_FULL_FILE_GET_ARGUMENT, jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION );
 							Files.move( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ), Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
 
 							downloadDone = true;
@@ -115,8 +122,8 @@ public class VersionChecker implements Runnable{
 			try {
 
 				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), JAR_ARGUMENT, jarWithDependenciesFileName + UPDATE_EXTENSION, UPDATE_MARKER_ARGUMENT );
-
 				processBuilder.start();
+
 				return true;
 			}
 			catch( final IOException e ) {
@@ -185,7 +192,6 @@ public class VersionChecker implements Runnable{
 	private static void downloadFile( final String sourceFile, final String destFile ) throws IOException {
 
 		final URL url = new URL( sourceFile );
-
 		Files.copy( url.openStream(), Paths.get( destFile ) );
 	}
 
