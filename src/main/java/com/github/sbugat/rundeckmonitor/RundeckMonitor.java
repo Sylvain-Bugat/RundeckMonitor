@@ -142,7 +142,6 @@ public class RundeckMonitor implements Runnable {
 				if( versionChecker.isDownloadDone() ) {
 
 					//Restart, remove the tray icon and exit
-					rundeckMonitorTrayIcon.disposeTrayIcon();
 					if( versionChecker.restart() ) {
 						rundeckMonitorTrayIcon.disposeTrayIcon();
 						System.exit( 0 );

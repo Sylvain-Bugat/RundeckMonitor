@@ -87,9 +87,10 @@ public class VersionChecker implements Runnable{
 
 						if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
 
-							downloadFile( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + UPDATE_EXTENSION + UPDATE_EXTENSION );
-
+							downloadFile( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarWithDependenciesFileName + "?raw=true", jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION );
 							Files.move( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ), Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
+
+							downloadDone = true;
 						}
 					}
 
@@ -109,7 +110,7 @@ public class VersionChecker implements Runnable{
 
 	public boolean restart() {
 
-		if( Files.exists( Paths.get( jarWithDependenciesFileName ) ) ) {
+		if( Files.exists( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) ) ) {
 
 			try {
 
@@ -202,7 +203,7 @@ public class VersionChecker implements Runnable{
 			javaExecutablePath = javaExecutablePath + WINDOWS_EXE_EXTENSION;
 		}
 
-		if ( ! Files.exists( Paths.get(javaExecutablePath ) ) ) {
+		if ( ! Files.exists( Paths.get( javaExecutablePath ) ) ) {
 			throw new NoSuchFileException( javaExecutablePath );
 		}
 
