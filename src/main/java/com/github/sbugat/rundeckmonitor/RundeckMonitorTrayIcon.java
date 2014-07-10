@@ -3,13 +3,13 @@ package com.github.sbugat.rundeckmonitor;
 import java.awt.AWTException;
 import java.awt.Desktop;
 import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -21,7 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Tray icon management class
@@ -70,7 +74,7 @@ public class RundeckMonitorTrayIcon {
 	private RundeckMonitorState rundeckMonitorState;
 
 	/**MenuItem for lasts late/failed jobs*/
-	private final Map<MenuItem, Long> failedMenuItems = new LinkedHashMap<MenuItem, Long>();
+	private final Map<JMenuItem, Long> failedMenuItems = new LinkedHashMap<JMenuItem, Long>();
 
 	/**
 	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it
@@ -88,6 +92,15 @@ public class RundeckMonitorTrayIcon {
 
 		if( SystemTray.isSupported() ) {
 
+			//Try to use the system Look&Feel
+			try {
+				UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
+			}
+			catch( final ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e ) {
+
+				//If System Look&Feel is not supported, stay with the default one
+			}
+
 			// Get the system default browser to open execution details
 			final Desktop desktop = Desktop.getDesktop();
 
@@ -96,7 +109,7 @@ public class RundeckMonitorTrayIcon {
 				@SuppressWarnings("synthetic-access")
 				public void actionPerformed( final ActionEvent e) {
 
-					if( MenuItem.class.isInstance( e.getSource() ) ){
+					if( JMenuItem.class.isInstance( e.getSource() ) ){
 
 						final Long executionId = failedMenuItems.get( e.getSource() );
 
@@ -153,30 +166,42 @@ public class RundeckMonitorTrayIcon {
 			};
 
 			//Popup menu
-			final PopupMenu popupMenu = new PopupMenu();
+			//SystemLookAndFeel
+			JPopupMenu.setDefaultLightWeightPopupEnabled( true );
+			final JPopupMenu popupMenu = new JPopupMenu();
 
 			for( int i = 0 ; i < failedJobNumber ; i++ ){
 
-				final MenuItem failedItem = new MenuItem();
+				final JMenuItem failedItem = new JMenuItem();
 				failedMenuItems.put( failedItem, null );
 				popupMenu.add( failedItem );
 				failedItem.addActionListener( menuListener );
 			}
 
 			popupMenu.addSeparator();
-			final MenuItem reinitItem = new MenuItem( "Reset alert" ); //$NON-NLS-1$
+			final JMenuItem reinitItem = new JMenuItem( "Reset alert" ); //$NON-NLS-1$
 			popupMenu.add( reinitItem );
 			reinitItem.addActionListener( reinitListener );
-			final MenuItem aboutItem = new MenuItem( "About RundeckMonitor" ); //$NON-NLS-1$
+			final JMenuItem aboutItem = new JMenuItem( "About RundeckMonitor" ); //$NON-NLS-1$
 			popupMenu.add( aboutItem );
 			aboutItem.addActionListener( aboutListener );
-			final MenuItem exitItem = new MenuItem( "Quit" ); //$NON-NLS-1$
+			final JMenuItem exitItem = new JMenuItem( "Quit" ); //$NON-NLS-1$
 			popupMenu.add( exitItem );
 			exitItem.addActionListener( exitListener );
 
 			//Add the icon  to the system tray
-			trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorName, popupMenu ); //$NON-NLS-1$
+			trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorName ); //$NON-NLS-1$
 			trayIcon.setImageAutoSize( true );
+
+			trayIcon.addMouseListener( new MouseAdapter() {
+				public void mouseReleased(MouseEvent e) {
+					if( e.isPopupTrigger() ) {
+						popupMenu.setLocation( e.getX(), e.getY() );
+						popupMenu.setInvoker( popupMenu );
+						popupMenu.setVisible( true );
+					}
+				}
+			});
 
 			try {
 				tray.add( trayIcon );
@@ -210,7 +235,7 @@ public class RundeckMonitorTrayIcon {
 
 		int i=0;
 
-		for( final Entry<MenuItem,Long> entry: failedMenuItems.entrySet() ) {
+		for( final Entry<JMenuItem,Long> entry: failedMenuItems.entrySet() ) {
 
 			if( i >= listJobExecutionInfo.size() ) {
 				break;
@@ -222,7 +247,7 @@ public class RundeckMonitorTrayIcon {
 			final SimpleDateFormat formatter = new SimpleDateFormat( dateFormat );
 			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
 			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription();
-			entry.getKey().setLabel( message + longExecution ); //$NON-NLS-1$
+			entry.getKey().setText( message + longExecution );
 			i++;
 
 			if( jobExecutionInfo.isNewJob() ) {
