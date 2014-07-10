@@ -66,8 +66,8 @@ public class VersionChecker implements Runnable{
 	public VersionChecker( final String gitHubProjectRootUrlArg, final String mavenArtifactIdArg, final String mavenVersion, final String mavenGroupIdArg, final String jarWithDependenciesSuffix ) {
 
 		gitHubProjectRootUrl = gitHubProjectRootUrlArg;
-		jarFileName = mavenArtifactIdArg + '-' + mavenVersion + mavenGroupIdArg + JAR_EXTENSION;
-		jarWithDependenciesFileName =  mavenArtifactIdArg + '-' + mavenVersion + mavenGroupIdArg + jarWithDependenciesSuffix + JAR_EXTENSION;
+		jarFileName = mavenArtifactIdArg + '-' + mavenVersion + JAR_EXTENSION;
+		jarWithDependenciesFileName =  mavenArtifactIdArg + '-' + mavenVersion + jarWithDependenciesSuffix + JAR_EXTENSION;
 
 		mavenArtifactId = mavenArtifactIdArg;
 		mavenGroupId = mavenGroupIdArg;
