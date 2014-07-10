@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
@@ -74,7 +75,6 @@ public class VersionChecker implements Runnable{
 
 			while( null != entry ) {
 
-				System.out.println( entry.getName() );
 				if( entry.getName().matches( "META-INF/maven/org.rundeck.monitor/rundeck-monitor/pom.properties" ) ) {
 
 					final Date lastBuildDate = extractBuildDate( zis );
@@ -103,19 +103,7 @@ public class VersionChecker implements Runnable{
 
 			//Ignore any error during update process
 			//Just delete the temporary file
-			try {
-				Files.delete( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + UPDATE_EXTENSION) );
-			}
-			catch( final IOException e1) {
-				//Ignore any error
-			}
-
-			try {
-				Files.delete( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
-			}
-			catch( final IOException e1 ) {
-				//Ignore any error
-			}
+			cleanDownloadedJar();
 		}
 	}
 
@@ -163,25 +151,20 @@ public class VersionChecker implements Runnable{
 
 	public void cleanDownloadedJar() {
 
-		if( Files.exists( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) ) ) {
+		deleteJar( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
+		deleteJar( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ) );
+	}
+
+	private static void deleteJar( final Path jarFileToDelete ) {
+
+		if( Files.exists( jarFileToDelete ) ) {
 
 			try {
-				Files.delete( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
+				Files.delete( jarFileToDelete );
 			}
 			catch ( final IOException e ) {
 
-				//Ignore any error during the cleanup
-			}
-		}
-
-		if( Files.exists( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ) ) ) {
-
-			try {
-				Files.delete( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ) );
-			}
-			catch ( final IOException e ) {
-
-				//Ignore any error during the cleanup
+				//Ignore any error during the delete process
 			}
 		}
 	}
