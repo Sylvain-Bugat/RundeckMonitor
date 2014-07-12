@@ -21,6 +21,16 @@ import java.util.zip.ZipInputStream;
 
 import javax.swing.JOptionPane;
 
+/**
+ * Simple generic version checker on GitHub, inpect target jar and local jar build date to determinated if an update is available
+ * If one is found, download the full jar and replace the original jar via a double restart
+ *
+ * The checker use an independant thread to check and download the file.
+ * The main thread have to check is the download is done and order to restart the program
+ *
+ * @author Sylvain Bugat
+ *
+ */
 public class VersionChecker implements Runnable{
 
 	public static final String UPDATE_MARKER_ARGUMENT = "update"; //$NON-NLS-1$
@@ -46,14 +56,20 @@ public class VersionChecker implements Runnable{
 
 	private static final String JAR_ARGUMENT = "-jar"; //$NON-NLS-1$
 
+	/**Root URL of the GitHub project to update*/
 	private final String gitHubProjectRootUrl;
 
+	/**Name of jar file name without dependencies*/
 	private final String jarFileName;
+	/**Name of jar file containind all dependencies*/
 	private final String jarWithDependenciesFileName;
 
+	/**Maven artifact identifier*/
 	private final String mavenArtifactId;
+	/**Maven artefact group identifier*/
 	private final String mavenGroupId;
 
+	/**Indicate if the download is completed*/
 	private boolean downloadDone;
 
 	/**
@@ -236,6 +252,11 @@ public class VersionChecker implements Runnable{
 		return javaExecutablePath;
 	}
 
+	/**
+	 * Check if the operating system is a windows based on a property, otherwise it's a Linux/Mac-OS
+	 *
+	 * @return true if the OS is a windows*
+	 */
 	private static boolean isWindows() {
 
 		final String operatingSystem = System.getProperty( OS_NAME_PROPERTY );
