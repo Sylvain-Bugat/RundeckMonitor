@@ -91,6 +91,9 @@ public class VersionChecker implements Runnable{
 		mavenGroupId = mavenGroupIdArg;
 	}
 
+	/**
+	 * Background thread launched to check the version on GitHub
+	 */
 	@Override
 	public void run() {
 
@@ -225,12 +228,25 @@ public class VersionChecker implements Runnable{
 		return BUILD_DATE_FORMAT.parse( date );
 	}
 
-	private static void downloadFile( final String sourceFile, final String destFile ) throws IOException {
+	/**
+	 * Download a file/URL and write it to a destination file
+	 *
+	 * @param sourceFile source file/URL
+	 * @param destinationFile destination file
+	 * @throws IOException
+	 */
+	private static void downloadFile( final String sourceFile, final String destinationFile ) throws IOException {
 
 		final URL url = new URL( sourceFile );
-		Files.copy( url.openStream(), Paths.get( destFile ) );
+		Files.copy( url.openStream(), Paths.get( destinationFile ) );
 	}
 
+	/**
+	 * Get the java executable
+	 *
+	 * @return absolte path to the java executable
+	 * @throws NoSuchFileException if the java executable is not found
+	 */
 	private static String getJavaExecutable() throws NoSuchFileException {
 
 		final String javaDirectory = System.getProperty( JAVA_HOME_PROPERTY );
@@ -239,17 +255,22 @@ public class VersionChecker implements Runnable{
 			throw new IllegalStateException( JAVA_HOME_PROPERTY );
 		}
 
-		String javaExecutablePath = javaDirectory + FileSystems.getDefault().getSeparator() + BIN_DIRECTORY_AND_JAVA;
-
+		final String javaExecutableFilePath;
+		//Add .exe extension on Windows OS
 		if ( isWindows() ) {
-			javaExecutablePath = javaExecutablePath + WINDOWS_EXE_EXTENSION;
+			javaExecutableFilePath = javaDirectory + FileSystems.getDefault().getSeparator() + BIN_DIRECTORY_AND_JAVA + WINDOWS_EXE_EXTENSION;
+		}
+		else {
+			javaExecutableFilePath = javaDirectory + FileSystems.getDefault().getSeparator() + BIN_DIRECTORY_AND_JAVA;
 		}
 
-		if ( ! Files.exists( Paths.get( javaExecutablePath ) ) ) {
-			throw new NoSuchFileException( javaExecutablePath );
+		//Check if the executable exists and is executable
+		final Path javaExecutablePath = Paths.get( javaExecutableFilePath );
+		if ( ! Files.exists( javaExecutablePath ) && Files.isExecutable( javaExecutablePath ) ) {
+			throw new NoSuchFileException( javaExecutableFilePath );
 		}
 
-		return javaExecutablePath;
+		return javaExecutableFilePath;
 	}
 
 	/**
