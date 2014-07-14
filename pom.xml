@@ -25,6 +25,12 @@
 		<!-- Rundeck Java Client -->
 		<rundeck.client>11.0</rundeck.client>
 
+		<!-- GitHub Client -->
+		<github.client>3.4.0.201406110918-r</github.client>
+
+		<!-- Google GSON -->
+		<gson.client>2.2.4</gson.client>
+
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>2.5</maven.pluginclean.version>
 		<maven.plugininstall.version>2.4</maven.plugininstall.version>
@@ -43,6 +49,16 @@
 			<groupId>org.rundeck</groupId>
 			<artifactId>rundeck-api-java-client</artifactId>
 			<version>${rundeck.client}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.mylyn.github</groupId>
+			<artifactId>org.eclipse.egit.github.core</artifactId>
+			<version>${github.client}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.client}</version>
 		</dependency>
 	</dependencies>
 
