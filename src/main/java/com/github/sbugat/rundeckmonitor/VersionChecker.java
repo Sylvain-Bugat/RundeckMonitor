@@ -1,6 +1,7 @@
 package com.github.sbugat.rundeckmonitor;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,6 +21,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.swing.JOptionPane;
+import javax.xml.bind.DatatypeConverter;
+
+import org.eclipse.egit.github.core.Repository;
+import org.eclipse.egit.github.core.RepositoryContents;
+import org.eclipse.egit.github.core.service.ContentsService;
+import org.eclipse.egit.github.core.service.DataService;
+import org.eclipse.egit.github.core.service.RepositoryService;
 
 /**
  * Simple generic version checker on GitHub, inpect target jar and local jar build date to determinated if an update is available
@@ -69,6 +77,8 @@ public class VersionChecker implements Runnable{
 	/**Maven artefact group identifier*/
 	private final String mavenGroupId;
 
+	private final String jarWithDependenciesSuffix;
+
 	/**Indicate if the download is completed*/
 	private boolean downloadDone;
 
@@ -79,16 +89,17 @@ public class VersionChecker implements Runnable{
 	 * @param mavenArtifactIdArg
 	 * @param mavenVersion
 	 * @param mavenGroupIdArg
-	 * @param jarWithDependenciesSuffix
+	 * @param jarWithDependenciesSuffixArg
 	 */
-	public VersionChecker( final String gitHubProjectRootUrlArg, final String mavenArtifactIdArg, final String mavenVersion, final String mavenGroupIdArg, final String jarWithDependenciesSuffix ) {
+	public VersionChecker( final String gitHubProjectRootUrlArg, final String mavenArtifactIdArg, final String mavenVersion, final String mavenGroupIdArg, final String jarWithDependenciesSuffixArg ) {
 
 		gitHubProjectRootUrl = gitHubProjectRootUrlArg;
 		jarFileName = mavenArtifactIdArg + '-' + mavenVersion + JAR_EXTENSION;
-		jarWithDependenciesFileName =  mavenArtifactIdArg + '-' + mavenVersion + jarWithDependenciesSuffix + JAR_EXTENSION;
+		jarWithDependenciesFileName =  mavenArtifactIdArg + '-' + mavenVersion + jarWithDependenciesSuffixArg + JAR_EXTENSION;
 
 		mavenArtifactId = mavenArtifactIdArg;
 		mavenGroupId = mavenGroupIdArg;
+		jarWithDependenciesSuffix = jarWithDependenciesSuffixArg;
 	}
 
 	/**
@@ -99,7 +110,31 @@ public class VersionChecker implements Runnable{
 
 		try( final InputStream remoteJarInputStream = new URL( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarFileName + GITHUB_FULL_FILE_GET_ARGUMENT ).openStream() ) {
 
-			final ZipInputStream zis = new ZipInputStream( remoteJarInputStream );
+			final RepositoryService rs = new RepositoryService();
+			final Repository repository = rs.getRepository( "Sylvain-Bugat", "RundeckMonitor" );
+
+			final ContentsService contentsService = new ContentsService();
+
+			String jarFileSha = null;
+			for( final RepositoryContents repositoryContents : contentsService.getContents(repository, "target" ) ) {
+
+				if( repositoryContents.getName().startsWith( mavenArtifactId ) ) {
+
+					if( ! repositoryContents.getName().endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) ) {
+						jarFileSha = repositoryContents.getSha();
+					}
+					else {
+						//TODO
+					}
+				}
+			}
+
+			if( null == jarFileSha ) {
+				return;
+			}
+
+			final DataService dataService = new DataService();
+			final ZipInputStream zis = new ZipInputStream( new ByteArrayInputStream( DatatypeConverter.parseBase64Binary( dataService.getBlob( repository, jarFileSha ).getContent() ) ) );
 
 			ZipEntry entry = zis.getNextEntry();
 
