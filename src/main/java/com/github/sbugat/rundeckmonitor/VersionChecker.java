@@ -115,26 +115,27 @@ public class VersionChecker implements Runnable{
 
 			final ContentsService contentsService = new ContentsService();
 
-			String jarFileSha = null;
+			RepositoryContents jarRepositoryContents = null;
+			RepositoryContents jarWithDependenciesRepositoryContents = null;
 			for( final RepositoryContents repositoryContents : contentsService.getContents(repository, "target" ) ) {
 
 				if( repositoryContents.getName().startsWith( mavenArtifactId ) ) {
 
 					if( ! repositoryContents.getName().endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) ) {
-						jarFileSha = repositoryContents.getSha();
+						jarRepositoryContents = repositoryContents;
 					}
 					else {
-						//TODO
+						jarWithDependenciesRepositoryContents = repositoryContents;
 					}
 				}
 			}
 
-			if( null == jarFileSha ) {
+			if( null == jarRepositoryContents || null == jarWithDependenciesRepositoryContents ) {
 				return;
 			}
 
 			final DataService dataService = new DataService();
-			final ZipInputStream zis = new ZipInputStream( new ByteArrayInputStream( DatatypeConverter.parseBase64Binary( dataService.getBlob( repository, jarFileSha ).getContent() ) ) );
+			final ZipInputStream zis = new ZipInputStream( new ByteArrayInputStream( DatatypeConverter.parseBase64Binary( dataService.getBlob( repository, jarRepositoryContents.getSha() ).getContent() ) ) );
 
 			ZipEntry entry = zis.getNextEntry();
 
@@ -150,7 +151,8 @@ public class VersionChecker implements Runnable{
 						final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (8-9MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$
 						if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
 
-							downloadFile( gitHubProjectRootUrl + GITHUB_MASTER_DIRECTORY + jarWithDependenciesFileName + GITHUB_FULL_FILE_GET_ARGUMENT, jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION );
+							//new ByteArrayInputStream( DatatypeConverter.parseBase64Binary( dataService.getBlob( repository, jarWithDependenciesRepositoryContents.getSha() ).getContent() ) );
+							downloadFile( new ByteArrayInputStream( DatatypeConverter.parseBase64Binary( dataService.getBlob( repository, jarWithDependenciesRepositoryContents.getSha() ).getContent() ) ), jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION );
 							Files.move( Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION + TMP_EXTENSION ), Paths.get( jarWithDependenciesFileName + UPDATE_EXTENSION ) );
 
 							downloadDone = true;
@@ -266,14 +268,13 @@ public class VersionChecker implements Runnable{
 	/**
 	 * Download a file/URL and write it to a destination file
 	 *
-	 * @param sourceFile source file/URL
+	 * @param inputStream source stream
 	 * @param destinationFile destination file
 	 * @throws IOException
 	 */
-	private static void downloadFile( final String sourceFile, final String destinationFile ) throws IOException {
+	private static void downloadFile( final InputStream inputStream, final String destinationFile ) throws IOException {
 
-		final URL url = new URL( sourceFile );
-		Files.copy( url.openStream(), Paths.get( destinationFile ) );
+		Files.copy( inputStream, Paths.get( destinationFile ) );
 	}
 
 	/**
