@@ -166,7 +166,7 @@ public class VersionChecker implements Runnable{
 
 	public void cleanOldAndTemporaryJar() {
 
-		String currentJar = null;
+		String currentJar = currentJar();
 
 		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) {
 
@@ -175,12 +175,9 @@ public class VersionChecker implements Runnable{
 				final String fileName = path.getFileName().toString();
 				if( fileName.startsWith( mavenArtifactId) ) {
 
-					if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) ) {
+					if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) && currentJar.compareTo( fileName ) > 0 ) {
 
-						if( null == currentJar || currentJar.compareTo( fileName ) < 0 ) {
-
-							currentJar = fileName;
-						}
+						deleteJar( path );
 					}
 					else if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION + TMP_EXTENSION ) ) {
 
@@ -188,22 +185,6 @@ public class VersionChecker implements Runnable{
 					}
 				}
 			}
-
-			try( final DirectoryStream<Path> deleteDirectoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) {
-
-				for( final Path path : deleteDirectoryStream ) {
-
-					final String fileName = path.getFileName().toString();
-					if( fileName.startsWith( mavenArtifactId) ) {
-
-						if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) && currentJar.compareTo( fileName ) > 0 ) {
-
-							deleteJar( path );
-						}
-					}
-				}
-			}
-
 		}
 		catch ( final IOException ex ) {
 			//Ignore any error during the delete process
@@ -226,6 +207,7 @@ public class VersionChecker implements Runnable{
 
 	private String currentJar() {
 
+		String currentJar = null;
 		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) {
 
 			for( final Path path : directoryStream ) {
@@ -233,12 +215,15 @@ public class VersionChecker implements Runnable{
 				final String fileName = path.getFileName().toString();
 				if( fileName.startsWith( mavenArtifactId) && fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) ) {
 
-					return fileName;
+					if( null == currentJar || currentJar.compareTo( fileName ) < 0 ) {
+						currentJar = fileName;
+					}
 				}
 			}
 		}
 		catch ( final IOException ex ) {
-			//Ignore any error during the delete process
+			//Ignore any error during the process
+			currentJar = null;
 		}
 
 		return null;

@@ -126,6 +126,9 @@ public class RundeckMonitor implements Runnable {
 
 		//Initialize and update the rundeck monitor failed/late jobs
 		updateRundeckHistory( true );
+
+		//Clean any temporary downloaded jar
+		versionChecker.cleanOldAndTemporaryJar();
 	}
 
 	/**
