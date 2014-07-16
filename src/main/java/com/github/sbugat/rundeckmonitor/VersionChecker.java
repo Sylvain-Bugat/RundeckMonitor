@@ -175,7 +175,7 @@ public class VersionChecker implements Runnable{
 				final String fileName = path.getFileName().toString();
 				if( fileName.startsWith( mavenArtifactId) ) {
 
-					if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) && currentJar.compareTo( fileName ) > 0 ) {
+					if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) && null != currentJar && currentJar.compareTo( fileName ) > 0 ) {
 
 						deleteJar( path );
 					}
@@ -221,12 +221,12 @@ public class VersionChecker implements Runnable{
 				}
 			}
 		}
-		catch ( final IOException ex ) {
+		catch ( final IOException e ) {
 			//Ignore any error during the process
 			currentJar = null;
 		}
 
-		return null;
+		return currentJar;
 	}
 
 	/**
