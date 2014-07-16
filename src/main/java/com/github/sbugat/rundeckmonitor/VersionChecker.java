@@ -15,6 +15,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryContents;
+import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.ContentsService;
 import org.eclipse.egit.github.core.service.DataService;
 import org.eclipse.egit.github.core.service.RepositoryService;
@@ -96,10 +97,12 @@ public class VersionChecker implements Runnable{
 
 		try {
 
-			final RepositoryService rs = new RepositoryService();
+			final GitHubClient gitHubClient = new GitHubClient();
+
+			final RepositoryService rs = new RepositoryService( gitHubClient );
 			final Repository repository = rs.getRepository( gitHubUser, gitHubRepository );
 
-			final ContentsService contentsService = new ContentsService();
+			final ContentsService contentsService = new ContentsService( gitHubClient );
 
 			RepositoryContents jarWithDependenciesRepositoryContents = null;
 			for( final RepositoryContents repositoryContents : contentsService.getContents(repository, repositoryJarDirectory ) ) {
@@ -116,10 +119,10 @@ public class VersionChecker implements Runnable{
 
 			if( jarWithDependenciesRepositoryContents.getName().compareTo( currentJar ) > 0 ) {
 
-				final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (" + jarWithDependenciesRepositoryContents.getSize() / 2_062_336 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (" + jarWithDependenciesRepositoryContents.getSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
 
-					final DataService dataService = new DataService();
+					final DataService dataService = new DataService( gitHubClient );
 					downloadFile( new ByteArrayInputStream( DatatypeConverter.parseBase64Binary( dataService.getBlob( repository, jarWithDependenciesRepositoryContents.getSha() ).getContent() ) ), jarWithDependenciesRepositoryContents.getName() + TMP_EXTENSION );
 					Files.move( Paths.get( jarWithDependenciesRepositoryContents.getName() + TMP_EXTENSION ), Paths.get( jarWithDependenciesRepositoryContents.getName() ) );
 
