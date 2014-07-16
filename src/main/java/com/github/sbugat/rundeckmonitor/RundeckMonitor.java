@@ -261,16 +261,10 @@ public class RundeckMonitor implements Runnable {
 	public static void main( final String args[] ) throws InterruptedException{
 
 		//"Sylvain-Bugat", "RundeckMonitor",
-		final VersionChecker versionChecker = new VersionChecker( RundeckMonitorTrayIcon.RUNDECK_MONITOR_PROJECT_URL, "rundeck-monitor", "1.0-SNAPSHOT", "com.github.sbugat", "-jar-with-dependencies" );
-
-		//If the rundecl monitor just restart with the new jar
-		if( args.length > 0 && VersionChecker.UPDATE_MARKER_ARGUMENT.equals( args[0] ) ) {
-
-			versionChecker.replaceJarAndRestart();
-		}
+		final VersionChecker versionChecker = new VersionChecker( "Sylvain-Bugat", "RundeckMonitor", "rundeck-monitor", "target", "-jar-with-dependencies" );
 
 		//Clean any temporary downloaded jar
-		versionChecker.cleanDownloadedJar();
+		versionChecker.cleanOldAndTemporaryJar();
 
 		try {
 			//Start the main thread
