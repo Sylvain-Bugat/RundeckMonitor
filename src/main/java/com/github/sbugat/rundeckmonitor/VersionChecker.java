@@ -126,8 +126,8 @@ public class VersionChecker implements Runnable{
 					downloadFile( new ByteArrayInputStream( DatatypeConverter.parseBase64Binary( dataService.getBlob( repository, jarWithDependenciesRepositoryContents.getSha() ).getContent() ) ), jarWithDependenciesRepositoryContents.getName() + TMP_EXTENSION );
 					Files.move( Paths.get( jarWithDependenciesRepositoryContents.getName() + TMP_EXTENSION ), Paths.get( jarWithDependenciesRepositoryContents.getName() ) );
 
-					downloadDone = true;
 					downloadedJar = jarWithDependenciesRepositoryContents.getName();
+					downloadDone = true;
 				}
 			}
 		}
@@ -177,7 +177,7 @@ public class VersionChecker implements Runnable{
 
 					if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) ) {
 
-						if( null == currentJar || currentJar.compareTo( fileName ) > 0 ) {
+						if( null == currentJar || currentJar.compareTo( fileName ) < 0 ) {
 
 							currentJar = fileName;
 						}
@@ -196,7 +196,7 @@ public class VersionChecker implements Runnable{
 					final String fileName = path.getFileName().toString();
 					if( fileName.startsWith( mavenArtifactId) ) {
 
-						if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) && currentJar.compareTo( fileName ) < 0 ) {
+						if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) && currentJar.compareTo( fileName ) > 0 ) {
 
 							deleteJar( path );
 						}
