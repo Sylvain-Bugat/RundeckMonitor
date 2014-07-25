@@ -8,11 +8,11 @@ System tray icon tools that indicates failed rundeck jobs and jobs running for a
 
 ## Installation
 
-To install RundeckMonitor you just have to clone the repository:
+Download the master repository at this URL: https://github.com/Sylvain-Bugat/RundeckMonitor/archive/master.zip
+
+Or clone the master repository with this command:
 
 	git clone https://github.com/Sylvain-Bugat/RundeckMonitor.git
-
-Or download the master reposotory at this URL: https://github.com/Sylvain-Bugat/RundeckMonitor/archive/master.zip
 
 ## Configuration
 
@@ -60,13 +60,13 @@ Date format of the failed jobs in the popup menu
 
 	rundeck.monitor.api.version=10
 
-Optional rundeck rest API version to use	
+Optional rundeck rest API version to use (11 cannot be used yet because of https://github.com/rundeck/rundeck-api-java-client/pull/12)
 
 ***
 
 ## Launch RundeckMonitor
 
-Just execute this jar file: `target/RundeckMonitor-1.0-SNAPSHOT-jar-with-dependencies.jar`.
+Just execute this jar file: `target/RundeckMonitor-1.2-SNAPSHOT-jar-with-dependencies.jar`.
 
 The tray icon can be in these colors:
 
