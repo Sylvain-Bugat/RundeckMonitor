@@ -2,6 +2,7 @@ package com.github.sbugat.rundeckmonitor;
 
 import java.awt.AWTException;
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
@@ -16,11 +17,15 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -54,8 +59,10 @@ public class RundeckMonitorTrayIcon {
 	private final Image IMAGE_OK = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "OK.png" ) ); //$NON-NLS-1$
 	/** WARNING image when a job seems to be blocked*/
 	private final Image IMAGE_LATE = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "LATE.png" ) ); //$NON-NLS-1$
+	private final Icon ICON_LATE_SMALL = new ImageIcon( Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "LATE_SMALL.png" ) ) ); //$NON-NLS-1$
 	/** KO image when a job has failed*/
 	private final Image IMAGE_KO = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "KO.png" ) ); //$NON-NLS-1$
+	private final Icon ICON_KO_SMALL = new ImageIcon( Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "KO_SMALL.png" ) ) ); //$NON-NLS-1$
 	/** KO image when a job has failed and a job seems to be blocked*/
 	private final Image IMAGE_KO_LATE = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "KO_LATE.png" ) ); //$NON-NLS-1$
 	/** Disconnected from rundeck image */
@@ -74,7 +81,11 @@ public class RundeckMonitorTrayIcon {
 	private RundeckMonitorState rundeckMonitorState;
 
 	/**MenuItem for lasts late/failed jobs*/
-	private final Map<JMenuItem, Long> failedMenuItems = new LinkedHashMap<JMenuItem, Long>();
+	private final Map<JMenuItem, Long> failedMenuItems = new LinkedHashMap<>();
+
+	private final Set<Long> newLateProcess = new HashSet<>();
+
+	private final Set<Long> newFailedProcess = new HashSet<>();
 
 	/**
 	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it
@@ -131,6 +142,18 @@ public class RundeckMonitorTrayIcon {
 				@SuppressWarnings("synthetic-access")
 				public void actionPerformed( final ActionEvent e) {
 					rundeckMonitorState.setFailedJobs( false );
+
+					//Reset all failed icon
+					for( final Entry<JMenuItem,Long> entry: failedMenuItems.entrySet() ) {
+
+						final JMenuItem menuItem = entry.getKey();
+						menuItem.setIcon( null );
+						menuItem.setFont( menuItem.getFont().deriveFont( Font.PLAIN ) );
+					}
+
+					//Clear all new failed jobs
+					newLateProcess.clear();
+					newFailedProcess.clear();
 
 					updateTrayIcon();
 				}
@@ -242,23 +265,41 @@ public class RundeckMonitorTrayIcon {
 			}
 
 			final JobExecutionInfo jobExecutionInfo = listJobExecutionInfo.get( i );
+			final JMenuItem jMenuItem = entry.getKey();
 
 			entry.setValue( jobExecutionInfo.getExecutionId() );
 			final SimpleDateFormat formatter = new SimpleDateFormat( dateFormat );
 			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
 			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription();
-			entry.getKey().setText( message + longExecution );
-			i++;
+			jMenuItem.setText( message + longExecution );
 
 			if( jobExecutionInfo.isNewJob() ) {
 
 				if( jobExecutionInfo.isLongExecution() ) {
-					trayIcon.displayMessage( NEW_LONG_EXECUTION_ALERT, message, TrayIcon.MessageType.WARNING ); //$NON-NLS-1$ //$NON-NLS-2$
+					trayIcon.displayMessage( NEW_LONG_EXECUTION_ALERT, message, TrayIcon.MessageType.WARNING );
+					newLateProcess.add( jobExecutionInfo.getExecutionId() );
 				}
 				else {
-					trayIcon.displayMessage( NEW_FAILED_JOB_ALERT, message, TrayIcon.MessageType.ERROR ); //$NON-NLS-1$ //$NON-NLS-2$
+					trayIcon.displayMessage( NEW_FAILED_JOB_ALERT, message, TrayIcon.MessageType.ERROR );
+					newFailedProcess.add( jobExecutionInfo.getExecutionId() );
 				}
 			}
+
+			//Mark failed and late jobs with an icon and bold menuitem
+			if( newFailedProcess.contains( jobExecutionInfo.getExecutionId() ) ) {
+				jMenuItem.setFont( entry.getKey().getFont().deriveFont( Font.BOLD ) );
+				jMenuItem.setIcon( ICON_KO_SMALL );
+			}
+			else if( newLateProcess.contains( jobExecutionInfo.getExecutionId() ) ) {
+				jMenuItem.setFont( entry.getKey().getFont().deriveFont( Font.BOLD ) );
+				jMenuItem.setIcon( ICON_LATE_SMALL );
+			}
+			else {
+				jMenuItem.setFont( entry.getKey().getFont().deriveFont( Font.PLAIN ) );
+				jMenuItem.setIcon( null );
+			}
+
+			i++;
 		}
 	}
 
@@ -268,7 +309,6 @@ public class RundeckMonitorTrayIcon {
 	public void updateTrayIcon() {
 
 		if( rundeckMonitorState.isDisconnected() ) {
-
 			trayIcon.setImage( IMAGE_DISCONNECTED );
 		}
 		else if( rundeckMonitorState.isFailedJobs() ) {
