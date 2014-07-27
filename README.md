@@ -17,22 +17,30 @@ Or clone the master repository with this command:
 ## Configuration
 
 Edit the sample configuration file `rundeckMonitor.properties` in the `target\` directory and configure these parameters:  
+### Rundeck project parameters
 
 	rundeck.monitor.url=
 	
 URL with the http protocol and with only the domain and the port like: `http:\\rundeck.domain.com:4444`
 
-	rundeck.monitor.login=
-	
-Login with access to the Rundeck REST API
-
-	rundeck.monitor.password=
-	
-Password associated with this login
-
 	rundeck.monitor.project=
 	
 Rundeck project containing jobs to scan
+
+### Authentication parameters
+
+	rundeck.monitor.api.key=
+
+Rundeck API key can be used instead of login/password
+
+	rundeck.monitor.login=
+	
+Login with access to the Rundeck REST API if no API key is defined
+
+	rundeck.monitor.password=
+	
+Password associated with this login if no API key is defined
+
 
 ## Additionnal Configuration
 
