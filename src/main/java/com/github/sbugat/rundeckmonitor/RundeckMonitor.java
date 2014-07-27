@@ -33,6 +33,7 @@ public class RundeckMonitor implements Runnable {
 	private static final String RUNDECK_MONITOR_PROPERTIES_FILE = "rundeckMonitor.properties"; //$NON-NLS-1$
 
 	private static final String RUNDECK_PROPERTY_URL = "rundeck.monitor.url"; //$NON-NLS-1$
+	private static final String RUNDECK_PROPERTY_API_KEY = "rundeck.monitor.api.key"; //$NON-NLS-1$
 	private static final String RUNDECK_PROPERTY_LOGIN = "rundeck.monitor.login"; //$NON-NLS-1$
 	private static final String RUNDECK_PROPERTY_PASSWORD = "rundeck.monitor.password"; //$NON-NLS-1$
 	private static final String RUNDECK_PROPERTY_PROJECT = "rundeck.monitor.project"; //$NON-NLS-1$
@@ -99,6 +100,7 @@ public class RundeckMonitor implements Runnable {
 		prop.load( new FileInputStream( propertyFile ) );
 
 		final String rundeckUrl = prop.getProperty( RUNDECK_PROPERTY_URL );
+		final String rundeckApiKey = prop.getProperty( RUNDECK_PROPERTY_API_KEY );
 		final String rundeckLogin = prop.getProperty( RUNDECK_PROPERTY_LOGIN );
 		final String rundeckPassword = prop.getProperty( RUNDECK_PROPERTY_PASSWORD );
 		rundeckProject = prop.getProperty( RUNDECK_PROPERTY_PROJECT );
@@ -110,8 +112,16 @@ public class RundeckMonitor implements Runnable {
 		final String dateFormat = prop.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
 		final String version = prop.getProperty( RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
 
-		//Initialize the rundeck connection with or without version
-		final RundeckClientBuilder rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword );
+		//Initialize the client builder with token  or login/password authentication
+		final RundeckClientBuilder rundeckClientBuilder;
+		if( null != rundeckApiKey && ! rundeckApiKey.isEmpty() ) {
+			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckApiKey );
+		}
+		else {
+			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword );
+		}
+
+		//Initialize the rundeck client with or without version
 		if( null != version && ! version.isEmpty() ) {
 			rundeckClient = rundeckClientBuilder.version( Integer.parseInt( version ) ).build();
 		}
@@ -119,6 +129,7 @@ public class RundeckMonitor implements Runnable {
 			rundeckClient = rundeckClientBuilder.build();
 		}
 
+		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
 
 		//Initialize the tray icon
