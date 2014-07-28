@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.rundeck.api.RundeckApiException;
 import org.rundeck.api.RundeckApiException.RundeckApiHttpStatusException;
 import org.rundeck.api.RundeckApiException.RundeckApiLoginException;
 import org.rundeck.api.RundeckApiException.RundeckApiTokenException;
@@ -300,9 +302,27 @@ public class RundeckMonitor implements Runnable {
 		}
 		catch ( final RundeckApiHttpStatusException e ) {
 
-			final StringWriter stringWriter = new StringWriter();
-			e.printStackTrace( new PrintWriter( stringWriter ) );
-			JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+			if( 500 == e.getStatusCode() ) {
+				JOptionPane.showMessageDialog( null, "Invalid project settings," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RUNDECK_PROPERTY_API_KEY + '"' + System.lineSeparator() + '"' + RUNDECK_PROPERTY_PROJECT + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			else {
+				final StringWriter stringWriter = new StringWriter();
+				e.printStackTrace( new PrintWriter( stringWriter ) );
+				JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			System.exit( 1 );
+		}
+		catch ( final RundeckApiException e ) {
+
+			//Connection error
+			if( ConnectException.class.isInstance( e.getCause() ) ){
+				JOptionPane.showMessageDialog( null, "Unable to connect to the project URL," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RUNDECK_PROPERTY_URL + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			else {
+				final StringWriter stringWriter = new StringWriter();
+				e.printStackTrace( new PrintWriter( stringWriter ) );
+				JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "undeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			System.exit( 1 );
 		}
 		catch ( final Exception e ) {
