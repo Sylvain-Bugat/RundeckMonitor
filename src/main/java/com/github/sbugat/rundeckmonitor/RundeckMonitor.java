@@ -14,6 +14,9 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.rundeck.api.RundeckApiException.RundeckApiHttpStatusException;
+import org.rundeck.api.RundeckApiException.RundeckApiLoginException;
+import org.rundeck.api.RundeckApiException.RundeckApiTokenException;
 import org.rundeck.api.RundeckClient;
 import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.domain.RundeckExecution;
@@ -287,7 +290,22 @@ public class RundeckMonitor implements Runnable {
 			//Start the version checker thread
 			new Thread( versionChecker ).start();
 		}
-		catch ( final Exception e) {
+		catch ( final RundeckApiTokenException e ) {
+			JOptionPane.showMessageDialog( null, "Invalid authentication token," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RUNDECK_PROPERTY_API_KEY + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.exit( 1 );
+		}
+		catch ( final RundeckApiLoginException e ) {
+			JOptionPane.showMessageDialog( null, "Invalid login/password," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RUNDECK_PROPERTY_LOGIN + '"' + System.lineSeparator() + '"' + RUNDECK_PROPERTY_PASSWORD + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.exit( 1 );
+		}
+		catch ( final RundeckApiHttpStatusException e ) {
+
+			final StringWriter stringWriter = new StringWriter();
+			e.printStackTrace( new PrintWriter( stringWriter ) );
+			JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+			System.exit( 1 );
+		}
+		catch ( final Exception e ) {
 
 			final StringWriter stringWriter = new StringWriter();
 			e.printStackTrace( new PrintWriter( stringWriter ) );
