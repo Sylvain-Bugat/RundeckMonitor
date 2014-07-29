@@ -1,7 +1,5 @@
 package com.github.sbugat.rundeckmonitor;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -10,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -34,37 +31,10 @@ import org.rundeck.api.util.PagedResults;
  */
 public class RundeckMonitor implements Runnable {
 
-	/**Configuration file name*/
-	private static final String RUNDECK_MONITOR_PROPERTIES_FILE = "rundeckMonitor.properties"; //$NON-NLS-1$
-
-	private static final String RUNDECK_PROPERTY_URL = "rundeck.monitor.url"; //$NON-NLS-1$
-	private static final String RUNDECK_PROPERTY_API_KEY = "rundeck.monitor.api.key"; //$NON-NLS-1$
-	private static final String RUNDECK_PROPERTY_LOGIN = "rundeck.monitor.login"; //$NON-NLS-1$
-	private static final String RUNDECK_PROPERTY_PASSWORD = "rundeck.monitor.password"; //$NON-NLS-1$
-	private static final String RUNDECK_PROPERTY_PROJECT = "rundeck.monitor.project"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_NAME = "rundeck.monitor.name"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE = "Rundeck monitor"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY = "rundeck.monitor.refresh.delay"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE = "60"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD = "rundeck.monitor.execution.late.threshold"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE = "1800"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER = "rundeck.monitor.failed.job.number"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE = "10"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = "10"; //$NON-NLS-1$
-
 	private final VersionChecker versionChecker;
 
-	/**Name of the rundeck project to access*/
-	private final String rundeckProject;
-
-	/**Delay between 2 refresh of rundeck's data*/
-	private final int refreshDelay;
-
-	/**Threshold for detecting long execution*/
-	private final int lateThreshold;
+	/**Configuration of the rundeck monitor with default values if some properties are missing or are empty*/
+	private final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
 	/**Time zone difference between local machine and rundeck server to correctly detect late execution*/
 	private final long dateDelta;
@@ -87,48 +57,31 @@ public class RundeckMonitor implements Runnable {
 	 * Initialize the rundeck monitor, load configuration and try to connect to the configured rundeck
 	 *
 	 * @throws IOException in case of loading configuration error
+	 * @throws InvalidPropertyException
+	 * @throws MissingPropertyException
 	 */
-	public RundeckMonitor( final VersionChecker versionCheckerArg ) throws IOException {
+	public RundeckMonitor( final VersionChecker versionCheckerArg ) throws IOException, MissingPropertyException, InvalidPropertyException {
 
 		versionChecker = versionCheckerArg;
 
 		//Configuration loading
-		final File propertyFile = new File( RUNDECK_MONITOR_PROPERTIES_FILE );
-		if( ! propertyFile.exists() ){
-
-			JOptionPane.showMessageDialog( null, "Copy and configure " + RUNDECK_MONITOR_PROPERTIES_FILE + " file", RUNDECK_MONITOR_PROPERTIES_FILE + " file is missing", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
-			System.exit( 1 );
-		}
-
-		//Load the configuration file and extract properties
-		final Properties prop = new Properties();
-		prop.load( new FileInputStream( propertyFile ) );
-
-		final String rundeckUrl = prop.getProperty( RUNDECK_PROPERTY_URL );
-		final String rundeckApiKey = prop.getProperty( RUNDECK_PROPERTY_API_KEY );
-		final String rundeckLogin = prop.getProperty( RUNDECK_PROPERTY_LOGIN );
-		final String rundeckPassword = prop.getProperty( RUNDECK_PROPERTY_PASSWORD );
-		rundeckProject = prop.getProperty( RUNDECK_PROPERTY_PROJECT );
-
-		final String rundeckMonitorName = prop.getProperty( RUNDECK_MONITOR_PROPERTY_NAME, RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE );
-		refreshDelay = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY, RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE ) );
-		lateThreshold = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD, RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE ) );
-		final int failedJobNumber = Integer.parseInt( prop.getProperty( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE ) );
-		final String dateFormat = prop.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
-		final String version = prop.getProperty( RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
+		rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
 
 		//Initialize the client builder with token  or login/password authentication
 		final RundeckClientBuilder rundeckClientBuilder;
-		if( null != rundeckApiKey && ! rundeckApiKey.isEmpty() ) {
-			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckApiKey );
+		final String rundeckAPIKey = rundeckMonitorConfiguration.getRundeckApiKey();
+		final String rundeckUrl = rundeckMonitorConfiguration.getRundeckUrl();
+		if( null != rundeckAPIKey && ! rundeckAPIKey.isEmpty() ) {
+			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckAPIKey );
 		}
 		else {
-			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckLogin, rundeckPassword );
+			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
 		}
 
 		//Initialize the rundeck client with or without version
-		if( null != version && ! version.isEmpty() ) {
-			rundeckClient = rundeckClientBuilder.version( Integer.parseInt( version ) ).build();
+		final String rundeckAPIVersion= rundeckMonitorConfiguration.getRundeckAPIversion();
+		if( null != rundeckAPIVersion && ! rundeckAPIVersion.isEmpty() ) {
+			rundeckClient = rundeckClientBuilder.version( Integer.parseInt( rundeckAPIVersion ) ).build();
 		}
 		else {
 			rundeckClient = rundeckClientBuilder.build();
@@ -141,7 +94,7 @@ public class RundeckMonitor implements Runnable {
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
 
 		//Initialize the tray icon
-		rundeckMonitorTrayIcon = new RundeckMonitorTrayIcon( rundeckUrl, rundeckMonitorName, failedJobNumber, dateFormat, rundeckMonitorState );
+		rundeckMonitorTrayIcon = new RundeckMonitorTrayIcon( rundeckMonitorConfiguration, rundeckMonitorState );
 
 		//Initialize and update the rundeck monitor failed/late jobs
 		updateRundeckHistory( true );
@@ -171,7 +124,7 @@ public class RundeckMonitor implements Runnable {
 				}
 
 				try {
-					Thread.sleep( refreshDelay * 1000 );
+					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000 );
 				}
 				catch ( final Exception e ) {
 
@@ -186,7 +139,7 @@ public class RundeckMonitor implements Runnable {
 
 				try {
 
-					Thread.sleep( refreshDelay * 1000 );
+					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000 );
 				}
 				catch ( final InterruptedException e1) {
 
@@ -204,10 +157,10 @@ public class RundeckMonitor implements Runnable {
 	private void updateRundeckHistory( final boolean init ) {
 
 		//call Rundeck rest API
-		final ExecutionQuery executionQuery = ExecutionQuery.builder().project( rundeckProject ).status( ExecutionStatus.FAILED ).build();
+		final ExecutionQuery executionQuery = ExecutionQuery.builder().project( rundeckMonitorConfiguration.getRundeckProject() ).status( ExecutionStatus.FAILED ).build();
 		final PagedResults<RundeckExecution> lastFailedJobs = rundeckClient.getExecutions( executionQuery, Long.valueOf( 10 ), null );
 
-		final List<RundeckExecution> currentExecutions = rundeckClient.getRunningExecutions( rundeckProject );
+		final List<RundeckExecution> currentExecutions = rundeckClient.getRunningExecutions( rundeckMonitorConfiguration.getRundeckProject() );
 
 		//Rundeck calls are OK
 		rundeckMonitorState.setDisconnected( false );
@@ -221,7 +174,7 @@ public class RundeckMonitor implements Runnable {
 		//Scan runnings jobs to detect if they are late
 		for( final RundeckExecution rundeckExecution : currentExecutions ) {
 
-			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > lateThreshold * 1000 ) {
+			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > rundeckMonitorConfiguration.getLateThreshold() * 1000 ) {
 
 				lateExecutionFound = true;
 
@@ -281,7 +234,7 @@ public class RundeckMonitor implements Runnable {
 	 * @param args program arguments: none is expected and used
 	 * @throws InterruptedException
 	 */
-	public static void main( final String args[] ) throws InterruptedException{
+	public static void main( final String args[] ) /*throws InterruptedException*/{
 
 		//"Sylvain-Bugat", "RundeckMonitor",
 		final VersionChecker versionChecker = new VersionChecker( "Sylvain-Bugat", "RundeckMonitor", "rundeck-monitor", "target", "-jar-with-dependencies" );
@@ -296,18 +249,33 @@ public class RundeckMonitor implements Runnable {
 			//Start the version checker thread
 			new Thread( versionChecker ).start();
 		}
+		//Loading properties exceptions
+		catch( final MissingPropertyException e ) {
+			JOptionPane.showMessageDialog( null, "Missing mandatory property," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + e.getProperty() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.exit( 1 );
+		}
+		catch( final InvalidPropertyException e ) {
+			JOptionPane.showMessageDialog( null, "Invalid property value:" + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + e.getProperty() + '=' + e.getPropertyValue() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.exit( 1 );
+		}
+		//Loading configuration file I/O exception
+		catch( final IOException e ) {
+			JOptionPane.showMessageDialog( null, "Error loading property file:" + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTIES_FILE + "check access rights of this file." , "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+			System.exit( 1 );
+		}
+		//Authentication exceptions
 		catch ( final RundeckApiTokenException e ) {
-			JOptionPane.showMessageDialog( null, "Invalid authentication token," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RUNDECK_PROPERTY_API_KEY + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			JOptionPane.showMessageDialog( null, "Invalid authentication token," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_API_KEY + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			System.exit( 1 );
 		}
 		catch ( final RundeckApiLoginException e ) {
-			JOptionPane.showMessageDialog( null, "Invalid login/password," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RUNDECK_PROPERTY_LOGIN + '"' + System.lineSeparator() + '"' + RUNDECK_PROPERTY_PASSWORD + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			JOptionPane.showMessageDialog( null, "Invalid login/password," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_LOGIN + '"' + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PASSWORD + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			System.exit( 1 );
 		}
 		catch ( final RundeckApiHttpStatusException e ) {
 
 			if( 500 == e.getStatusCode() ) {
-				JOptionPane.showMessageDialog( null, "Invalid project settings," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RUNDECK_PROPERTY_API_KEY + '"' + System.lineSeparator() + '"' + RUNDECK_PROPERTY_PROJECT + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				JOptionPane.showMessageDialog( null, "Invalid project settings," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_API_KEY + '"' + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			else {
 				final StringWriter stringWriter = new StringWriter();
@@ -320,7 +288,7 @@ public class RundeckMonitor implements Runnable {
 
 			//Connection error
 			if( ConnectException.class.isInstance( e.getCause() ) ){
-				JOptionPane.showMessageDialog( null, "Unable to connect to the project URL," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RUNDECK_PROPERTY_URL + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				JOptionPane.showMessageDialog( null, "Unable to connect to the project URL," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_URL + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			else {
 				final StringWriter stringWriter = new StringWriter();
@@ -329,6 +297,7 @@ public class RundeckMonitor implements Runnable {
 			}
 			System.exit( 1 );
 		}
+
 		catch ( final Exception e ) {
 
 			final StringWriter stringWriter = new StringWriter();

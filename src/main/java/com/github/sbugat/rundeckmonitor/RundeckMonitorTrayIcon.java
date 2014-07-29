@@ -75,7 +75,7 @@ public class RundeckMonitorTrayIcon {
 	private final TrayIcon trayIcon;
 
 	/**Date format to use for printing the Job start date*/
-	private final String dateFormat;
+	private final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
 	/**Current state of the trayIcon */
 	private RundeckMonitorState rundeckMonitorState;
@@ -90,15 +90,12 @@ public class RundeckMonitorTrayIcon {
 	/**
 	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it
 	 *
-	 * @param rundeckUrl
-	 * @param rundeckMonitorName name of the application
-	 * @param failedJobNumber size of the failed jobs list
-	 * @param dateFormatArg date format to print jobs start date
+	 * @param rundeckMonitorConfiguration loaded configuration
 	 * @param rundeckMonitorStateArg state of the rundeck monitor
 	 */
-	public RundeckMonitorTrayIcon( final String rundeckUrl, final String rundeckMonitorName, final int failedJobNumber, final String dateFormatArg, final RundeckMonitorState rundeckMonitorStateArg ) {
+	public RundeckMonitorTrayIcon( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final RundeckMonitorState rundeckMonitorStateArg ) {
 
-		dateFormat = dateFormatArg;
+		rundeckMonitorConfiguration = rundeckMonitorConfigurationArg;
 		rundeckMonitorState = rundeckMonitorStateArg;
 
 		if( SystemTray.isSupported() ) {
@@ -125,7 +122,7 @@ public class RundeckMonitorTrayIcon {
 						final Long executionId = failedMenuItems.get( e.getSource() );
 
 						try {
-							final URI executionURI = new URI( rundeckUrl + RUNDECK_JOB_EXECUTION_URL + executionId );
+							final URI executionURI = new URI( rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + executionId );
 							desktop.browse( executionURI );
 						}
 						catch ( final URISyntaxException | IOException exception) {
@@ -193,7 +190,7 @@ public class RundeckMonitorTrayIcon {
 			JPopupMenu.setDefaultLightWeightPopupEnabled( true );
 			final JPopupMenu popupMenu = new JPopupMenu();
 
-			for( int i = 0 ; i < failedJobNumber ; i++ ){
+			for( int i = 0 ; i < rundeckMonitorConfiguration.getFailedJobNumber() ; i++ ){
 
 				final JMenuItem failedItem = new JMenuItem();
 				failedMenuItems.put( failedItem, null );
@@ -213,7 +210,7 @@ public class RundeckMonitorTrayIcon {
 			exitItem.addActionListener( exitListener );
 
 			//Add the icon  to the system tray
-			trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorName ); //$NON-NLS-1$
+			trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorConfiguration.getRundeckMonitorName() ); //$NON-NLS-1$
 			trayIcon.setImageAutoSize( true );
 
 			trayIcon.addMouseListener( new MouseAdapter() {
@@ -268,7 +265,7 @@ public class RundeckMonitorTrayIcon {
 			final JMenuItem jMenuItem = entry.getKey();
 
 			entry.setValue( jobExecutionInfo.getExecutionId() );
-			final SimpleDateFormat formatter = new SimpleDateFormat( dateFormat );
+			final SimpleDateFormat formatter = new SimpleDateFormat( rundeckMonitorConfiguration.getDateFormat() );
 			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
 			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription();
 			jMenuItem.setText( message + longExecution );
