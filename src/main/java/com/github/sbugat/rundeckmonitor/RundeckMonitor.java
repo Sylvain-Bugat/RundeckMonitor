@@ -20,6 +20,7 @@ import org.rundeck.api.RundeckClient;
 import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.domain.RundeckExecution;
 import org.rundeck.api.domain.RundeckExecution.ExecutionStatus;
+import org.rundeck.api.domain.RundeckProject;
 import org.rundeck.api.query.ExecutionQuery;
 import org.rundeck.api.util.PagedResults;
 
@@ -89,6 +90,21 @@ public class RundeckMonitor implements Runnable {
 
 		//Test authentication credentials
 		rundeckClient.testAuth();
+
+		//Check if the configured project exists
+		boolean existingProject = false;
+		for( final RundeckProject rundeckProject: rundeckClient.getProjects() ) {
+
+			if( rundeckMonitorConfiguration.getRundeckProject().equals( rundeckProject.getName() ) ) {
+				existingProject = true;
+				break;
+			}
+		}
+
+		if( ! existingProject ) {
+			JOptionPane.showMessageDialog( null, "Invalid rundeck project," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + '=' + rundeckMonitorConfiguration.getRundeckProject() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.exit( 1 );
+		}
 
 		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
