@@ -134,6 +134,9 @@ public class RundeckMonitor implements Runnable {
 			rundeckClient = rundeckClientBuilder.build();
 		}
 
+		//Test authentication credentials
+		rundeckClient.testAuth();
+
 		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
 
@@ -203,7 +206,8 @@ public class RundeckMonitor implements Runnable {
 		//call Rundeck rest API
 		final ExecutionQuery executionQuery = ExecutionQuery.builder().project( rundeckProject ).status( ExecutionStatus.FAILED ).build();
 		final PagedResults<RundeckExecution> lastFailedJobs = rundeckClient.getExecutions( executionQuery, Long.valueOf( 10 ), null );
-		final List<RundeckExecution> currentExecutions= rundeckClient.getRunningExecutions( rundeckProject );
+
+		final List<RundeckExecution> currentExecutions = rundeckClient.getRunningExecutions( rundeckProject );
 
 		//Rundeck calls are OK
 		rundeckMonitorState.setDisconnected( false );
@@ -321,7 +325,7 @@ public class RundeckMonitor implements Runnable {
 			else {
 				final StringWriter stringWriter = new StringWriter();
 				e.printStackTrace( new PrintWriter( stringWriter ) );
-				JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "undeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+				JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			System.exit( 1 );
 		}
