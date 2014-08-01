@@ -63,14 +63,14 @@ public class RundeckMonitorWizard {
 		final ActionListener backListener = new ActionListener() {
 			@SuppressWarnings("synthetic-access")
 			public void actionPerformed( final ActionEvent e) {
-				final String dest = map.get( currentDescriptor ).getBackPanelDescriptor();
+				final String dest = map.get( currentDescriptor ).getBack();
 				setCurrentPanel( dest );
 			}
 		};
 		final ActionListener nextListener = new ActionListener() {
 			@SuppressWarnings("synthetic-access")
 			public void actionPerformed( final ActionEvent e) {
-				final String dest = map.get( currentDescriptor ).getNextPanelDescriptor();
+				final String dest = map.get( currentDescriptor ).getNext();
 
 				if( null == dest ) {
 					//Write configuration
@@ -136,7 +136,7 @@ public class RundeckMonitorWizard {
 
 		map.get( id ).aboutToDisplayPanel();
 
-		if( null == map.get( id ).getNextPanelDescriptor() ) {
+		if( null == map.get( id ).getNext() ) {
 
 			nextButton.setText( "Finish" );
 		}
@@ -145,7 +145,7 @@ public class RundeckMonitorWizard {
 			nextButton.setText( "Next" );
 		}
 
-		backButton.setVisible( null != map.get( id ).getBackPanelDescriptor() );
+		backButton.setVisible( null != map.get( id ).getBack() );
 
 		cardLayout.show(cardPanel, id.toString());
 
@@ -167,14 +167,9 @@ public class RundeckMonitorWizard {
 		}
 
 		RundeckMonitorWizard rundeckMonitorWizard = new RundeckMonitorWizard();
-		WizardPanelDescriptor1 wpd1 =new WizardPanelDescriptor1("1");
-		WizardPanelDescriptor2 wpd2 = new WizardPanelDescriptor2("2");
-		WizardPanelDescriptor2 wpd3 = new WizardPanelDescriptor2("3");
-
-		wpd1.setNextPanelDescriptor( "2" );
-		wpd2.setBackPanelDescriptor( "1" );
-		wpd2.setNextPanelDescriptor( "3" );
-		wpd3.setBackPanelDescriptor( "2" );
+		WizardPanelDescriptor1 wpd1 =new WizardPanelDescriptor1( "1", null, "2" );
+		WizardPanelDescriptor2 wpd2 = new WizardPanelDescriptor2("2", "1", "3" );
+		WizardPanelDescriptor2 wpd3 = new WizardPanelDescriptor2("3", "2", null );
 
 		rundeckMonitorWizard.registerWizardPanel("1", wpd1 );
 		rundeckMonitorWizard.registerWizardPanel("2", wpd2 );

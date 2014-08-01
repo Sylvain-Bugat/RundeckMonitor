@@ -6,12 +6,14 @@ public abstract class WizardPanelDescriptor {
 
 	private final String panelIdentifier;
 
-	private String next;
+	private final String back;
 
-	private String back;
+	private final String next;
 
-	WizardPanelDescriptor( String id ) {
-		panelIdentifier = id;
+	public WizardPanelDescriptor( final String panelIdentifierArg, final String backArg, final String nextArg ) {
+		panelIdentifier = panelIdentifierArg;
+		back = backArg;
+		next = nextArg;
 	}
 
 	public abstract Component getPanelComponent();
@@ -20,40 +22,23 @@ public abstract class WizardPanelDescriptor {
 		return panelIdentifier;
 	}
 
-	public String getNextPanelDescriptor() {
+	public String getNext() {
 		return next;
 	}
 
-	public void setNextPanelDescriptor( final String nextArg) {
-		next = nextArg;
-	}
-
-	public String getBackPanelDescriptor() {
+	public String getBack() {
 		return back;
 	}
 
-	public void setBackPanelDescriptor( final String backArg) {
-		back = backArg;
-	}
-
 	public void aboutToDisplayPanel() {
-
-		// Place code here that will be executed before the
-		// panel is displayed.
 
 	}
 
 	public void displayingPanel() {
 
-		// Place code here that will be executed when the
-		// panel is displayed.
-
 	}
 
 	public void aboutToHidePanel() {
-
-		// Place code here that will be executed when the
-		// panel is hidden.
 
 	}
 }
