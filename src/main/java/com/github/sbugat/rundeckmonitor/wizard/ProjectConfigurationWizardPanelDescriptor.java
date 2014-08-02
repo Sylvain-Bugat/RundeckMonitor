@@ -26,7 +26,7 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 
 	final JComboBox<Version> rundeckRundeckAPIVersionTextField = new JComboBox<>();
 
-	public ProjectConfigurationWizardPanelDescriptor( final String panelIdentifierArg, final String backArg, final String nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
+	public ProjectConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
 
 		container.setLayout( layout );

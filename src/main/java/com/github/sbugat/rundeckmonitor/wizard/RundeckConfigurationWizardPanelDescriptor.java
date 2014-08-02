@@ -26,7 +26,7 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	final JTextField rundeckLoginTextField = new JTextField( 30 );
 	final JTextField rundeckPasswordTextField = new JPasswordField( 30 );
 
-	public RundeckConfigurationWizardPanelDescriptor( final String panelIdentifierArg, final String backArg, final String nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
+	public RundeckConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
 
 		container.setLayout( layout );

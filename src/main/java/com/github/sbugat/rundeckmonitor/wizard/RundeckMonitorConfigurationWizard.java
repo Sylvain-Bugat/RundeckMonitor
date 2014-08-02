@@ -20,12 +20,12 @@ import javax.swing.border.EmptyBorder;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 
-public class RundeckMonitorWizard {
+public class RundeckMonitorConfigurationWizard {
 
-	private Map<String, WizardPanelDescriptor> map = new HashMap<>();
-	private String currentDescriptor;
+	private Map<ConfigurationWizardStep, WizardPanelDescriptor> map = new HashMap<>();
+	private ConfigurationWizardStep currentStep;
 
-	private JFrame wizardFrame;
+	private final JFrame wizardFrame;
 
 	private JPanel cardPanel;
 	private CardLayout cardLayout;
@@ -34,7 +34,7 @@ public class RundeckMonitorWizard {
 	private JButton nextButton;
 	private JButton cancelButton;
 
-	public RundeckMonitorWizard() {
+	public RundeckMonitorConfigurationWizard() {
 
 		// wizardModel = new WizardModel();
 		wizardFrame = new JFrame();
@@ -42,6 +42,22 @@ public class RundeckMonitorWizard {
 		wizardFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
 		initComponents();
+
+		RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
+		WizardPanelDescriptor wpd1 = new RundeckConfigurationWizardPanelDescriptor( ConfigurationWizardStep.RUNDECK_STEP, null, ConfigurationWizardStep.PROJECT_STEP, rundeckMonitorConfiguration );
+		WizardPanelDescriptor wpd2 = new ProjectConfigurationWizardPanelDescriptor( ConfigurationWizardStep.PROJECT_STEP, ConfigurationWizardStep.RUNDECK_STEP, ConfigurationWizardStep.MONITOR_STEP, rundeckMonitorConfiguration );
+		WizardPanelDescriptor wpd3 = new MonitorConfigurationWizardPanelDescriptor( ConfigurationWizardStep.MONITOR_STEP, ConfigurationWizardStep.PROJECT_STEP, null, rundeckMonitorConfiguration );
+
+		registerWizardPanel( wpd1 );
+		registerWizardPanel( wpd2 );
+		registerWizardPanel( wpd3 );
+		setCurrentPanel( ConfigurationWizardStep.RUNDECK_STEP );
+
+		wizardFrame.pack();
+		wizardFrame.setLocationRelativeTo(null);
+
+		wizardFrame.setVisible(true);
+
 	}
 
 	private void initComponents() {
@@ -63,21 +79,23 @@ public class RundeckMonitorWizard {
 		final ActionListener backListener = new ActionListener() {
 			@SuppressWarnings("synthetic-access")
 			public void actionPerformed( final ActionEvent e) {
-				final String dest = map.get( currentDescriptor ).getBack();
+				final ConfigurationWizardStep dest = map.get( currentStep ).getBack();
 				setCurrentPanel( dest );
 			}
 		};
 		final ActionListener nextListener = new ActionListener() {
 			@SuppressWarnings("synthetic-access")
 			public void actionPerformed( final ActionEvent e) {
-				final String dest = map.get( currentDescriptor ).getNext();
+				final ConfigurationWizardStep dest = map.get( currentStep ).getNext();
 
 				if( null == dest ) {
 
-					final WizardPanelDescriptor oldPanelDescriptor = map.get( currentDescriptor );
-					oldPanelDescriptor.validate();
+					final WizardPanelDescriptor oldPanelDescriptor = map.get( currentStep );
+
 					//Write configuration
-					System.exit( 0 );
+					oldPanelDescriptor.validate();
+
+					wizardFrame.setVisible( false );
 				}
 				else {
 					setCurrentPanel( dest );
@@ -106,16 +124,13 @@ public class RundeckMonitorWizard {
 		buttonPanel.add(buttonBox, java.awt.BorderLayout.EAST);
 		wizardFrame.getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
 		wizardFrame.getContentPane().add(cardPanel, java.awt.BorderLayout.CENTER);
-		wizardFrame.setVisible(true);
 
-		wizardFrame.pack();
-		wizardFrame.setLocationRelativeTo(null);
 
 	}
 
-	public void registerWizardPanel(String id, WizardPanelDescriptor panel) {
-		cardPanel.add(panel.getPanelComponent(), id);
-		map.put(id, panel);
+	public void registerWizardPanel( final WizardPanelDescriptor panel ) {
+		cardPanel.add( panel.getPanelComponent(), panel.getPanelDescriptorIdentifier().toString() );
+		map.put( panel.getPanelDescriptorIdentifier(), panel );
 	}
 
 
@@ -127,14 +142,17 @@ public class RundeckMonitorWizard {
 		nextButton.setEnabled(b);
 	}
 
-	public void setCurrentPanel( final String id ) {
+	public void setCurrentPanel( final ConfigurationWizardStep id ) {
 
-		if (currentDescriptor != null) {
-			WizardPanelDescriptor oldPanelDescriptor = map.get(currentDescriptor);
-			oldPanelDescriptor.validate();
+		if (currentStep != null) {
+			WizardPanelDescriptor oldPanelDescriptor = map.get( currentStep );
+
+			if( ! oldPanelDescriptor.validate() ) {
+				return;
+			}
 		}
 
-		currentDescriptor = id;
+		currentStep = id;
 
 		map.get( id ).aboutToDisplayPanel();
 
@@ -166,15 +184,15 @@ public class RundeckMonitorWizard {
 			//If System Look&Feel is not supported, stay with the default one
 		}
 
-		RundeckMonitorWizard rundeckMonitorWizard = new RundeckMonitorWizard();
-		RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
-		WizardPanelDescriptor wpd1 =new RundeckConfigurationWizardPanelDescriptor( "1", null, "2", rundeckMonitorConfiguration );
-		WizardPanelDescriptor wpd2 = new ProjectConfigurationWizardPanelDescriptor("2", "1", "3", rundeckMonitorConfiguration );
-		WizardPanelDescriptor wpd3 = new MonitorConfigurationWizardPanelDescriptor("3", "2", null, rundeckMonitorConfiguration );
+		RundeckMonitorConfigurationWizard rundeckMonitorWizard = new RundeckMonitorConfigurationWizard();
+		//RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
+		//WizardPanelDescriptor wpd1 = new RundeckConfigurationWizardPanelDescriptor( ConfigurationWizardStep.RUNDECK_STEP, null, ConfigurationWizardStep.PROJECT_STEP, rundeckMonitorConfiguration );
+		//WizardPanelDescriptor wpd2 = new ProjectConfigurationWizardPanelDescriptor( ConfigurationWizardStep.PROJECT_STEP, ConfigurationWizardStep.RUNDECK_STEP, ConfigurationWizardStep.MONITOR_STEP, rundeckMonitorConfiguration );
+		//WizardPanelDescriptor wpd3 = new MonitorConfigurationWizardPanelDescriptor( ConfigurationWizardStep.MONITOR_STEP, ConfigurationWizardStep.PROJECT_STEP, null, rundeckMonitorConfiguration );
 
-		rundeckMonitorWizard.registerWizardPanel("1", wpd1 );
-		rundeckMonitorWizard.registerWizardPanel("2", wpd2 );
-		rundeckMonitorWizard.registerWizardPanel("3", wpd3 );
-		rundeckMonitorWizard.setCurrentPanel("1");
+		//rundeckMonitorWizard.registerWizardPanel( wpd1 );
+		//rundeckMonitorWizard.registerWizardPanel( wpd2 );
+		//rundeckMonitorWizard.registerWizardPanel( wpd3 );
+		//rundeckMonitorWizard.setCurrentPanel( ConfigurationWizardStep.RUNDECK_STEP );
 	}
 }

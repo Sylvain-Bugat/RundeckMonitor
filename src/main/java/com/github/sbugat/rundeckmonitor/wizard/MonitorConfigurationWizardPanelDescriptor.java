@@ -24,7 +24,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	final JComboBox<Integer> rundeckMonitorFailedJobNumber = new JComboBox<>();
 	final JComboBox<String> rundeckMonitorDateFormat = new JComboBox<>();
 
-	public MonitorConfigurationWizardPanelDescriptor( final String panelIdentifierArg, final String backArg, final String nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
+	public MonitorConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
 
 		container.setLayout( layout );

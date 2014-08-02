@@ -6,15 +6,15 @@ import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguratio
 
 public abstract class WizardPanelDescriptor {
 
-	private final String panelIdentifier;
+	private final ConfigurationWizardStep panelIdentifier;
 
-	private final String back;
+	private final ConfigurationWizardStep back;
 
-	private final String next;
+	private final ConfigurationWizardStep next;
 
 	protected RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
-	public WizardPanelDescriptor( final String panelIdentifierArg, final String backArg, final String nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
+	public WizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		panelIdentifier = panelIdentifierArg;
 		back = backArg;
 		next = nextArg;
@@ -23,15 +23,15 @@ public abstract class WizardPanelDescriptor {
 
 	public abstract Component getPanelComponent();
 
-	public String getPanelDescriptorIdentifier() {
+	public ConfigurationWizardStep getPanelDescriptorIdentifier() {
 		return panelIdentifier;
 	}
 
-	public String getNext() {
+	public ConfigurationWizardStep getNext() {
 		return next;
 	}
 
-	public String getBack() {
+	public ConfigurationWizardStep getBack() {
 		return back;
 	}
 

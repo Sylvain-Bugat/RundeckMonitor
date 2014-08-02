@@ -33,7 +33,7 @@ public class RundeckMonitorConfiguration {
 	static final String RUNDECK_MONITOR_PROPERTY_PASSWORD = "rundeck.monitor.password"; //$NON-NLS-1$
 	static final String RUNDECK_MONITOR_PROPERTY_PROJECT = "rundeck.monitor.project"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_NAME = "rundeck.monitor.name"; //$NON-NLS-1$
-	public static final String RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE = "Rundeck monitor"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE = "RundeckMonitor"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY = "rundeck.monitor.refresh.delay"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE = "60"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD = "rundeck.monitor.execution.late.threshold"; //$NON-NLS-1$
