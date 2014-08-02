@@ -73,6 +73,9 @@ public class RundeckMonitorWizard {
 				final String dest = map.get( currentDescriptor ).getNext();
 
 				if( null == dest ) {
+
+					final WizardPanelDescriptor oldPanelDescriptor = map.get( currentDescriptor );
+					oldPanelDescriptor.validate();
 					//Write configuration
 					System.exit( 0 );
 				}

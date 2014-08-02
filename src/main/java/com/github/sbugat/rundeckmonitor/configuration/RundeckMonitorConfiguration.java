@@ -179,9 +179,9 @@ public class RundeckMonitorConfiguration {
 		properties.put( RUNDECK_MONITOR_PROPERTY_PASSWORD, rundeckPassword );
 		properties.put( RUNDECK_MONITOR_PROPERTY_PROJECT, rundeckProject );
 		properties.put( RUNDECK_MONITOR_PROPERTY_NAME, rundeckMonitorName);
-		properties.put( RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY, refreshDelay );
-		properties.put( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD, lateThreshold );
-		properties.put( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, failedJobNumber );
+		properties.put( RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY, String.valueOf( refreshDelay ) );
+		properties.put( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD, String.valueOf( lateThreshold ) );
+		properties.put( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, String.valueOf( failedJobNumber ) );
 		properties.put( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, dateFormat );
 		properties.put( RUNDECK_MONITOR_PROPERTY_API_VERSION, rundeckAPIversion );
 
