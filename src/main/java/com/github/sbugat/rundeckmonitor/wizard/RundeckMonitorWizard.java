@@ -11,20 +11,21 @@ import java.util.Map;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
+import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+
 public class RundeckMonitorWizard {
 
-	// private WizardModel wizardModel;
 	private Map<String, WizardPanelDescriptor> map = new HashMap<>();
 	private String currentDescriptor;
 
-	private JDialog Wizard;
+	private JFrame Wizard;
 
 	private JPanel cardPanel;
 	private CardLayout cardLayout;
@@ -36,10 +37,10 @@ public class RundeckMonitorWizard {
 	public RundeckMonitorWizard() {
 
 		// wizardModel = new WizardModel();
-		Wizard = new JDialog();
+		Wizard = new JFrame();
 
 
-		Wizard.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		Wizard.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
 		initComponents();
 	}
@@ -56,9 +57,9 @@ public class RundeckMonitorWizard {
 
 		cardLayout = new CardLayout();
 		cardPanel.setLayout(cardLayout);
-		backButton = new JButton("back");
-		nextButton = new JButton("next");
-		cancelButton = new JButton("cancel");
+		backButton = new JButton( "back" ); //$NON-NLS-1$
+		nextButton = new JButton( "next" ); //$NON-NLS-1$
+		cancelButton = new JButton( "cancel" ); //$NON-NLS-1$
 
 		final ActionListener backListener = new ActionListener() {
 			@SuppressWarnings("synthetic-access")
@@ -117,11 +118,11 @@ public class RundeckMonitorWizard {
 	}
 
 
-	void setBackButtonEnabled(boolean b) {
+	public void setBackButtonEnabled(boolean b) {
 		backButton.setEnabled(b);
 	}
 
-	void setNextButtonEnabled(boolean b) {
+	public void setNextButtonEnabled(boolean b) {
 		nextButton.setEnabled(b);
 	}
 
@@ -129,7 +130,7 @@ public class RundeckMonitorWizard {
 
 		if (currentDescriptor != null) {
 			WizardPanelDescriptor oldPanelDescriptor = map.get(currentDescriptor);
-			oldPanelDescriptor.aboutToHidePanel();
+			oldPanelDescriptor.validate();
 		}
 
 		currentDescriptor = id;
@@ -137,12 +138,10 @@ public class RundeckMonitorWizard {
 		map.get( id ).aboutToDisplayPanel();
 
 		if( null == map.get( id ).getNext() ) {
-
-			nextButton.setText( "Finish" );
+			nextButton.setText( "finish" ); //$NON-NLS-1$
 		}
 		else {
-
-			nextButton.setText( "Next" );
+			nextButton.setText( "next" ); //$NON-NLS-1$
 		}
 
 		backButton.setVisible( null != map.get( id ).getBack() );
@@ -167,9 +166,10 @@ public class RundeckMonitorWizard {
 		}
 
 		RundeckMonitorWizard rundeckMonitorWizard = new RundeckMonitorWizard();
-		WizardPanelDescriptor1 wpd1 =new WizardPanelDescriptor1( "1", null, "2" );
-		WizardPanelDescriptor2 wpd2 = new WizardPanelDescriptor2("2", "1", "3" );
-		WizardPanelDescriptor2 wpd3 = new WizardPanelDescriptor2("3", "2", null );
+		RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
+		WizardPanelDescriptor wpd1 =new RundeckConfigurationWizardPanelDescriptor( "1", null, "2", rundeckMonitorConfiguration );
+		WizardPanelDescriptor wpd2 = new ProjectConfigurationWizardPanelDescriptor("2", "1", "3", rundeckMonitorConfiguration );
+		WizardPanelDescriptor wpd3 = new WizardPanelDescriptor2("3", "2", null, rundeckMonitorConfiguration );
 
 		rundeckMonitorWizard.registerWizardPanel("1", wpd1 );
 		rundeckMonitorWizard.registerWizardPanel("2", wpd2 );

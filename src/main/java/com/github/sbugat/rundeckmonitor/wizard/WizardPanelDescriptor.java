@@ -2,6 +2,8 @@ package com.github.sbugat.rundeckmonitor.wizard;
 
 import java.awt.Component;
 
+import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+
 public abstract class WizardPanelDescriptor {
 
 	private final String panelIdentifier;
@@ -10,10 +12,13 @@ public abstract class WizardPanelDescriptor {
 
 	private final String next;
 
-	public WizardPanelDescriptor( final String panelIdentifierArg, final String backArg, final String nextArg ) {
+	protected RundeckMonitorConfiguration rundeckMonitorConfiguration;
+
+	public WizardPanelDescriptor( final String panelIdentifierArg, final String backArg, final String nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		panelIdentifier = panelIdentifierArg;
 		back = backArg;
 		next = nextArg;
+		rundeckMonitorConfiguration = rundeckMonitorConfigurationArg;
 	}
 
 	public abstract Component getPanelComponent();
@@ -40,5 +45,10 @@ public abstract class WizardPanelDescriptor {
 
 	public void aboutToHidePanel() {
 
+	}
+
+	public boolean validate() {
+
+		return true;
 	}
 }
