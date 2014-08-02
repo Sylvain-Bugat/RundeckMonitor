@@ -33,7 +33,7 @@ public class RundeckMonitorConfiguration {
 	static final String RUNDECK_MONITOR_PROPERTY_PASSWORD = "rundeck.monitor.password"; //$NON-NLS-1$
 	static final String RUNDECK_MONITOR_PROPERTY_PROJECT = "rundeck.monitor.project"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_NAME = "rundeck.monitor.name"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE = "Rundeck monitor"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE = "Rundeck monitor"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY = "rundeck.monitor.refresh.delay"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE = "60"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD = "rundeck.monitor.execution.late.threshold"; //$NON-NLS-1$
@@ -41,7 +41,7 @@ public class RundeckMonitorConfiguration {
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER = "rundeck.monitor.failed.job.number"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE = "10"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = "10"; //$NON-NLS-1$
 

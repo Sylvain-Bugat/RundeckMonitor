@@ -25,7 +25,7 @@ public class RundeckMonitorWizard {
 	private Map<String, WizardPanelDescriptor> map = new HashMap<>();
 	private String currentDescriptor;
 
-	private JFrame Wizard;
+	private JFrame wizardFrame;
 
 	private JPanel cardPanel;
 	private CardLayout cardLayout;
@@ -37,10 +37,9 @@ public class RundeckMonitorWizard {
 	public RundeckMonitorWizard() {
 
 		// wizardModel = new WizardModel();
-		Wizard = new JFrame();
-
-
-		Wizard.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+		wizardFrame = new JFrame();
+		wizardFrame.setTitle( "RundeckMonitor configuration wizard" ); //$NON-NLS-1$
+		wizardFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
 		initComponents();
 	}
@@ -102,13 +101,12 @@ public class RundeckMonitorWizard {
 		buttonBox.add(Box.createHorizontalStrut(30));
 		buttonBox.add(cancelButton);
 		buttonPanel.add(buttonBox, java.awt.BorderLayout.EAST);
-		Wizard.getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
-		Wizard.getContentPane().add(cardPanel, java.awt.BorderLayout.CENTER);
-		Wizard.setVisible(true);
+		wizardFrame.getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
+		wizardFrame.getContentPane().add(cardPanel, java.awt.BorderLayout.CENTER);
+		wizardFrame.setVisible(true);
 
-
-		Wizard.pack();
-		Wizard.setLocationRelativeTo(null);
+		wizardFrame.pack();
+		wizardFrame.setLocationRelativeTo(null);
 
 	}
 
@@ -148,7 +146,7 @@ public class RundeckMonitorWizard {
 
 		cardLayout.show(cardPanel, id.toString());
 
-		Wizard.pack();
+		wizardFrame.pack();
 
 		map.get( id ).displayingPanel();
 	}
@@ -169,7 +167,7 @@ public class RundeckMonitorWizard {
 		RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
 		WizardPanelDescriptor wpd1 =new RundeckConfigurationWizardPanelDescriptor( "1", null, "2", rundeckMonitorConfiguration );
 		WizardPanelDescriptor wpd2 = new ProjectConfigurationWizardPanelDescriptor("2", "1", "3", rundeckMonitorConfiguration );
-		WizardPanelDescriptor wpd3 = new WizardPanelDescriptor2("3", "2", null, rundeckMonitorConfiguration );
+		WizardPanelDescriptor wpd3 = new MonitorConfigurationWizardPanelDescriptor("3", "2", null, rundeckMonitorConfiguration );
 
 		rundeckMonitorWizard.registerWizardPanel("1", wpd1 );
 		rundeckMonitorWizard.registerWizardPanel("2", wpd2 );
