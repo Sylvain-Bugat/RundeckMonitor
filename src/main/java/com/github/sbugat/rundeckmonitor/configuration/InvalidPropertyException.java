@@ -1,4 +1,4 @@
-package com.github.sbugat.rundeckmonitor;
+package com.github.sbugat.rundeckmonitor.configuration;
 
 /**
  *

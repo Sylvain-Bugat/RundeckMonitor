@@ -13,9 +13,6 @@ import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
-import com.github.sbugat.rundeckmonitor.InvalidPropertyException;
-import com.github.sbugat.rundeckmonitor.MissingPropertyException;
-
 /**
  * Configurationloading  class of the Rundeck Monitor
  *
@@ -25,13 +22,13 @@ import com.github.sbugat.rundeckmonitor.MissingPropertyException;
 public class RundeckMonitorConfiguration {
 
 	/**Configuration file name*/
-	static final String RUNDECK_MONITOR_PROPERTIES_FILE = "rundeckMonitor.properties"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTIES_FILE = "rundeckMonitor.properties"; //$NON-NLS-1$
 
-	static final String RUNDECK_MONITOR_PROPERTY_URL = "rundeck.monitor.url"; //$NON-NLS-1$
-	static final String RUNDECK_MONITOR_PROPERTY_API_KEY = "rundeck.monitor.api.key"; //$NON-NLS-1$
-	static final String RUNDECK_MONITOR_PROPERTY_LOGIN = "rundeck.monitor.login"; //$NON-NLS-1$
-	static final String RUNDECK_MONITOR_PROPERTY_PASSWORD = "rundeck.monitor.password"; //$NON-NLS-1$
-	static final String RUNDECK_MONITOR_PROPERTY_PROJECT = "rundeck.monitor.project"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTY_URL = "rundeck.monitor.url"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTY_API_KEY = "rundeck.monitor.api.key"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTY_LOGIN = "rundeck.monitor.login"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTY_PASSWORD = "rundeck.monitor.password"; //$NON-NLS-1$
+	public static final String RUNDECK_MONITOR_PROPERTY_PROJECT = "rundeck.monitor.project"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_NAME = "rundeck.monitor.name"; //$NON-NLS-1$
 	public static final String RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE = "RundeckMonitor"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY = "rundeck.monitor.refresh.delay"; //$NON-NLS-1$
@@ -203,6 +200,12 @@ public class RundeckMonitorConfiguration {
 		try( final Writer propertyFilewriter = Files.newBufferedWriter( propertyFile, StandardCharsets.UTF_8 ) ) {
 			properties.store( propertyFilewriter, commentStringBuilder.toString() );
 		}
+	}
+
+	public static boolean propertiesFileExists() {
+
+		final Path propertyFile = Paths.get( RUNDECK_MONITOR_PROPERTIES_FILE );
+		return Files.exists( propertyFile );
 	}
 
 	public String getRundeckUrl() {

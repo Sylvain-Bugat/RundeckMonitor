@@ -32,6 +32,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+
 /**
  * Tray icon management class
  *
@@ -129,7 +131,7 @@ public class RundeckMonitorTrayIcon {
 
 							final StringWriter stringWriter = new StringWriter();
 							exception.printStackTrace( new PrintWriter( stringWriter ) );
-							JOptionPane.showMessageDialog( null, exception.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor redirection error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+							JOptionPane.showMessageDialog( null, exception.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor redirection error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
 						}
 					}
 				}
@@ -168,7 +170,7 @@ public class RundeckMonitorTrayIcon {
 
 						final StringWriter stringWriter = new StringWriter();
 						exception.printStackTrace( new PrintWriter( stringWriter ) );
-						JOptionPane.showMessageDialog( null, exception.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor redirection error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+						JOptionPane.showMessageDialog( null, exception.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor redirection error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
 					}
 				}
 			};
@@ -210,7 +212,7 @@ public class RundeckMonitorTrayIcon {
 			exitItem.addActionListener( exitListener );
 
 			//Add the icon  to the system tray
-			trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorConfiguration.getRundeckMonitorName() ); //$NON-NLS-1$
+			trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorConfiguration.getRundeckMonitorName() );
 			trayIcon.setImageAutoSize( true );
 
 			trayIcon.addMouseListener( new MouseAdapter() {
@@ -230,7 +232,7 @@ public class RundeckMonitorTrayIcon {
 
 				final StringWriter stringWriter = new StringWriter();
 				e.printStackTrace( new PrintWriter( stringWriter ) );
-				JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+				JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
 
 				System.exit( 1 );
 			}
@@ -267,7 +269,7 @@ public class RundeckMonitorTrayIcon {
 			entry.setValue( jobExecutionInfo.getExecutionId() );
 			final SimpleDateFormat formatter = new SimpleDateFormat( rundeckMonitorConfiguration.getDateFormat() );
 			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
-			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription();
+			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription(); //$NON-NLS-1$
 			jMenuItem.setText( message + longExecution );
 
 			if( jobExecutionInfo.isNewJob() ) {
