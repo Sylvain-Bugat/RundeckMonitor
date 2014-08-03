@@ -180,7 +180,7 @@ public class RundeckMonitor implements Runnable {
 
 		//call Rundeck rest API
 		final ExecutionQuery executionQuery = ExecutionQuery.builder().project( rundeckMonitorConfiguration.getRundeckProject() ).status( ExecutionStatus.FAILED ).build();
-		final PagedResults<RundeckExecution> lastFailedJobs = rundeckClient.getExecutions( executionQuery, Long.valueOf( 10 ), null );
+		final PagedResults<RundeckExecution> lastFailedJobs = rundeckClient.getExecutions( executionQuery, Long.valueOf( rundeckMonitorConfiguration.getFailedJobNumber() ), null );
 
 		final List<RundeckExecution> currentExecutions = rundeckClient.getRunningExecutions( rundeckMonitorConfiguration.getRundeckProject() );
 
