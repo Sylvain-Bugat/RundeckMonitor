@@ -36,19 +36,11 @@ public abstract class WizardPanelDescriptor {
 	}
 
 	public void aboutToDisplayPanel() {
-
-	}
-
-	public void displayingPanel() {
-
-	}
-
-	public void aboutToHidePanel() {
-
+		//Default: nothing to do
 	}
 
 	public boolean validate() {
-
+		//Default: return OK
 		return true;
 	}
 }

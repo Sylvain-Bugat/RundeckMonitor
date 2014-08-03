@@ -14,13 +14,18 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 
 public class RundeckMonitorConfigurationWizard {
+
+	private static final String WIZARD_FRAME_TITLE = "RundeckMonitor configuration wizard"; //$NON-NLS-1$
+
+	private static final String BACK_BUTTON_LABEL = "Back"; //$NON-NLS-1$
+	private static final String CANCEL_BUTTON_LABEL = "Cancel"; //$NON-NLS-1$
+	private static final String FINISH_BUTTON_LABEL = "Finish"; //$NON-NLS-1$
+	private static final String NEXT_BUTTON_LABEL = "Next"; //$NON-NLS-1$
 
 	private Map<ConfigurationWizardStep, WizardPanelDescriptor> map = new HashMap<>();
 	private ConfigurationWizardStep currentStep;
@@ -32,18 +37,18 @@ public class RundeckMonitorConfigurationWizard {
 
 	private JButton backButton;
 	private JButton nextButton;
-	private JButton cancelButton;
 
 	public RundeckMonitorConfigurationWizard() {
 
-		// wizardModel = new WizardModel();
 		wizardFrame = new JFrame();
-		wizardFrame.setTitle( "RundeckMonitor configuration wizard" ); //$NON-NLS-1$
+		wizardFrame.setTitle( WIZARD_FRAME_TITLE );
 		wizardFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
+		//Initialize displayed components
 		initComponents();
 
-		RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
+		//Initialize steps and set the first step
+		final RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
 		WizardPanelDescriptor wpd1 = new RundeckConfigurationWizardPanelDescriptor( ConfigurationWizardStep.RUNDECK_STEP, null, ConfigurationWizardStep.PROJECT_STEP, rundeckMonitorConfiguration );
 		WizardPanelDescriptor wpd2 = new ProjectConfigurationWizardPanelDescriptor( ConfigurationWizardStep.PROJECT_STEP, ConfigurationWizardStep.RUNDECK_STEP, ConfigurationWizardStep.MONITOR_STEP, rundeckMonitorConfiguration );
 		WizardPanelDescriptor wpd3 = new MonitorConfigurationWizardPanelDescriptor( ConfigurationWizardStep.MONITOR_STEP, ConfigurationWizardStep.PROJECT_STEP, null, rundeckMonitorConfiguration );
@@ -51,36 +56,37 @@ public class RundeckMonitorConfigurationWizard {
 		registerWizardPanel( wpd1 );
 		registerWizardPanel( wpd2 );
 		registerWizardPanel( wpd3 );
-		setCurrentPanel( ConfigurationWizardStep.RUNDECK_STEP );
+		setCurrentPanel( ConfigurationWizardStep.RUNDECK_STEP, false );
 
+		//Resize the frame
 		wizardFrame.pack();
-		wizardFrame.setLocationRelativeTo(null);
+		wizardFrame.setResizable( false );
+		//Center the frame on the screen
+		wizardFrame.setLocationRelativeTo( null );
 
+		//Display the frame
 		wizardFrame.setVisible(true);
-
 	}
 
 	private void initComponents() {
 
-		// Code omitted
-
-		JPanel buttonPanel = new JPanel();
-		Box buttonBox = new Box(BoxLayout.X_AXIS);
+		final JPanel buttonPanel = new JPanel();
+		final Box buttonBox = new Box( BoxLayout.X_AXIS );
 
 		cardPanel = new JPanel();
-		cardPanel.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10)));
+		cardPanel.setBorder( new EmptyBorder( new Insets( 5, 10, 5, 10 ) ) );
 
 		cardLayout = new CardLayout();
-		cardPanel.setLayout(cardLayout);
-		backButton = new JButton( "back" ); //$NON-NLS-1$
-		nextButton = new JButton( "next" ); //$NON-NLS-1$
-		cancelButton = new JButton( "cancel" ); //$NON-NLS-1$
+		cardPanel.setLayout( cardLayout );
+		backButton = new JButton( BACK_BUTTON_LABEL );
+		nextButton = new JButton( NEXT_BUTTON_LABEL );
+		final JButton cancelButton = new JButton( CANCEL_BUTTON_LABEL );
 
 		final ActionListener backListener = new ActionListener() {
 			@SuppressWarnings("synthetic-access")
 			public void actionPerformed( final ActionEvent e) {
 				final ConfigurationWizardStep dest = map.get( currentStep ).getBack();
-				setCurrentPanel( dest );
+				setCurrentPanel( dest, false );
 			}
 		};
 		final ActionListener nextListener = new ActionListener() {
@@ -98,7 +104,7 @@ public class RundeckMonitorConfigurationWizard {
 					wizardFrame.setVisible( false );
 				}
 				else {
-					setCurrentPanel( dest );
+					setCurrentPanel( dest, true );
 				}
 			}
 		};
@@ -108,24 +114,23 @@ public class RundeckMonitorConfigurationWizard {
 				System.exit( 0 );
 			}
 		};
-		backButton.addActionListener(backListener);
-		nextButton.addActionListener(nextListener);
-		cancelButton.addActionListener(cancelListener);
 
-		buttonPanel.setLayout(new BorderLayout());
-		buttonPanel.add(new JSeparator(), BorderLayout.NORTH);
+		backButton.addActionListener( backListener );
+		nextButton.addActionListener( nextListener );
+		cancelButton.addActionListener( cancelListener );
 
-		buttonBox.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10)));
-		buttonBox.add(backButton);
-		buttonBox.add(Box.createHorizontalStrut(10));
-		buttonBox.add(nextButton);
-		buttonBox.add(Box.createHorizontalStrut(30));
-		buttonBox.add(cancelButton);
-		buttonPanel.add(buttonBox, java.awt.BorderLayout.EAST);
-		wizardFrame.getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
-		wizardFrame.getContentPane().add(cardPanel, java.awt.BorderLayout.CENTER);
+		buttonPanel.setLayout( new BorderLayout() );
+		buttonPanel.add( new JSeparator(), BorderLayout.NORTH );
 
-
+		buttonBox.setBorder( new EmptyBorder( new Insets( 5, 10, 5, 10 ) ) );
+		buttonBox.add( backButton );
+		buttonBox.add( Box.createHorizontalStrut( 10 ) );
+		buttonBox.add( nextButton );
+		buttonBox.add( Box.createHorizontalStrut( 30 ) );
+		buttonBox.add( cancelButton );
+		buttonPanel.add( buttonBox, BorderLayout.EAST );
+		wizardFrame.getContentPane().add( buttonPanel, BorderLayout.SOUTH );
+		wizardFrame.getContentPane().add( cardPanel, BorderLayout.CENTER );
 	}
 
 	public void registerWizardPanel( final WizardPanelDescriptor panel ) {
@@ -133,23 +138,11 @@ public class RundeckMonitorConfigurationWizard {
 		map.put( panel.getPanelDescriptorIdentifier(), panel );
 	}
 
+	public void setCurrentPanel( final ConfigurationWizardStep id, final boolean next ) {
 
-	public void setBackButtonEnabled(boolean b) {
-		backButton.setEnabled(b);
-	}
-
-	public void setNextButtonEnabled(boolean b) {
-		nextButton.setEnabled(b);
-	}
-
-	public void setCurrentPanel( final ConfigurationWizardStep id ) {
-
-		if (currentStep != null) {
-			WizardPanelDescriptor oldPanelDescriptor = map.get( currentStep );
-
-			if( ! oldPanelDescriptor.validate() ) {
-				return;
-			}
+		//If going to the next panel, validate it and don't advance if validation failed
+		if( next && currentStep != null && ! map.get( currentStep ).validate()) {
+			return;
 		}
 
 		currentStep = id;
@@ -157,42 +150,14 @@ public class RundeckMonitorConfigurationWizard {
 		map.get( id ).aboutToDisplayPanel();
 
 		if( null == map.get( id ).getNext() ) {
-			nextButton.setText( "finish" ); //$NON-NLS-1$
+			nextButton.setText( FINISH_BUTTON_LABEL );
 		}
 		else {
-			nextButton.setText( "next" ); //$NON-NLS-1$
+			nextButton.setText( NEXT_BUTTON_LABEL );
 		}
 
 		backButton.setVisible( null != map.get( id ).getBack() );
 
-		cardLayout.show(cardPanel, id.toString());
-
-		wizardFrame.pack();
-
-		map.get( id ).displayingPanel();
-	}
-
-
-	public static void main(String arg[]) {
-
-		//Try to use the system Look&Feel
-		try {
-			UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
-		}
-		catch( final ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e ) {
-
-			//If System Look&Feel is not supported, stay with the default one
-		}
-
-		RundeckMonitorConfigurationWizard rundeckMonitorWizard = new RundeckMonitorConfigurationWizard();
-		//RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
-		//WizardPanelDescriptor wpd1 = new RundeckConfigurationWizardPanelDescriptor( ConfigurationWizardStep.RUNDECK_STEP, null, ConfigurationWizardStep.PROJECT_STEP, rundeckMonitorConfiguration );
-		//WizardPanelDescriptor wpd2 = new ProjectConfigurationWizardPanelDescriptor( ConfigurationWizardStep.PROJECT_STEP, ConfigurationWizardStep.RUNDECK_STEP, ConfigurationWizardStep.MONITOR_STEP, rundeckMonitorConfiguration );
-		//WizardPanelDescriptor wpd3 = new MonitorConfigurationWizardPanelDescriptor( ConfigurationWizardStep.MONITOR_STEP, ConfigurationWizardStep.PROJECT_STEP, null, rundeckMonitorConfiguration );
-
-		//rundeckMonitorWizard.registerWizardPanel( wpd1 );
-		//rundeckMonitorWizard.registerWizardPanel( wpd2 );
-		//rundeckMonitorWizard.registerWizardPanel( wpd3 );
-		//rundeckMonitorWizard.setCurrentPanel( ConfigurationWizardStep.RUNDECK_STEP );
+		cardLayout.show( cardPanel, id.toString() );
 	}
 }

@@ -18,11 +18,11 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	final Container container = new Container();
 	final GridBagLayout layout = new GridBagLayout();
 
-	final JTextField rundeckMonitorName = new JTextField( 30 );
-	final JComboBox<Integer> rundeckMonitorRefreshDelay = new JComboBox<>();
-	final JComboBox<Integer> rundeckMonitorLateExecutionThreshold = new JComboBox<>();
+	final JTextField rundeckMonitorName = new JTextField( 20 );
+	final JComboBox<RefreshDelay> rundeckMonitorRefreshDelay = new JComboBox<>();
+	final JComboBox<LateExecutionThreshold> rundeckMonitorLateExecutionThreshold = new JComboBox<>();
 	final JComboBox<Integer> rundeckMonitorFailedJobNumber = new JComboBox<>();
-	final JComboBox<String> rundeckMonitorDateFormat = new JComboBox<>();
+	final JComboBox<DateFormat> rundeckMonitorDateFormat = new JComboBox<>();
 
 	public MonitorConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
@@ -37,23 +37,18 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		//Fields initialization
 		rundeckMonitorName.setText( RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE );
 
-		rundeckMonitorRefreshDelay.addItem( Integer.valueOf( 10 ) );
-		rundeckMonitorRefreshDelay.addItem( Integer.valueOf( 30 ) );
-		rundeckMonitorRefreshDelay.addItem( Integer.valueOf( 60 ) );
-		rundeckMonitorRefreshDelay.addItem( Integer.valueOf( 120 ) );
-		rundeckMonitorRefreshDelay.addItem( Integer.valueOf( 300 ) );
-		rundeckMonitorRefreshDelay.addItem( Integer.valueOf( 6000 ) );
-		rundeckMonitorRefreshDelay .setSelectedItem( Integer.valueOf( 60 ) );
+		for( final RefreshDelay refreshDelay : RefreshDelay.values() ) {
 
-		rundeckMonitorLateExecutionThreshold.addItem( Integer.valueOf( 5 ) );
-		rundeckMonitorLateExecutionThreshold.addItem( Integer.valueOf( 10 ) );
-		rundeckMonitorLateExecutionThreshold.addItem( Integer.valueOf( 20 ) );
-		rundeckMonitorLateExecutionThreshold.addItem( Integer.valueOf( 30 ) );
-		rundeckMonitorLateExecutionThreshold.addItem( Integer.valueOf( 40 ) );
-		rundeckMonitorLateExecutionThreshold.addItem( Integer.valueOf( 60 ) );
-		rundeckMonitorLateExecutionThreshold.addItem( Integer.valueOf( 90 ) );
-		rundeckMonitorLateExecutionThreshold.addItem( Integer.valueOf( 120 ) );
-		rundeckMonitorLateExecutionThreshold.setSelectedItem( Integer.valueOf( 30 ) );
+			rundeckMonitorRefreshDelay.addItem( refreshDelay );
+		}
+		rundeckMonitorRefreshDelay.setSelectedItem( RefreshDelay.REFRESH_DELAY_1M );
+
+		for( final LateExecutionThreshold lateExecutionThreshold : LateExecutionThreshold.values() ) {
+
+			rundeckMonitorLateExecutionThreshold.addItem( lateExecutionThreshold );
+		}
+		rundeckMonitorLateExecutionThreshold.setSelectedItem( LateExecutionThreshold.LATE_EXECUTION_THRESHOLD_30M );
+
 
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 5 ) );
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 6 ) );
@@ -71,9 +66,13 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 18 ) );
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 19 ) );
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 20 ) );
-		rundeckMonitorFailedJobNumber.setSelectedItem( Integer.valueOf( 20 ) );
+		rundeckMonitorFailedJobNumber.setSelectedItem( Integer.valueOf( 10 ) );
 
-		rundeckMonitorDateFormat.addItem( RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
+		for( final DateFormat dateFormat : DateFormat.values() ) {
+
+			rundeckMonitorDateFormat.addItem( dateFormat );
+		}
+		rundeckMonitorDateFormat.setSelectedItem( DateFormat.DATE_FORMAT_STANDARD );
 
 		final GridBagConstraints gridBagConstraits = new GridBagConstraints();
 		gridBagConstraits.insets = new Insets( 2,2,2,2 );
@@ -124,10 +123,10 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	public boolean validate() {
 
 		rundeckMonitorConfiguration.setRundeckMonitorName( rundeckMonitorName.getText() );
-		rundeckMonitorConfiguration.setRefreshDelay( rundeckMonitorRefreshDelay.getItemAt( rundeckMonitorRefreshDelay.getSelectedIndex() ) );
-		rundeckMonitorConfiguration.setLateThreshold( rundeckMonitorLateExecutionThreshold.getItemAt( rundeckMonitorLateExecutionThreshold.getSelectedIndex() ) );
+		rundeckMonitorConfiguration.setRefreshDelay( rundeckMonitorRefreshDelay.getItemAt( rundeckMonitorRefreshDelay.getSelectedIndex() ).getDelay() );
+		rundeckMonitorConfiguration.setLateThreshold( rundeckMonitorLateExecutionThreshold.getItemAt( rundeckMonitorLateExecutionThreshold.getSelectedIndex() ).getThreshold() );
 		rundeckMonitorConfiguration.setFailedJobNumber( rundeckMonitorFailedJobNumber.getItemAt( rundeckMonitorFailedJobNumber.getSelectedIndex() ) );
-		rundeckMonitorConfiguration.setDateFormat( rundeckMonitorDateFormat.getItemAt( rundeckMonitorDateFormat.getSelectedIndex() ) );
+		rundeckMonitorConfiguration.setDateFormat( rundeckMonitorDateFormat.getItemAt( rundeckMonitorDateFormat.getSelectedIndex() ).getDateFormat() );
 
 		try {
 			rundeckMonitorConfiguration.saveMonitorConfigurationPropertieFile();

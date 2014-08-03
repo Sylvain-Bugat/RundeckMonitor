@@ -6,8 +6,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import org.rundeck.api.RundeckClient;
@@ -18,7 +21,6 @@ import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguratio
 public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescriptor {
 
 	final Container container = new Container();
-	final GridBagLayout layout = new GridBagLayout();
 
 	final JTextField rundeckUrlTextField = new JTextField( 30 );
 
@@ -29,12 +31,14 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	public RundeckConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
 
-		container.setLayout( layout );
+		container.setLayout( new BoxLayout( container, BoxLayout.PAGE_AXIS ) );
 		final JLabel rundeckUrllabel = new JLabel( "Rundeck URL:" ); //$NON-NLS-1$
 		final JLabel rundeckAPITokenlabel = new JLabel( "API token:" ); //$NON-NLS-1$
 		final JLabel rundeckLoginlabel = new JLabel( "Login:" ); //$NON-NLS-1$
 		final JLabel rundeckPasswordlabel = new JLabel( "Password:" ); //$NON-NLS-1$
-;
+
+		final JPanel topPanel = new JPanel();
+		topPanel.setLayout( new GridBagLayout() );
 		final GridBagConstraints gridBagConstraits = new GridBagConstraints();
 		gridBagConstraits.insets = new Insets( 2,2,2,2 );
 		gridBagConstraits.fill = GridBagConstraints.HORIZONTAL;
@@ -42,27 +46,45 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 
 		gridBagConstraits.gridx=0;
 		gridBagConstraits.gridy=0;
-		container.add( rundeckUrllabel, gridBagConstraits );
+		topPanel.add( rundeckUrllabel, gridBagConstraits );
 		gridBagConstraits.gridx=1;
-		container.add( rundeckUrlTextField, gridBagConstraits );
+		topPanel.add( rundeckUrlTextField, gridBagConstraits );
+
+		container.add( topPanel );
+
+		container.add( new JSeparator() );
+
+		final JPanel aPIKeyPanel = new JPanel();
+		aPIKeyPanel.setLayout( new GridBagLayout() );
+
+		gridBagConstraits.gridx=0;
+		gridBagConstraits.gridy=0;
+		aPIKeyPanel.add( rundeckAPITokenlabel, gridBagConstraits );
+		gridBagConstraits.gridx=1;
+		aPIKeyPanel.add( rundeckAPITokenTextField, gridBagConstraits );
+
+		container.add( aPIKeyPanel );
+
+		container.add( new JLabel( "OR" ) ); //$NON-NLS-1$
+
+		final JPanel loginPasswordPanel = new JPanel();
+		loginPasswordPanel.setLayout( new GridBagLayout() );
+
+		gridBagConstraits.gridx=0;
+		gridBagConstraits.gridy=0;
+		loginPasswordPanel.add( rundeckLoginlabel, gridBagConstraits );
+		gridBagConstraits.gridx=1;
+		loginPasswordPanel.add( rundeckLoginTextField, gridBagConstraits );
 
 		gridBagConstraits.gridx=0;
 		gridBagConstraits.gridy=1;
-		container.add( rundeckAPITokenlabel, gridBagConstraits );
+		loginPasswordPanel.add( rundeckPasswordlabel, gridBagConstraits );
 		gridBagConstraits.gridx=1;
-		container.add( rundeckAPITokenTextField, gridBagConstraits );
+		loginPasswordPanel.add( rundeckPasswordTextField, gridBagConstraits );
 
-		gridBagConstraits.gridx=0;
-		gridBagConstraits.gridy=2;
-		container.add( rundeckLoginlabel, gridBagConstraits );
-		gridBagConstraits.gridx=1;
-		container.add( rundeckLoginTextField, gridBagConstraits );
+		container.add( loginPasswordPanel );
 
-		gridBagConstraits.gridx=0;
-		gridBagConstraits.gridy=3;
-		container.add( rundeckPasswordlabel, gridBagConstraits );
-		gridBagConstraits.gridx=1;
-		container.add( rundeckPasswordTextField, gridBagConstraits );
+		container.add( new JSeparator() );
 	}
 
 	@Override
