@@ -1,23 +1,22 @@
 package com.github.sbugat.rundeckmonitor;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.swing.JOptionPane;
-import javax.xml.bind.DatatypeConverter;
 
 import org.eclipse.egit.github.core.Repository;
-import org.eclipse.egit.github.core.RepositoryContents;
+import org.eclipse.egit.github.core.RepositoryTag;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.service.ContentsService;
-import org.eclipse.egit.github.core.service.DataService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
 /**
@@ -38,19 +37,15 @@ public class VersionChecker implements Runnable{
 	private static final String JAVA_HOME_PROPERTY = "java.home"; //$NON-NLS-1$
 	private static final String OS_NAME_PROPERTY = "os.name"; //$NON-NLS-1$
 	private static final String WINDOWS_OS_NAME = "windows"; //$NON-NLS-1$
+	private static final String TARGET_DIRECTORY = "target"; //$NON-NLS-1$
 
-	private static final String BIN_DIRECTORY_AND_JAVA = "bin" + FileSystems.getDefault().getSeparator() + "java"; //$NON-NLS-1$
+	private static final String BIN_DIRECTORY_AND_JAVA = "bin" + FileSystems.getDefault().getSeparator() + "java"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final String JAR_ARGUMENT = "-jar"; //$NON-NLS-1$
 
 	/**Root URL of the GitHub project to update*/
 	private final String gitHubUser;
 	private final String gitHubRepository;
-
-	/**Name of jar file name without dependencies*/
-	//private final String jarFileName;
-	/**Name of jar file containind all dependencies*/
-	//private final String jarWithDependenciesFileName;
 
 	/**Maven artifact identifier*/
 	private final String mavenArtifactId;
@@ -98,36 +93,53 @@ public class VersionChecker implements Runnable{
 		try {
 
 			final GitHubClient gitHubClient = new GitHubClient();
+			gitHubClient.setOAuth2Token("511db316ad182b0599137157499a28b3deb7f5ae");
 
 			final RepositoryService rs = new RepositoryService( gitHubClient );
 			final Repository repository = rs.getRepository( gitHubUser, gitHubRepository );
 
-			final ContentsService contentsService = new ContentsService( gitHubClient );
+			final String currentVersion = 'v' + currentJar.replaceFirst( "^" + mavenArtifactId + '-', "" ).replaceFirst( jarWithDependenciesSuffix + ".*$", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			RepositoryTag recentRelease = null;
+			for( final RepositoryTag tag : rs.getTags( repository ) ) {
 
-			RepositoryContents jarWithDependenciesRepositoryContents = null;
-			for( final RepositoryContents repositoryContents : contentsService.getContents(repository, repositoryJarDirectory ) ) {
-
-				if( repositoryContents.getName().startsWith( mavenArtifactId ) && repositoryContents.getName().endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) ) {
-
-					jarWithDependenciesRepositoryContents = repositoryContents;
+				if( null != recentRelease && tag.getName().compareTo( recentRelease.getName() ) > 0 ) {
+					recentRelease = tag;
+				}
+				else if( ( tag.getName() ).compareTo( currentVersion ) > 0 ) {
+					recentRelease = tag;
 				}
 			}
 
-			if( null == jarWithDependenciesRepositoryContents ) {
+			if( null == recentRelease  ) {
 				return;
 			}
 
-			if( jarWithDependenciesRepositoryContents.getName().compareTo( currentJar ) > 0 ) {
+			try( final InputStream remoteJarInputStream = new URL( recentRelease.getZipballUrl() ).openStream() ) {
 
-				final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (" + jarWithDependenciesRepositoryContents.getSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
+				final ZipInputStream zis = new ZipInputStream( remoteJarInputStream );
 
-					final DataService dataService = new DataService( gitHubClient );
-					downloadFile( new ByteArrayInputStream( DatatypeConverter.parseBase64Binary( dataService.getBlob( repository, jarWithDependenciesRepositoryContents.getSha() ).getContent() ) ), jarWithDependenciesRepositoryContents.getName() + TMP_EXTENSION );
-					Files.move( Paths.get( jarWithDependenciesRepositoryContents.getName() + TMP_EXTENSION ), Paths.get( jarWithDependenciesRepositoryContents.getName() ) );
+				ZipEntry entry = zis.getNextEntry();
 
-					downloadedJar = jarWithDependenciesRepositoryContents.getName();
-					downloadDone = true;
+				while( null != entry ) {
+
+					if( entry.getName().matches( ".*/" + TARGET_DIRECTORY + '/' + mavenArtifactId + "-[0-9\\.]*" + jarWithDependenciesSuffix + JAR_EXTENSION  ) ) { //$NON-NLS-1$ //$NON-NLS-2$
+
+						final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (" + entry.getCompressedSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
+
+							final String jarFileBaseName = entry.getName().replaceFirst( "^.*/", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+
+							downloadFile( zis, jarFileBaseName + TMP_EXTENSION );
+							Files.move( Paths.get( jarFileBaseName + TMP_EXTENSION ), Paths.get( jarFileBaseName ) );
+
+							downloadedJar = jarFileBaseName;
+							downloadDone = true;
+						}
+
+						return;
+					}
+
+					entry = zis.getNextEntry();
 				}
 			}
 		}
@@ -168,7 +180,7 @@ public class VersionChecker implements Runnable{
 
 		String currentJar = currentJar();
 
-		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) {
+		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) { //$NON-NLS-1$
 
 			for( final Path path : directoryStream ) {
 
@@ -208,7 +220,7 @@ public class VersionChecker implements Runnable{
 	private String currentJar() {
 
 		String currentJar = null;
-		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) {
+		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) { //$NON-NLS-1$
 
 			for( final Path path : directoryStream ) {
 
@@ -266,7 +278,7 @@ public class VersionChecker implements Runnable{
 
 		//Check if the executable exists and is executable
 		final Path javaExecutablePath = Paths.get( javaExecutableFilePath );
-		if ( ! Files.exists( javaExecutablePath ) && Files.isExecutable( javaExecutablePath ) ) {
+		if ( ! Files.exists( javaExecutablePath ) || ! Files.isExecutable( javaExecutablePath ) ) {
 			throw new NoSuchFileException( javaExecutableFilePath );
 		}
 
