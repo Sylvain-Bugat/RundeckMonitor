@@ -8,13 +8,17 @@ import java.awt.Insets;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
+import org.rundeck.api.RundeckApiException;
+import org.rundeck.api.RundeckApiException.RundeckApiLoginException;
 import org.rundeck.api.RundeckClient;
 import org.rundeck.api.RundeckClientBuilder;
+import org.rundeck.api.RundeckApiException.RundeckApiTokenException;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 
@@ -95,6 +99,20 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 
 	public boolean validate() {
 
+		if( rundeckUrlTextField.getText().isEmpty() ) {
+			JOptionPane.showMessageDialog( null, "Missing rundeck URL parameter.", "Missing parameter", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
+		}
+
+		if( rundeckAPITokenTextField.getText().isEmpty() ) {
+
+			if( rundeckLoginTextField.getText().isEmpty() || rundeckPasswordTextField.getText().isEmpty() ) {
+
+				JOptionPane.showMessageDialog( null, "Missing rundeck API token," + System.lineSeparator() + "or rundeck login/password parameters", "Missing parameters", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				return false;
+			}
+		}
+
 		final RundeckClientBuilder rundeckClientBuilder;
 		final String rundeckUrl = rundeckUrlTextField.getText();
 		if( ! rundeckAPITokenTextField.getText().isEmpty() ) {
@@ -107,9 +125,35 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		//Initialize the rundeck client
 		final RundeckClient rundeckClient = rundeckClientBuilder.build();
 
+		//Test connection
+		try {
+			rundeckClient.ping();
+		}
+		catch( final RundeckApiException e ) {
+
+			JOptionPane.showMessageDialog( null, "Unable to connect to the project URL," + System.lineSeparator() + "check and change this parameter.", "Configuration error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return false;
+		}
+		catch( final Exception e ) {
+
+			JOptionPane.showMessageDialog( null, "Invalid project URL," + System.lineSeparator() + "check and change this parameter.", "Configuration error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return false;
+		}
+
 		//Test authentication credentials
-		rundeckClient.ping();
-		rundeckClient.testAuth();
+		try {
+			rundeckClient.testAuth();
+		}
+		catch( final RundeckApiTokenException e ) {
+
+			JOptionPane.showMessageDialog( null, "Invalid authentication token," + System.lineSeparator() + "check and change this parameter.", "Configuration error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return false;
+		}
+		catch( final RundeckApiLoginException e ) {
+
+			JOptionPane.showMessageDialog( null, "Invalid login/password," + System.lineSeparator() + "check and change these parameters.", "Configuration error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return false;
+		}
 
 		rundeckMonitorConfiguration.setRundeckUrl( rundeckUrlTextField.getText() );
 		rundeckMonitorConfiguration.setRundeckAPIKey( rundeckAPITokenTextField.getText() );
