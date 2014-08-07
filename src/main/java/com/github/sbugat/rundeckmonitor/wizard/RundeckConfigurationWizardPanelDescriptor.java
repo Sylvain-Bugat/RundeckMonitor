@@ -155,6 +155,19 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			return false;
 		}
 
+		//Test existing projects
+		try {
+			if( rundeckClient.getProjects().isEmpty() ) {
+				JOptionPane.showMessageDialog( null, "Configured rundeck has no project," + System.lineSeparator() + "check and change this rundeck instance.", "Configuration error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				return false;
+			}
+		}
+		catch( final RundeckApiException e ) {
+
+			JOptionPane.showMessageDialog( null, "Configured rundeck has no project," + System.lineSeparator() + "check and change this rundeck instance.", "Configuration error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return false;
+		}
+
 		rundeckMonitorConfiguration.setRundeckUrl( rundeckUrlTextField.getText() );
 		rundeckMonitorConfiguration.setRundeckAPIKey( rundeckAPITokenTextField.getText() );
 		rundeckMonitorConfiguration.setRundeckLogin( rundeckLoginTextField.getText() );
