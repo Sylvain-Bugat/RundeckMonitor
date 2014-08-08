@@ -72,7 +72,8 @@ public class RundeckMonitor implements Runnable {
 
 		//Configuration loading
 		rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
-		rundeckMonitorConfiguration.loadMonitorConfigurationPropertieFile();
+		rundeckMonitorConfiguration.loadConfigurationPropertieFile();
+		rundeckMonitorConfiguration.verifyConfiguration();
 
 		//Initialize the client builder with token  or login/password authentication
 		final RundeckClientBuilder rundeckClientBuilder;

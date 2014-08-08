@@ -1,5 +1,6 @@
 package com.github.sbugat.rundeckmonitor.configuration;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -10,8 +11,6 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-
-import javax.swing.JOptionPane;
 
 /**
  * Configurationloading  class of the Rundeck Monitor
@@ -32,11 +31,11 @@ public class RundeckMonitorConfiguration {
 	private static final String RUNDECK_MONITOR_PROPERTY_NAME = "rundeck.monitor.name"; //$NON-NLS-1$
 	public static final String RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE = "RundeckMonitor"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY = "rundeck.monitor.refresh.delay"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE = "60"; //$NON-NLS-1$
+	private static final int RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE = 60;
 	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD = "rundeck.monitor.execution.late.threshold"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE = "1800"; //$NON-NLS-1$
+	private static final int RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE = 1800;
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER = "rundeck.monitor.failed.job.number"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE = "10"; //$NON-NLS-1$
+	private static final int RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE = 10;
 	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
 	public static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
@@ -75,17 +74,14 @@ public class RundeckMonitorConfiguration {
 	 * Load configuration
 	 *
 	 * @throws IOException in case of loading configuration error
-	 * @throws InvalidPropertyException
-	 * @throws MissingPropertyException
 	 */
-	public void loadMonitorConfigurationPropertieFile() throws IOException, MissingPropertyException, InvalidPropertyException {
+	public void loadConfigurationPropertieFile() throws IOException {
 
 		//Configuration loading
 		final Path propertyFile = Paths.get( RUNDECK_MONITOR_PROPERTIES_FILE );
 		if( ! Files.exists( propertyFile ) ){
 
-			JOptionPane.showMessageDialog( null, "Copy and configure " + RUNDECK_MONITOR_PROPERTIES_FILE + " file", RUNDECK_MONITOR_PROPERTIES_FILE + " file is missing", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			System.exit( 1 );
+			throw new FileNotFoundException( RUNDECK_MONITOR_PROPERTIES_FILE );
 		}
 
 		//Load the configuration file and extract properties
@@ -94,74 +90,73 @@ public class RundeckMonitorConfiguration {
 			properties.load( propertyFileReader );
 		}
 
-		rundeckUrl = loadMandatoryStringProperty( properties, RUNDECK_MONITOR_PROPERTY_URL );
-		rundeckProject = loadMandatoryStringProperty( properties, RUNDECK_MONITOR_PROPERTY_PROJECT );
+		rundeckUrl = properties.getProperty( RUNDECK_MONITOR_PROPERTY_URL );
+		rundeckProject = properties.getProperty( RUNDECK_MONITOR_PROPERTY_PROJECT );
 
-		String loadedRundeckApiKey;
+		rundeckAPIKey = properties.getProperty( RUNDECK_MONITOR_PROPERTY_API_KEY );
+
+		rundeckLogin = properties.getProperty( RUNDECK_MONITOR_PROPERTY_LOGIN );
+		rundeckPassword = properties.getProperty( RUNDECK_MONITOR_PROPERTY_PASSWORD );
+
+		rundeckMonitorName =  properties.getProperty( RUNDECK_MONITOR_PROPERTY_NAME, RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE );
+		refreshDelay = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY, RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE );
+		lateThreshold = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD, RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE );
+		failedJobNumber = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE );
+		dateFormat = properties.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
+		rundeckAPIversion = properties.getProperty( RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
+	}
+
+	/**
+	 * Check configuration
+	 *
+	 * @throws InvalidPropertyException
+	 * @throws MissingPropertyException
+	 */
+	public void verifyConfiguration() throws MissingPropertyException, InvalidPropertyException  {
+
+		//Configuration checking
+
+		checkMandatoryStringProperty( rundeckUrl, RUNDECK_MONITOR_PROPERTY_URL );
+		checkMandatoryStringProperty( rundeckProject, RUNDECK_MONITOR_PROPERTY_PROJECT );
+
+		boolean missingAPIKey = false;
 		try {
-			loadedRundeckApiKey = loadMandatoryStringProperty( properties, RUNDECK_MONITOR_PROPERTY_API_KEY );
+			checkMandatoryStringProperty( rundeckAPIKey, RUNDECK_MONITOR_PROPERTY_API_KEY );
 		}
 		catch( final MissingPropertyException | InvalidPropertyException e ) {
-			loadedRundeckApiKey = null;
+			missingAPIKey = false;
 		}
 
-		rundeckAPIKey = loadedRundeckApiKey;
 
-		if( null == loadedRundeckApiKey ) {
-			rundeckLogin = loadMandatoryStringProperty( properties, RUNDECK_MONITOR_PROPERTY_LOGIN );
-			rundeckPassword = loadMandatoryStringProperty( properties, RUNDECK_MONITOR_PROPERTY_PASSWORD );
+		if( missingAPIKey ) {
+			checkMandatoryStringProperty( rundeckLogin, RUNDECK_MONITOR_PROPERTY_LOGIN );
+			checkMandatoryStringProperty( rundeckPassword, RUNDECK_MONITOR_PROPERTY_PASSWORD );
 		}
-		else {
-			rundeckLogin = ""; //$NON-NLS-1$
-			rundeckPassword = ""; //$NON-NLS-1$
-		}
-
-		rundeckMonitorName = loadOptionalStringProperty( properties, RUNDECK_MONITOR_PROPERTY_NAME, RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE );
-		refreshDelay = loadOptionalIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY, RUNDECK_MONITOR_PROPERTY_REFRESH_DELAY_DEFAULT_VALUE );
-		lateThreshold = loadOptionalIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD, RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE );
-		failedJobNumber = loadOptionalIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE );
-		dateFormat = loadOptionalStringProperty( properties, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
-		rundeckAPIversion = loadOptionalStringProperty( properties, RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
 	}
 
-	private static String loadMandatoryStringProperty( final Properties properties, final String propertyName ) throws MissingPropertyException, InvalidPropertyException {
+	private static void checkMandatoryStringProperty( final String property, final String propertyName ) throws MissingPropertyException, InvalidPropertyException {
 
-		final String propertyValue = properties.getProperty( propertyName );
-
-		if( null == propertyValue ) {
+		if( null == property ) {
 			throw new MissingPropertyException( propertyName );
 		}
-		else if( propertyValue.isEmpty() ) {
-			throw new InvalidPropertyException( propertyName, propertyValue );
+		else if( property.isEmpty() ) {
+			throw new InvalidPropertyException( propertyName, property );
 		}
-
-		return propertyValue;
 	}
 
-	private static String loadOptionalStringProperty( final Properties properties, final String propertyName, final String defaultValue ) {
+	private static int getIntegerProperty( final Properties properties, final String propertyName, final int defaultValue ) {
 
-		final String propertyValue = properties.getProperty( propertyName, defaultValue );
+		String propertyValue = properties.getProperty( propertyName, String.valueOf( defaultValue ) );
 
 		if( propertyValue.isEmpty() ) {
 			return defaultValue;
-		}
-
-		return propertyValue;
-	}
-
-	private static int loadOptionalIntegerProperty( final Properties properties, final String propertyName, final String defaultValue ) throws InvalidPropertyException {
-
-		String propertyValue = properties.getProperty( propertyName, defaultValue );
-
-		if( propertyValue.isEmpty() ) {
-			propertyValue = defaultValue;
 		}
 
 		try {
 			return Integer.parseInt( propertyValue );
 		}
 		catch( final NumberFormatException e ) {
-			throw new InvalidPropertyException( propertyName, propertyValue );
+			return defaultValue;
 		}
 	}
 
