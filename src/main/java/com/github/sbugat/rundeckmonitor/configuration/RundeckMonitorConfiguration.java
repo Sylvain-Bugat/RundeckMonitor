@@ -127,10 +127,17 @@ public class RundeckMonitorConfiguration {
 			missingAPIKey = false;
 		}
 
-
 		if( missingAPIKey ) {
 			checkMandatoryStringProperty( rundeckLogin, RUNDECK_MONITOR_PROPERTY_LOGIN );
 			checkMandatoryStringProperty( rundeckPassword, RUNDECK_MONITOR_PROPERTY_PASSWORD );
+		}
+
+		//Test the configured date format
+		try {
+			new SimpleDateFormat( dateFormat );
+		}
+		catch( final IllegalArgumentException e ) {
+			dateFormat = RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE;
 		}
 	}
 
