@@ -66,10 +66,6 @@ public class RundeckMonitorConfiguration {
 
 	private String rundeckAPIversion;
 
-	public RundeckMonitorConfiguration() {
-
-	}
-
 	/**
 	 * Load configuration
 	 *
