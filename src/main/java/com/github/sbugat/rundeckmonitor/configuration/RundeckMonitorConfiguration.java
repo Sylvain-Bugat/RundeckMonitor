@@ -210,6 +210,19 @@ public class RundeckMonitorConfiguration {
 		return Files.exists( propertyFile );
 	}
 
+	public static boolean propertiesFileUpdated( final Date date ) throws IOException {
+
+		final Path propertyFile = Paths.get( RUNDECK_MONITOR_PROPERTIES_FILE );
+		if( Files.exists( propertyFile ) ) {
+
+			final Date fileTime = new Date( Files.getLastModifiedTime( propertyFile ).toMillis() );
+
+			return fileTime.after( date );
+		}
+
+		return false;
+	}
+
 	public String getRundeckUrl() {
 		return rundeckUrl;
 	}

@@ -66,13 +66,12 @@ public class RundeckMonitor implements Runnable {
 	 * @throws InvalidPropertyException
 	 * @throws MissingPropertyException
 	 */
-	public RundeckMonitor( final VersionChecker versionCheckerArg ) throws IOException, MissingPropertyException, InvalidPropertyException {
+	public RundeckMonitor( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final VersionChecker versionCheckerArg ) throws IOException, MissingPropertyException, InvalidPropertyException {
 
 		versionChecker = versionCheckerArg;
+		rundeckMonitorConfiguration = rundeckMonitorConfigurationArg;
 
-		//Configuration loading
-		rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
-		rundeckMonitorConfiguration.loadConfigurationPropertieFile();
+		//Configuration checking
 		rundeckMonitorConfiguration.verifyConfiguration();
 
 		//Initialize the client builder with token  or login/password authentication
@@ -281,11 +280,19 @@ public class RundeckMonitor implements Runnable {
 		//Clean any temporary downloaded jar
 		versionChecker.cleanOldAndTemporaryJar();
 
-		boolean launchMonitor = true;
-		while( launchMonitor ) {
+		final Object[] options = { "Exit", "Edit configuration" }; //$NON-NLS-1$ //$NON-NLS-2$
+
+		while( true ) {
+
+			int errorUserReturn = JOptionPane.YES_OPTION;
+
 			try {
+				//Configuration loading
+				final RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
+				rundeckMonitorConfiguration.loadConfigurationPropertieFile();
+
 				//Start the main thread
-				new Thread( new RundeckMonitor( versionChecker ) ).start();
+				new Thread( new RundeckMonitor( rundeckMonitorConfiguration, versionChecker ) ).start();
 
 				//Start the version checker thread
 				new Thread( versionChecker ).start();
@@ -293,72 +300,78 @@ public class RundeckMonitor implements Runnable {
 				//Monitor and Version started without exception, end the launch thread
 				return;
 			}
+
 			//Loading properties exceptions
 			catch( final MissingPropertyException e ) {
-				JOptionPane.showMessageDialog( null, "Missing mandatory property," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + e.getProperty() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				System.exit( 1 );
+				errorUserReturn = JOptionPane.showOptionDialog( null, "Missing mandatory property," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + e.getProperty() + "\".", "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
 			}
 			catch( final InvalidPropertyException e ) {
-				JOptionPane.showMessageDialog( null, "Invalid property value:" + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + e.getProperty() + '=' + e.getPropertyValue() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				System.exit( 1 );
+				errorUserReturn = JOptionPane.showOptionDialog( null, "Invalid property value:" + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + e.getProperty() + '=' + e.getPropertyValue() + "\".", "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
 			}
 			//Loading configuration file I/O exception
 			catch( final IOException e ) {
-				JOptionPane.showMessageDialog( null, "Error loading property file:" + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTIES_FILE + "check access rights of this file." , "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				System.exit( 1 );
+				errorUserReturn = JOptionPane.showOptionDialog( null, "Error loading property file:" + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTIES_FILE + "check access rights of this file." , "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			//Authentication exceptions
 			catch ( final RundeckApiTokenException e ) {
-				JOptionPane.showMessageDialog( null, "Invalid authentication token," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_API_KEY + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				System.exit( 1 );
+				errorUserReturn = JOptionPane.showOptionDialog( null, "Invalid authentication token," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_API_KEY + "\".", "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			catch ( final RundeckApiLoginException e ) {
-				JOptionPane.showMessageDialog( null, "Invalid login/password," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_LOGIN + '"' + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PASSWORD + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				System.exit( 1 );
+				errorUserReturn = JOptionPane.showOptionDialog( null, "Invalid login/password," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_LOGIN + '"' + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PASSWORD + "\".", "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
 			}
 			catch ( final RundeckApiHttpStatusException e ) {
 
 				if( 500 == e.getStatusCode() ) {
-					JOptionPane.showMessageDialog( null, "Invalid project settings," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_API_KEY + '"' + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					errorUserReturn = JOptionPane.showOptionDialog( null, "Invalid project settings," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_API_KEY + '"' + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + "\".", "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				else {
 					final StringWriter stringWriter = new StringWriter();
 					e.printStackTrace( new PrintWriter( stringWriter ) );
-					JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
+					errorUserReturn = JOptionPane.showOptionDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] ); //$NON-NLS-1$
 				}
-				System.exit( 1 );
 			}
 			catch ( final RundeckApiException e ) {
 
 				//Connection error
 				if( ConnectException.class.isInstance( e.getCause() ) ){
-					JOptionPane.showMessageDialog( null, "Unable to connect to the project URL," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_URL + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					JOptionPane.showOptionDialog( null, "Unable to connect to the project URL," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_URL + "\".", "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				else {
 					final StringWriter stringWriter = new StringWriter();
 					e.printStackTrace( new PrintWriter( stringWriter ) );
-					JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
+					errorUserReturn = JOptionPane.showOptionDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] ); //$NON-NLS-1$
 				}
-				System.exit( 1 );
 			}
 
 			catch ( final Exception e ) {
 
 				final StringWriter stringWriter = new StringWriter();
 				e.printStackTrace( new PrintWriter( stringWriter ) );
-				JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
-
-				System.exit( 1 );
+				errorUserReturn = JOptionPane.showOptionDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] ); //$NON-NLS-1$
 			}
 
 			//
-			if( ! launchMonitor ) {
+			if( JOptionPane.YES_OPTION == errorUserReturn ) {
 
 				System.exit( 1 );
 			}
-			else {
 
-				new RundeckMonitorConfigurationWizard();
+			//Date the current time and launch the configuration wizard
+			final Date systemDate = new Date();
+
+			new RundeckMonitorConfigurationWizard();
+
+			//Wait until the configuration file is updated
+			boolean configurationFileUpdated = false;
+			while( ! configurationFileUpdated ) {
+
+				try {
+					Thread.sleep( 1000 );
+					configurationFileUpdated = RundeckMonitorConfiguration.propertiesFileUpdated( systemDate );
+				}
+				catch( final IOException | InterruptedException e ) {
+					//Ignore these error
+				}
 			}
 		}
 	}
