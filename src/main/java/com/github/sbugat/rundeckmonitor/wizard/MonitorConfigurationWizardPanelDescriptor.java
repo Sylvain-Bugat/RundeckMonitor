@@ -35,20 +35,44 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		final JLabel rundeckMonitorDateFormatLabel = new JLabel( "Failed/late jobs displayed date format:" ); //$NON-NLS-1$
 
 		//Fields initialization
-		rundeckMonitorName.setText( RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE );
+		if( rundeckMonitorConfiguration.getRundeckMonitorName().isEmpty() ) {
+			rundeckMonitorName.setText( RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE );
+		}
+		else {
+			rundeckMonitorName.setText( rundeckMonitorConfiguration.getRundeckMonitorName() );
+		}
 
+		RefreshDelay oldConfiguredRefreshDelay = null;
 		for( final RefreshDelay refreshDelay : RefreshDelay.values() ) {
 
 			rundeckMonitorRefreshDelay.addItem( refreshDelay );
+			if( refreshDelay.getDelay() == rundeckMonitorConfiguration.getRefreshDelay() ) {
+				oldConfiguredRefreshDelay = refreshDelay;
+			}
 		}
-		rundeckMonitorRefreshDelay.setSelectedItem( RefreshDelay.REFRESH_DELAY_1M );
 
+		if( null != oldConfiguredRefreshDelay ) {
+			rundeckMonitorRefreshDelay.setSelectedItem( oldConfiguredRefreshDelay );
+		}
+		else {
+			rundeckMonitorRefreshDelay.setSelectedItem( RefreshDelay.REFRESH_DELAY_1M );
+		}
+
+		LateExecutionThreshold oldLateExecutionThreshold = null;
 		for( final LateExecutionThreshold lateExecutionThreshold : LateExecutionThreshold.values() ) {
 
 			rundeckMonitorLateExecutionThreshold.addItem( lateExecutionThreshold );
+			if( lateExecutionThreshold.getThreshold() == rundeckMonitorConfiguration.getLateThreshold() ) {
+				oldLateExecutionThreshold = lateExecutionThreshold;
+			}
 		}
-		rundeckMonitorLateExecutionThreshold.setSelectedItem( LateExecutionThreshold.LATE_EXECUTION_THRESHOLD_30M );
 
+		if( null != oldLateExecutionThreshold ) {
+			rundeckMonitorLateExecutionThreshold.setSelectedItem( oldLateExecutionThreshold );
+		}
+		else {
+			rundeckMonitorLateExecutionThreshold.setSelectedItem( LateExecutionThreshold.LATE_EXECUTION_THRESHOLD_30M );
+		}
 
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 5 ) );
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 6 ) );
@@ -66,13 +90,30 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 18 ) );
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 19 ) );
 		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 20 ) );
-		rundeckMonitorFailedJobNumber.setSelectedItem( Integer.valueOf( 10 ) );
 
+		if( rundeckMonitorConfiguration.getFailedJobNumber() >=5 && rundeckMonitorConfiguration.getFailedJobNumber() <= 20 ) {
+			rundeckMonitorFailedJobNumber.setSelectedItem( Integer.valueOf( rundeckMonitorConfiguration.getFailedJobNumber() ) );
+		}
+		else {
+			rundeckMonitorFailedJobNumber.setSelectedItem( Integer.valueOf( 10 ) );
+		}
+
+		DateFormat oldDateFormat = null;
 		for( final DateFormat dateFormat : DateFormat.values() ) {
 
 			rundeckMonitorDateFormat.addItem( dateFormat );
+
+			if( dateFormat.getDateFormat().equals( rundeckMonitorConfiguration.getDateFormat() ) ) {
+				oldDateFormat = dateFormat;
+			}
 		}
-		rundeckMonitorDateFormat.setSelectedItem( DateFormat.DATE_FORMAT_STANDARD );
+
+		if( null != oldDateFormat ) {
+			rundeckMonitorDateFormat.setSelectedItem( oldDateFormat );
+		}
+		else {
+			rundeckMonitorDateFormat.setSelectedItem( DateFormat.DATE_FORMAT_STANDARD );
+		}
 
 		final GridBagConstraints gridBagConstraits = new GridBagConstraints();
 		gridBagConstraits.insets = new Insets( 2,2,2,2 );

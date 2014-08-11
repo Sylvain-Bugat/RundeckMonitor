@@ -75,20 +75,42 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		rundeckClient.ping();
 		rundeckClient.testAuth();
 
-		//Check if the configured project exists
 		rundeckProjectNameTextField.removeAllItems();
+		//Check if the configured project exists
+		boolean existingOldConfiguredProject = false;
 		for( final RundeckProject rundeckProject: rundeckClient.getProjects() ) {
 
-			rundeckProjectNameTextField.addItem( rundeckProject.getName() );
+			final String currentProjectName = rundeckProject.getName();
+			rundeckProjectNameTextField.addItem( currentProjectName );
+
+			if( ! currentProjectName.isEmpty() && currentProjectName.equals( rundeckMonitorConfiguration.getRundeckProject() ) ) {
+
+				existingOldConfiguredProject = true;
+			}
+		}
+
+		if( existingOldConfiguredProject ) {
+			rundeckProjectNameTextField.setSelectedItem( rundeckMonitorConfiguration.getRundeckProject() );
 		}
 
 		rundeckRundeckAPIVersionTextField.removeAllItems();
+		Version oldApiVersion = null;
 		for( final Version version : Version.values() ) {
 
 			rundeckRundeckAPIVersionTextField.addItem( version );
+
+			if( String.valueOf( version.getVersionNumber() ).equals( rundeckMonitorConfiguration.getRundeckAPIversion() ) ) {
+
+				oldApiVersion = version;
+			}
 		}
 
-		rundeckRundeckAPIVersionTextField.setSelectedItem( Version.V10 );
+		if( null != oldApiVersion ) {
+			rundeckRundeckAPIVersionTextField.setSelectedItem( oldApiVersion );
+		}
+		else {
+			rundeckRundeckAPIVersionTextField.setSelectedItem( Version.V10 );
+		}
 	}
 
 	public boolean validate() {

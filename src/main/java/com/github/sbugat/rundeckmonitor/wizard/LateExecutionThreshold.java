@@ -11,16 +11,16 @@ public enum LateExecutionThreshold {
 	LATE_EXECUTION_THRESHOLD_1H( 3600, "1 hour" ), //$NON-NLS-1$
 	LATE_EXECUTION_THRESHOLD_2H( 7200, "2 hours" ); //$NON-NLS-1$
 
-	private final Integer threshold;
+	private final int threshold;
 	private final String description;
 
 	private LateExecutionThreshold( final int thresholdArg, final String descriptionArg ) {
 
-		threshold= Integer.valueOf( thresholdArg );
+		threshold =  thresholdArg;
 		description = descriptionArg;
 	}
 
-	public Integer getThreshold() {
+	public int getThreshold() {
 		return threshold;
 	}
 

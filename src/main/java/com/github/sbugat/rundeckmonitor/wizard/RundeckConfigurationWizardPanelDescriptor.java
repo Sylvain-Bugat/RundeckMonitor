@@ -35,6 +35,11 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	public RundeckConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
 
+		rundeckUrlTextField.setText( rundeckMonitorConfiguration.getRundeckUrl() );
+		rundeckAPITokenTextField.setText( rundeckMonitorConfiguration.getRundeckAPIKey() );
+		rundeckLoginTextField.setText( rundeckMonitorConfiguration.getRundeckLogin() );
+		rundeckPasswordTextField.setText( rundeckMonitorConfiguration.getRundeckPassword() );
+
 		container.setLayout( new BoxLayout( container, BoxLayout.PAGE_AXIS ) );
 		final JLabel rundeckUrllabel = new JLabel( "Rundeck URL:" ); //$NON-NLS-1$
 		final JLabel rundeckAPITokenlabel = new JLabel( "API token:" ); //$NON-NLS-1$

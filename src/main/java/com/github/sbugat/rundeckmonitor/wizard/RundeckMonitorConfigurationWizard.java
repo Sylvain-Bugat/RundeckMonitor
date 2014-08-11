@@ -38,7 +38,7 @@ public class RundeckMonitorConfigurationWizard {
 	private JButton backButton;
 	private JButton nextButton;
 
-	public RundeckMonitorConfigurationWizard() {
+	public RundeckMonitorConfigurationWizard( final RundeckMonitorConfiguration rundeckMonitorConfiguration ) {
 
 		wizardFrame = new JFrame();
 		wizardFrame.setTitle( WIZARD_FRAME_TITLE );
@@ -48,7 +48,6 @@ public class RundeckMonitorConfigurationWizard {
 		initComponents();
 
 		//Initialize steps and set the first step
-		final RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
 		WizardPanelDescriptor wpd1 = new RundeckConfigurationWizardPanelDescriptor( ConfigurationWizardStep.RUNDECK_STEP, null, ConfigurationWizardStep.PROJECT_STEP, rundeckMonitorConfiguration );
 		WizardPanelDescriptor wpd2 = new ProjectConfigurationWizardPanelDescriptor( ConfigurationWizardStep.PROJECT_STEP, ConfigurationWizardStep.RUNDECK_STEP, ConfigurationWizardStep.MONITOR_STEP, rundeckMonitorConfiguration );
 		WizardPanelDescriptor wpd3 = new MonitorConfigurationWizardPanelDescriptor( ConfigurationWizardStep.MONITOR_STEP, ConfigurationWizardStep.PROJECT_STEP, null, rundeckMonitorConfiguration );
