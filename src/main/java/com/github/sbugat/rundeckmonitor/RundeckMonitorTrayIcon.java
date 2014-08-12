@@ -167,7 +167,7 @@ public class RundeckMonitorTrayIcon {
 			final ActionListener configurationListener = new ActionListener() {
 				@SuppressWarnings("synthetic-access")
 				public void actionPerformed( final ActionEvent e) {
-					new RundeckMonitorConfigurationWizard( new RundeckMonitorConfiguration( rundeckMonitorConfiguration ) );
+					new RundeckMonitorConfigurationWizard( new RundeckMonitorConfiguration( rundeckMonitorConfiguration ), false );
 				}
 			};
 

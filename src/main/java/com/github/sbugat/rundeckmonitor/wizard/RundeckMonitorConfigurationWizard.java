@@ -38,14 +38,20 @@ public class RundeckMonitorConfigurationWizard {
 	private JButton backButton;
 	private JButton nextButton;
 
-	public RundeckMonitorConfigurationWizard( final RundeckMonitorConfiguration rundeckMonitorConfiguration ) {
+	public RundeckMonitorConfigurationWizard( final RundeckMonitorConfiguration rundeckMonitorConfiguration, final boolean exitOnClose ) {
 
 		wizardFrame = new JFrame();
 		wizardFrame.setTitle( WIZARD_FRAME_TITLE );
-		wizardFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+
+		if( exitOnClose ) {
+			wizardFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+		}
+		else {
+			wizardFrame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
+		}
 
 		//Initialize displayed components
-		initComponents();
+		initComponents( exitOnClose );
 
 		//Initialize steps and set the first step
 		WizardPanelDescriptor wpd1 = new RundeckConfigurationWizardPanelDescriptor( ConfigurationWizardStep.RUNDECK_STEP, null, ConfigurationWizardStep.PROJECT_STEP, rundeckMonitorConfiguration );
@@ -67,7 +73,7 @@ public class RundeckMonitorConfigurationWizard {
 		wizardFrame.setVisible(true);
 	}
 
-	private void initComponents() {
+	private void initComponents( final boolean exitOnClose ) {
 
 		final JPanel buttonPanel = new JPanel();
 		final Box buttonBox = new Box( BoxLayout.X_AXIS );
@@ -101,6 +107,7 @@ public class RundeckMonitorConfigurationWizard {
 					oldPanelDescriptor.validate();
 
 					wizardFrame.setVisible( false );
+					wizardFrame.dispose();
 				}
 				else {
 					setCurrentPanel( dest, true );
@@ -110,7 +117,14 @@ public class RundeckMonitorConfigurationWizard {
 		final ActionListener cancelListener = new ActionListener() {
 			@SuppressWarnings("synthetic-access")
 			public void actionPerformed( final ActionEvent e) {
-				System.exit( 0 );
+
+				if( exitOnClose ) {
+					System.exit( 0 );
+				}
+				else {
+					wizardFrame.setVisible( false );
+					wizardFrame.dispose();
+				}
 			}
 		};
 

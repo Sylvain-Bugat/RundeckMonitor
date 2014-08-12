@@ -352,7 +352,7 @@ public class RundeckMonitor implements Runnable {
 
 		//Launch the configuration wizard if there is no configuration file
 		if( ! RundeckMonitorConfiguration.propertiesFileExists() ) {
-			new RundeckMonitorConfigurationWizard( new RundeckMonitorConfiguration() );
+			new RundeckMonitorConfigurationWizard( new RundeckMonitorConfiguration(), true );
 		}
 
 		//Wait until the configuration file is created
@@ -453,7 +453,7 @@ public class RundeckMonitor implements Runnable {
 			//Date the current time and launch the configuration wizard
 			final Date systemDate = new Date();
 
-			new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration );
+			new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration, true );
 
 			//Wait until the configuration file is updated
 			boolean configurationFileUpdated = false;
