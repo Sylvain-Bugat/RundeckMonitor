@@ -80,6 +80,9 @@ public class RundeckMonitorTrayIcon {
 	/** Tray Icon menu*/
 	final JPopupMenu popupMenu;
 
+	/** Menu failed item listener*/
+	final ActionListener menuListener;
+
 	/**Date format to use for printing the Job start date*/
 	private final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
@@ -119,7 +122,7 @@ public class RundeckMonitorTrayIcon {
 			final Desktop desktop = Desktop.getDesktop();
 
 			//Action listener to get job execution detail on the rundeck URL
-			final ActionListener menuListener = new ActionListener() {
+			menuListener = new ActionListener() {
 				@SuppressWarnings("synthetic-access")
 				public void actionPerformed( final ActionEvent e) {
 
@@ -267,6 +270,7 @@ public class RundeckMonitorTrayIcon {
 			tray = null;
 			trayIcon = null;
 			popupMenu = null;
+			menuListener = null;
 
 			JOptionPane.showMessageDialog( null, "SystemTray cannot be initialized", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -355,18 +359,21 @@ public class RundeckMonitorTrayIcon {
 
 	public void reloadConfiguration() {
 
-		for( final JMenuItem jMenuItem : failedMenuItems.keySet() ) {
-			popupMenu.remove( jMenuItem );
+		//Remove all old failedMenuItems from the popup menu
+		for( final JMenuItem failedItem : failedMenuItems.keySet() ) {
+			popupMenu.remove( failedItem );
+			failedItem.removeActionListener( menuListener );
 		}
 
 		failedMenuItems.clear();
 
+		//Add all new menu items to the popup menu
 		for( int i = 0 ; i < rundeckMonitorConfiguration.getFailedJobNumber() ; i++ ){
 
 			final JMenuItem failedItem = new JMenuItem();
 			failedMenuItems.put( failedItem, null );
 			popupMenu.insert( failedItem, i );
-			//failedItem.addActionListener( menuListener );
+			failedItem.addActionListener( menuListener );
 		}
 
 		newLateProcess.clear();
