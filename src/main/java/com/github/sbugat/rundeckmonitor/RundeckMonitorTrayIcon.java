@@ -33,6 +33,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
 /**
  * Tray icon management class
@@ -75,6 +76,9 @@ public class RundeckMonitorTrayIcon {
 
 	/** Task bar tray icon*/
 	private final TrayIcon trayIcon;
+
+	/** Tray Icon menu*/
+	final JPopupMenu popupMenu;
 
 	/**Date format to use for printing the Job start date*/
 	private final RundeckMonitorConfiguration rundeckMonitorConfiguration;
@@ -136,6 +140,7 @@ public class RundeckMonitorTrayIcon {
 					}
 				}
 			};
+
 			//Alert reset of the failed jobs state
 			final ActionListener reinitListener = new ActionListener() {
 				@SuppressWarnings("synthetic-access")
@@ -157,6 +162,15 @@ public class RundeckMonitorTrayIcon {
 					updateTrayIcon();
 				}
 			};
+
+			//Edit configuration listener
+			final ActionListener configurationListener = new ActionListener() {
+				@SuppressWarnings("synthetic-access")
+				public void actionPerformed( final ActionEvent e) {
+					new RundeckMonitorConfigurationWizard( new RundeckMonitorConfiguration( rundeckMonitorConfiguration ) );
+				}
+			};
+
 			//Rundeck monitor about
 			final ActionListener aboutListener = new ActionListener() {
 				@SuppressWarnings("synthetic-access")
@@ -190,7 +204,7 @@ public class RundeckMonitorTrayIcon {
 			//Popup menu
 			//SystemLookAndFeel
 			JPopupMenu.setDefaultLightWeightPopupEnabled( true );
-			final JPopupMenu popupMenu = new JPopupMenu();
+			popupMenu = new JPopupMenu();
 
 			for( int i = 0 ; i < rundeckMonitorConfiguration.getFailedJobNumber() ; i++ ){
 
@@ -201,12 +215,23 @@ public class RundeckMonitorTrayIcon {
 			}
 
 			popupMenu.addSeparator();
+
 			final JMenuItem reinitItem = new JMenuItem( "Reset alert" ); //$NON-NLS-1$
 			popupMenu.add( reinitItem );
+
+			popupMenu.addSeparator();
+
 			reinitItem.addActionListener( reinitListener );
 			final JMenuItem aboutItem = new JMenuItem( "About RundeckMonitor" ); //$NON-NLS-1$
 			popupMenu.add( aboutItem );
+
 			aboutItem.addActionListener( aboutListener );
+			final JMenuItem configurationItem = new JMenuItem( "Edit configuration" ); //$NON-NLS-1$
+			popupMenu.add( configurationItem );
+			configurationItem.addActionListener( configurationListener );
+
+			popupMenu.addSeparator();
+
 			final JMenuItem exitItem = new JMenuItem( "Quit" ); //$NON-NLS-1$
 			popupMenu.add( exitItem );
 			exitItem.addActionListener( exitListener );
@@ -241,6 +266,7 @@ public class RundeckMonitorTrayIcon {
 			//if the System is not compatible with SystemTray
 			tray = null;
 			trayIcon = null;
+			popupMenu = null;
 
 			JOptionPane.showMessageDialog( null, "SystemTray cannot be initialized", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -325,6 +351,26 @@ public class RundeckMonitorTrayIcon {
 		else {
 			trayIcon.setImage( IMAGE_OK );
 		}
+	}
+
+	public void reloadConfiguration() {
+
+		for( final JMenuItem jMenuItem : failedMenuItems.keySet() ) {
+			popupMenu.remove( jMenuItem );
+		}
+
+		failedMenuItems.clear();
+
+		for( int i = 0 ; i < rundeckMonitorConfiguration.getFailedJobNumber() ; i++ ){
+
+			final JMenuItem failedItem = new JMenuItem();
+			failedMenuItems.put( failedItem, null );
+			popupMenu.insert( failedItem, i );
+			//failedItem.addActionListener( menuListener );
+		}
+
+		newLateProcess.clear();
+		newFailedProcess.clear();
 	}
 
 	/**

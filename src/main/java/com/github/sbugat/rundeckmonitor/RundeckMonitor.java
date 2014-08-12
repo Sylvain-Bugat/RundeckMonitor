@@ -43,10 +43,10 @@ public class RundeckMonitor implements Runnable {
 	private final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
 	/**Time zone difference between local machine and rundeck server to correctly detect late execution*/
-	private final long dateDelta;
+	private long dateDelta;
 
 	/**Rundeck client API used to interact with rundeck rest API*/
-	private final RundeckClient rundeckClient;
+	private RundeckClient rundeckClient;
 
 	/**Tray icon and his menu for updating jobs and state displayed*/
 	private final RundeckMonitorTrayIcon rundeckMonitorTrayIcon;
@@ -125,13 +125,105 @@ public class RundeckMonitor implements Runnable {
 		versionChecker.cleanOldAndTemporaryJar();
 	}
 
+	public void reloadConfiguration() throws IOException, MissingPropertyException, InvalidPropertyException {
+
+		//Configuration checking
+		rundeckMonitorConfiguration.loadConfigurationPropertieFile();
+		rundeckMonitorConfiguration.verifyConfiguration();
+
+		//Initialize the client builder with token  or login/password authentication
+		final RundeckClientBuilder rundeckClientBuilder;
+		final String rundeckAPIKey = rundeckMonitorConfiguration.getRundeckAPIKey();
+		final String rundeckUrl = rundeckMonitorConfiguration.getRundeckUrl();
+		if( null != rundeckAPIKey && ! rundeckAPIKey.isEmpty() ) {
+			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckAPIKey );
+		}
+		else {
+			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
+		}
+
+		//Initialize the rundeck client with or without version
+		final String rundeckAPIVersion= rundeckMonitorConfiguration.getRundeckAPIversion();
+		if( null != rundeckAPIVersion && ! rundeckAPIVersion.isEmpty() ) {
+			rundeckClient = rundeckClientBuilder.version( Integer.parseInt( rundeckAPIVersion ) ).build();
+		}
+		else {
+			rundeckClient = rundeckClientBuilder.build();
+		}
+
+		//Test authentication credentials
+		rundeckClient.testAuth();
+
+		//Check if the configured project exists
+		boolean existingProject = false;
+		for( final RundeckProject rundeckProject: rundeckClient.getProjects() ) {
+
+			if( rundeckMonitorConfiguration.getRundeckProject().equals( rundeckProject.getName() ) ) {
+				existingProject = true;
+				break;
+			}
+		}
+
+		if( ! existingProject ) {
+			JOptionPane.showMessageDialog( null, "Invalid rundeck project," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + '=' + rundeckMonitorConfiguration.getRundeckProject() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			System.exit( 1 );
+		}
+
+		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
+		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
+
+		//Reinit monitor state
+		rundeckMonitorState.setFailedJobs( false );
+		rundeckMonitorState.setLateJobs( false );
+		rundeckMonitorState.setDisconnected( false );
+
+		//Initialize and update the rundeck monitor failed/late jobs
+		updateRundeckHistory( true );
+	}
+
+
+	private boolean checkNewConfiguration( final Date lastConfigurationUpdateDate ) {
+
+		try {
+			if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationUpdateDate ) ) {
+
+				//reload the configuration
+				try {
+					reloadConfiguration();
+					rundeckMonitorTrayIcon.reloadConfiguration();
+					return true;
+				}
+				catch( final MissingPropertyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch( final InvalidPropertyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		catch( final IOException e) {
+			//Ignore configuration checking and loading error
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * RundeckMonitor background process method executing the main loop
 	 */
 	public void run() {
 
+		Date lastConfigurationUpdateDate = new Date();
+
 		while( true ){
 			try {
+
+				if( checkNewConfiguration( lastConfigurationUpdateDate ) ) {
+					lastConfigurationUpdateDate = new Date();
+				}
 
 				//
 				updateRundeckHistory( false );
