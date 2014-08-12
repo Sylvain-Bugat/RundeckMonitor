@@ -21,7 +21,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	final JTextField rundeckMonitorName = new JTextField( 20 );
 	final JComboBox<RefreshDelay> rundeckMonitorRefreshDelay = new JComboBox<>();
 	final JComboBox<LateExecutionThreshold> rundeckMonitorLateExecutionThreshold = new JComboBox<>();
-	final JComboBox<Integer> rundeckMonitorFailedJobNumber = new JComboBox<>();
+	final JComboBox<FailedJobsNumber> rundeckMonitorFailedJobNumber = new JComboBox<>();
 	final JComboBox<DateFormat> rundeckMonitorDateFormat = new JComboBox<>();
 
 	public MonitorConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
@@ -74,28 +74,21 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			rundeckMonitorLateExecutionThreshold.setSelectedItem( LateExecutionThreshold.LATE_EXECUTION_THRESHOLD_30M );
 		}
 
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 5 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 6 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 7 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 8 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 9 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 10 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 11 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 12 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 13 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 14 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 15 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 16 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 17 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 18 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 19 ) );
-		rundeckMonitorFailedJobNumber.addItem( Integer.valueOf( 20 ) );
 
-		if( rundeckMonitorConfiguration.getFailedJobNumber() >=5 && rundeckMonitorConfiguration.getFailedJobNumber() <= 20 ) {
-			rundeckMonitorFailedJobNumber.setSelectedItem( Integer.valueOf( rundeckMonitorConfiguration.getFailedJobNumber() ) );
+		FailedJobsNumber oldFailedJobsNumber = null;
+		for( final FailedJobsNumber failedJobsNumber : FailedJobsNumber.values() ) {
+
+			rundeckMonitorFailedJobNumber.addItem( failedJobsNumber );
+			if( failedJobsNumber.getFailedJobsNumber() == rundeckMonitorConfiguration.getFailedJobNumber() ) {
+				oldFailedJobsNumber = failedJobsNumber;
+			}
+		}
+
+		if( null != oldFailedJobsNumber ) {
+			rundeckMonitorFailedJobNumber.setSelectedItem( oldFailedJobsNumber );
 		}
 		else {
-			rundeckMonitorFailedJobNumber.setSelectedItem( Integer.valueOf( 10 ) );
+			rundeckMonitorFailedJobNumber.setSelectedItem( FailedJobsNumber.FAILED_JOBS_10 );
 		}
 
 		DateFormat oldDateFormat = null;
@@ -166,7 +159,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		rundeckMonitorConfiguration.setRundeckMonitorName( rundeckMonitorName.getText() );
 		rundeckMonitorConfiguration.setRefreshDelay( rundeckMonitorRefreshDelay.getItemAt( rundeckMonitorRefreshDelay.getSelectedIndex() ).getDelay() );
 		rundeckMonitorConfiguration.setLateThreshold( rundeckMonitorLateExecutionThreshold.getItemAt( rundeckMonitorLateExecutionThreshold.getSelectedIndex() ).getThreshold() );
-		rundeckMonitorConfiguration.setFailedJobNumber( rundeckMonitorFailedJobNumber.getItemAt( rundeckMonitorFailedJobNumber.getSelectedIndex() ) );
+		rundeckMonitorConfiguration.setFailedJobNumber( rundeckMonitorFailedJobNumber.getItemAt( rundeckMonitorFailedJobNumber.getSelectedIndex() ).getFailedJobsNumber() );
 		rundeckMonitorConfiguration.setDateFormat( rundeckMonitorDateFormat.getItemAt( rundeckMonitorDateFormat.getSelectedIndex() ).getDateFormat() );
 
 		try {
