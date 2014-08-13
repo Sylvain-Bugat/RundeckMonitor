@@ -32,13 +32,9 @@ Failed and long  jobs list can be clicked in order to see the rundeck execution 
 
 ***
 
-## Manual configuration
+## Manual/custom configuration
 
-Clone the master repository with this command:
-
-	git clone https://github.com/Sylvain-Bugat/RundeckMonitor.git
-
-And edit the sample configuration file `rundeckMonitor.properties` in the `target\` directory and configure these parameters:  
+Edit the configuration file creatd by the wizard or copy and edit the sample configuration file `rundeckMonitor.properties` from the master `target\` directory and change these parameters:  
 
 ### Rundeck project parameters
 
@@ -94,3 +90,14 @@ Date format of the failed jobs in the popup menu
 Optional rundeck rest API version to use (11 cannot be used yet because of https://github.com/rundeck/rundeck-api-java-client/pull/12)
 
 ***
+
+## Compile and build
+
+Clone the master repository with this command:
+
+	git clone https://github.com/Sylvain-Bugat/RundeckMonitor.git
+
+Build target jars with this command:
+
+	mvn clean install
+
