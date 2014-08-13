@@ -29,7 +29,7 @@
 		<github.client>3.4.0.201406110918-r</github.client>
 
 		<!-- Google GSON -->
-		<gson.client>2.2.4</gson.client>
+		<gson.client>2.3</gson.client>
 
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>2.5</maven.pluginclean.version>
