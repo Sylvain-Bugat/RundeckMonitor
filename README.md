@@ -8,11 +8,11 @@ System tray icon tools that indicates failed rundeck jobs and jobs running for a
 
 ## Installation
 
-Download the latest jar release at this URL: https://github.com/Sylvain-Bugat/RundeckMonitor/releases
+Download the latest jar release at this URL: https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest
 
 ## Launch and configuration
 
-Just execute this jar file: `rundeck-monitor-1.3-SNAPSHOT-jar-with-dependencies.jar`.
+Just execute the downloaded jar file: `rundeck-monitor-1.3-jar-with-dependencies.jar`.
 
 And if no configuration file is found, a basic configuration wizard is launched.
 
