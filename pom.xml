@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<prerequisites>
-		<maven>3.0.3</maven>
+		<maven>2.2.1</maven>
 	</prerequisites>
 
 	<modelVersion>4.0.0</modelVersion>
