@@ -1,5 +1,11 @@
 package com.github.sbugat.rundeckmonitor.wizard;
 
+/**
+ * Possible value of possible failed and late jobs numbers for the wizard
+ *
+ * @author Sylvain Bugat
+ *
+ */
 public enum FailedJobsNumber {
 
 	FAILED_JOBS_5( 5 ),
@@ -19,6 +25,7 @@ public enum FailedJobsNumber {
 	FAILED_JOBS_19( 19 ),
 	FAILED_JOBS_20( 20 );
 
+	/**Number of failed/late jobs to display*/
 	private final int failedJobsNumber;
 
 	private FailedJobsNumber( final int failedJobsNumberArg ) {

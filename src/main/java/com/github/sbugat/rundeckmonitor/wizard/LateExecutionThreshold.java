@@ -1,5 +1,11 @@
 package com.github.sbugat.rundeckmonitor.wizard;
 
+/**
+ * Possible value of the late execution threshold for the wizard
+ *
+ * @author Sylvain Bugat
+ *
+ */
 public enum LateExecutionThreshold {
 
 	LATE_EXECUTION_THRESHOLD_5M( 300, "5 minutes" ), //$NON-NLS-1$
@@ -11,7 +17,9 @@ public enum LateExecutionThreshold {
 	LATE_EXECUTION_THRESHOLD_1H( 3600, "1 hour" ), //$NON-NLS-1$
 	LATE_EXECUTION_THRESHOLD_2H( 7200, "2 hours" ); //$NON-NLS-1$
 
+	/**Late execution threshold*/
 	private final int threshold;
+	/**Transalation in minutes/hours of the late execution threshold*/
 	private final String description;
 
 	private LateExecutionThreshold( final int thresholdArg, final String descriptionArg ) {

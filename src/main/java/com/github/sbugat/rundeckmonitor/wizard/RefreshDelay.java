@@ -1,5 +1,11 @@
 package com.github.sbugat.rundeckmonitor.wizard;
 
+/**
+ * Possible value of the refresh delay for the wizard
+ *
+ * @author Sylvain Bugat
+ *
+ */
 public enum RefreshDelay {
 
 	REFRESH_DELAY_10S( 10, "10 seconds" ), //$NON-NLS-1$
@@ -9,7 +15,9 @@ public enum RefreshDelay {
 	REFRESH_DELAY_5M( 300, "5 minutes" ), //$NON-NLS-1$
 	REFRESH_DELAY_10M( 600, "10 minutes" ); //$NON-NLS-1$
 
+	/**Refresh delay*/
 	private final Integer delay;
+	/**Translation in seconds/minutes of the delay*/
 	private final String description;
 
 	private RefreshDelay( final int delayArg, final String descriptionArg ) {
