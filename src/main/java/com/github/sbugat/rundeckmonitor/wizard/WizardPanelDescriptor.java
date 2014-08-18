@@ -4,6 +4,12 @@ import java.awt.Component;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 
+/**
+ * Generic wizard panel with a next and previous step
+ *
+ * @author Sylvain bugat
+ *
+ */
 public abstract class WizardPanelDescriptor {
 
 	private final ConfigurationWizardStep panelIdentifier;
@@ -27,18 +33,33 @@ public abstract class WizardPanelDescriptor {
 		return panelIdentifier;
 	}
 
+	/**
+	 * Return the next wizard panel or null
+	 * @return
+	 */
 	public ConfigurationWizardStep getNext() {
 		return next;
 	}
 
+	/**
+	 * Return the previous wizard panel or null
+	 */
 	public ConfigurationWizardStep getBack() {
 		return back;
 	}
 
+	/**
+	 * Method called before diplaying a panel for dynamic content update
+	 */
 	public void aboutToDisplayPanel() {
 		//Default: nothing to do
 	}
 
+	/**
+	 * Default method to validate the wizard step, default return true
+	 *
+	 * @return true by default
+	 */
 	public boolean validate() {
 		//Default: return OK
 		return true;

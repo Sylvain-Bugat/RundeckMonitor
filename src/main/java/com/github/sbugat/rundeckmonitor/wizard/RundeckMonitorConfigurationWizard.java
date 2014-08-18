@@ -18,6 +18,12 @@ import javax.swing.border.EmptyBorder;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 
+/**
+ * Class of the configuration Wizard
+ *
+ * @author Sylvain Bugat
+ *
+ */
 public class RundeckMonitorConfigurationWizard {
 
 	private static final String WIZARD_FRAME_TITLE = "RundeckMonitor configuration wizard"; //$NON-NLS-1$
@@ -35,7 +41,9 @@ public class RundeckMonitorConfigurationWizard {
 	private JPanel cardPanel;
 	private CardLayout cardLayout;
 
+	/**Back/previous step button of the wizard*/
 	private JButton backButton;
+	/**Next step button of the wizard*/
 	private JButton nextButton;
 
 	public RundeckMonitorConfigurationWizard( final RundeckMonitorConfiguration rundeckMonitorConfiguration, final boolean exitOnClose ) {
