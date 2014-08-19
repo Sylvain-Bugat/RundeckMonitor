@@ -147,7 +147,7 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		}
 
 		rundeckMonitorConfiguration.setRundeckProject( rundeckProjectNameTextField.getItemAt( rundeckProjectNameTextField.getSelectedIndex() ) );
-		rundeckMonitorConfiguration.setRundeckAPIversion( String.valueOf( rundeckRundeckAPIVersionTextField.getItemAt( rundeckRundeckAPIVersionTextField.getSelectedIndex() ).getVersionNumber() ) );
+		rundeckMonitorConfiguration.setRundeckAPIversion( rundeckRundeckAPIVersionTextField.getItemAt( rundeckRundeckAPIVersionTextField.getSelectedIndex() ).getVersionNumber() );
 
 		return true;
 	}

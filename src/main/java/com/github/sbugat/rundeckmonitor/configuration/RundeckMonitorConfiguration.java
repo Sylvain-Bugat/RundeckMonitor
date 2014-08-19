@@ -39,7 +39,7 @@ public class RundeckMonitorConfiguration {
 	private static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT = "rundeck.monitor.date.format"; //$NON-NLS-1$
 	public static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
-	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = "10"; //$NON-NLS-1$
+	private static final int RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = 10;
 
 	private String rundeckUrl;
 
@@ -64,7 +64,7 @@ public class RundeckMonitorConfiguration {
 
 	private String dateFormat;
 
-	private String rundeckAPIversion;
+	private int rundeckAPIversion;
 
 	public RundeckMonitorConfiguration() {
 		//Nothing to initialize
@@ -123,7 +123,7 @@ public class RundeckMonitorConfiguration {
 		lateThreshold = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD, RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD_DEFAULT_VALUE );
 		failedJobNumber = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE );
 		dateFormat = properties.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
-		rundeckAPIversion = properties.getProperty( RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
+		rundeckAPIversion = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
 	}
 
 	/**
@@ -202,7 +202,7 @@ public class RundeckMonitorConfiguration {
 		properties.put( RUNDECK_MONITOR_PROPERTY_EXECUTION_LATE_THRESHOLD, String.valueOf( lateThreshold ) );
 		properties.put( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, String.valueOf( failedJobNumber ) );
 		properties.put( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, dateFormat );
-		properties.put( RUNDECK_MONITOR_PROPERTY_API_VERSION, rundeckAPIversion );
+		properties.put( RUNDECK_MONITOR_PROPERTY_API_VERSION, String.valueOf( rundeckAPIversion ) );
 
 		//Comment header
 		final StringBuilder commentStringBuilder = new StringBuilder();
@@ -283,51 +283,51 @@ public class RundeckMonitorConfiguration {
 		return dateFormat;
 	}
 
-	public String getRundeckAPIversion() {
+	public int getRundeckAPIversion() {
 		return rundeckAPIversion;
 	}
 
-	public void setRundeckUrl(String rundeckUrl) {
+	public void setRundeckUrl( final String rundeckUrl ) {
 		this.rundeckUrl = rundeckUrl;
 	}
 
-	public void setRundeckAPIKey(String rundeckPIKey) {
+	public void setRundeckAPIKey( final String rundeckPIKey ) {
 		this.rundeckAPIKey = rundeckPIKey;
 	}
 
-	public void setRundeckLogin(String rundeckLogin) {
+	public void setRundeckLogin( final String rundeckLogin ) {
 		this.rundeckLogin = rundeckLogin;
 	}
 
-	public void setRundeckPassword(String rundeckPassword) {
+	public void setRundeckPassword( final String rundeckPassword ) {
 		this.rundeckPassword = rundeckPassword;
 	}
 
-	public void setRundeckProject(String rundeckProject) {
+	public void setRundeckProject( final String rundeckProject ) {
 		this.rundeckProject = rundeckProject;
 	}
 
-	public void setRundeckMonitorName(String rundeckMonitorName) {
+	public void setRundeckMonitorName( final String rundeckMonitorName ) {
 		this.rundeckMonitorName = rundeckMonitorName;
 	}
 
-	public void setRefreshDelay(int refreshDelay) {
+	public void setRefreshDelay( final int refreshDelay ) {
 		this.refreshDelay = refreshDelay;
 	}
 
-	public void setLateThreshold(int lateThreshold) {
+	public void setLateThreshold( final int lateThreshold ) {
 		this.lateThreshold = lateThreshold;
 	}
 
-	public void setFailedJobNumber(int failedJobNumber) {
+	public void setFailedJobNumber( final int failedJobNumber ) {
 		this.failedJobNumber = failedJobNumber;
 	}
 
-	public void setDateFormat(String dateFormat) {
+	public void setDateFormat( final String dateFormat ) {
 		this.dateFormat = dateFormat;
 	}
 
-	public void setRundeckAPIversion(String rundeckAPIversion) {
+	public void setRundeckAPIversion( final int rundeckAPIversion ) {
 		this.rundeckAPIversion = rundeckAPIversion;
 	}
 }
