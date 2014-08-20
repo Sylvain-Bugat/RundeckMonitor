@@ -9,7 +9,7 @@
 	<groupId>com.github.sbugat</groupId>
 	<artifactId>rundeck-monitor</artifactId>
 	<packaging>jar</packaging>
-	<version>1.4-SNAPSHOT</version>
+	<version>1.4</version>
 	<name>Rundeck monitor</name>
 
 	<!-- Global properties -->
