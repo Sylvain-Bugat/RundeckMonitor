@@ -378,6 +378,8 @@ public class RundeckMonitorTrayIcon {
 
 		newLateProcess.clear();
 		newFailedProcess.clear();
+
+		trayIcon.setToolTip( rundeckMonitorConfiguration.getRundeckMonitorName() );
 	}
 
 	/**
