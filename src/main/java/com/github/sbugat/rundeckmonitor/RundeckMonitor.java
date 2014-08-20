@@ -197,7 +197,7 @@ public class RundeckMonitor implements Runnable {
 							rundeckMonitorState.setDisconnected( true );
 							rundeckMonitorTrayIcon.updateTrayIcon();
 
-							if( handleStartupException( e ) ) {
+							if( handleStartupException( e, false ) ) {
 
 								new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration, true );
 								lastConfigurationDate = new Date();
@@ -365,9 +365,10 @@ public class RundeckMonitor implements Runnable {
 	 * Rundeck launcher exception handler, display an error message based on the argument exception
 	 *
 	 * @param exception exception to analyze
+	 * @param initialization indicate if the tray icon is not loaded yet
 	 * @return true if the wizard needs to be launched
 	 */
-	private static boolean handleStartupException( final Exception exception ) {
+	private static boolean handleStartupException( final Exception exception, final boolean initialization ) {
 
 		final String errorMessage;
 
@@ -413,7 +414,15 @@ public class RundeckMonitor implements Runnable {
 
 		//Show a dialog with edit configuration option
 		final Object[] options = { "Exit", "Edit configuration" }; //$NON-NLS-1$ //$NON-NLS-2$
-		final int errorUserReturn = JOptionPane.showOptionDialog( null, errorMessage, "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$
+
+		final int errorUserReturn;
+		if( initialization ) {
+			errorUserReturn = JOptionPane.showOptionDialog( null, errorMessage, "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$
+		}
+		else {
+			errorUserReturn = JOptionPane.showOptionDialog( null, errorMessage, "RundeckMonitor reload configuration error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$
+		}
+
 		if( JOptionPane.NO_OPTION == errorUserReturn ) {
 
 			return true;
@@ -472,7 +481,7 @@ public class RundeckMonitor implements Runnable {
 			}
 			catch ( final Exception e ) {
 
-				if( ! handleStartupException( e ) ) {
+				if( ! handleStartupException( e, true ) ) {
 					System.exit( 1 );
 				}
 			}
