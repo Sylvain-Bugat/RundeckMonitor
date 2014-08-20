@@ -3,7 +3,6 @@ package com.github.sbugat.rundeckmonitor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -12,8 +11,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.rundeck.api.RundeckApiException;
-import org.rundeck.api.RundeckApiException.RundeckApiHttpStatusException;
 import org.rundeck.api.RundeckApiException.RundeckApiLoginException;
 import org.rundeck.api.RundeckApiException.RundeckApiTokenException;
 import org.rundeck.api.RundeckClient;
@@ -172,21 +169,52 @@ public class RundeckMonitor implements Runnable {
 
 	private boolean checkNewConfiguration( final Date lastConfigurationUpdateDate ) {
 
+		Date lastConfigurationDate = lastConfigurationUpdateDate;
 		try {
-			if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationUpdateDate ) ) {
 
-				//reload the configuration
-				try {
-					reloadConfiguration();
-					rundeckMonitorTrayIcon.reloadConfiguration();
-					return true;
-				}
-				catch( final Exception e) {
+			if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationDate ) ) {
 
-					if( handleStartupException( e, true ) ) {
+				//Wait until configuration is reloaded or exit
+				while( true ) {
 
-						new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration, true );
-						//TODO block another wizard/error when configuration is not loaded
+					if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationDate ) ) {
+						//reload the configuration
+						try {
+							reloadConfiguration();
+							rundeckMonitorTrayIcon.reloadConfiguration();
+
+							//Set the tray icon as reconnected
+							rundeckMonitorState.setDisconnected( false );
+							rundeckMonitorTrayIcon.updateTrayIcon();
+							return true;
+						}
+						catch( final Exception e) {
+
+							//Set the tray icon as disconnected
+							rundeckMonitorState.setDisconnected( true );
+							rundeckMonitorTrayIcon.updateTrayIcon();
+
+							if( handleStartupException( e, true ) ) {
+
+								new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration, true );
+								lastConfigurationDate = new Date();
+							}
+							//Dispose tray icon and exit
+							else {
+								rundeckMonitorTrayIcon.disposeTrayIcon();
+								System.exit( 1 );
+							}
+						}
+					}
+
+					//Wait 1s
+					try {
+
+						Thread.sleep( 1000 );
+					}
+					catch ( final InterruptedException e1) {
+
+						//Nothing to do
 					}
 				}
 			}
@@ -213,7 +241,7 @@ public class RundeckMonitor implements Runnable {
 					lastConfigurationUpdateDate = new Date();
 				}
 
-				//
+				//Update the tray icon menu
 				updateRundeckHistory( false );
 
 				if( versionChecker.isDownloadDone() ) {
@@ -332,8 +360,6 @@ public class RundeckMonitor implements Runnable {
 
 	private static boolean handleStartupException( final Exception e, final boolean editConfiguration ) {
 
-
-
 		final String errorMessage;
 
 		//Loading properties exceptions
@@ -393,16 +419,16 @@ public class RundeckMonitor implements Runnable {
 		if( editConfiguration ) {
 			final Object[] options = { "Exit", "Edit configuration" }; //$NON-NLS-1$ //$NON-NLS-2$
 			final int errorUserReturn = JOptionPane.showOptionDialog( null, errorMessage, "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$
-			if( JOptionPane.YES_OPTION == errorUserReturn ) {
+			if( JOptionPane.NO_OPTION == errorUserReturn ) {
 
-				return false;
+				return true;
 			}
 		}
 		else {
 			JOptionPane.showMessageDialog( null, errorMessage, "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE );  //$NON-NLS-1$
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
@@ -411,7 +437,7 @@ public class RundeckMonitor implements Runnable {
 	 * @param args program arguments: none is expected and used
 	 * @throws InterruptedException
 	 */
-	public static void main( final String args[] ) /*throws InterruptedException*/{
+	public static void main( final String args[] ) {
 
 		//Launch the configuration wizard if there is no configuration file
 		if( ! RundeckMonitorConfiguration.propertiesFileExists() ) {
@@ -474,7 +500,7 @@ public class RundeckMonitor implements Runnable {
 					configurationFileUpdated = RundeckMonitorConfiguration.propertiesFileUpdated( systemDate );
 				}
 				catch( final IOException | InterruptedException e ) {
-					//Ignore these error
+					//Ignore these errors
 				}
 			}
 		}
