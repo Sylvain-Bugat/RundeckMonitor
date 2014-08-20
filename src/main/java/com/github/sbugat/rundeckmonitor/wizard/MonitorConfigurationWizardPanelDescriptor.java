@@ -35,7 +35,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		final JLabel rundeckMonitorDateFormatLabel = new JLabel( "Failed/late jobs displayed date format:" ); //$NON-NLS-1$
 
 		//Fields initialization
-		if( rundeckMonitorConfiguration.getRundeckMonitorName().isEmpty() ) {
+		if( null != rundeckMonitorConfiguration.getRundeckMonitorName() && rundeckMonitorConfiguration.getRundeckMonitorName().isEmpty() ) {
 			rundeckMonitorName.setText( RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE );
 		}
 		else {
