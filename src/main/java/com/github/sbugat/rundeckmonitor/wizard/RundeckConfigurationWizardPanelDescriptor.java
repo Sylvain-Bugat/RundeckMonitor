@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import org.rundeck.api.RundeckApiException;
 import org.rundeck.api.RundeckApiException.RundeckApiLoginException;
 import org.rundeck.api.RundeckClient;
+import org.rundeck.api.RundeckClient.Version;
 import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.RundeckApiException.RundeckApiTokenException;
 
@@ -128,7 +129,7 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		}
 
 		//Initialize the rundeck client
-		final RundeckClient rundeckClient = rundeckClientBuilder.build();
+		final RundeckClient rundeckClient = rundeckClientBuilder.version( Version.V5 ).build();
 
 		//Test connection
 		try {

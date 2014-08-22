@@ -124,8 +124,10 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
 		}
 
+		final Version apiVersion = rundeckRundeckAPIVersionTextField.getItemAt( rundeckRundeckAPIVersionTextField.getSelectedIndex() );
+
 		//Initialize the rundeck client
-		final RundeckClient rundeckClient = rundeckClientBuilder.build();
+		final RundeckClient rundeckClient = rundeckClientBuilder.version( apiVersion ).build();
 
 		//Test authentication credentials
 		rundeckClient.ping();
