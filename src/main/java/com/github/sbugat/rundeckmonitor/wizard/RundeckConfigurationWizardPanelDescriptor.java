@@ -128,8 +128,8 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckLoginTextField.getText(), rundeckPasswordTextField.getText() );
 		}
 
-		//Initialize the rundeck client
-		final RundeckClient rundeckClient = rundeckClientBuilder.version( Version.V5 ).build();
+		//Initialize the rundeck client with minimal rundeck version (1)
+		final RundeckClient rundeckClient = rundeckClientBuilder.version( 1 ).build();
 
 		//Test connection
 		try {
