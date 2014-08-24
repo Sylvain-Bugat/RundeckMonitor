@@ -99,7 +99,7 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 
 			rundeckRundeckAPIVersionTextField.addItem( version );
 
-			if( String.valueOf( version.getVersionNumber() ).equals( rundeckMonitorConfiguration.getRundeckAPIversion() ) ) {
+			if( version.getVersionNumber() == rundeckMonitorConfiguration.getRundeckAPIversion() ) {
 
 				oldApiVersion = version;
 			}
