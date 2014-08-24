@@ -24,7 +24,7 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 
 	final JComboBox<String> rundeckProjectNameTextField = new JComboBox<>();
 
-	final JComboBox<Version> rundeckRundeckAPIVersionTextField = new JComboBox<>();
+	final JComboBox<RundeckAPIVersion> rundeckRundeckAPIVersionTextField = new JComboBox<>();
 
 	public ProjectConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
@@ -93,23 +93,30 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			rundeckProjectNameTextField.setSelectedItem( rundeckMonitorConfiguration.getRundeckProject() );
 		}
 
+		final String rundeckVersion = rundeckClient.getSystemInfo().getVersion();
+
 		rundeckRundeckAPIVersionTextField.removeAllItems();
-		Version oldApiVersion = null;
-		for( final Version version : Version.values() ) {
+		RundeckAPIVersion oldApiVersion = null;
+		for( final RundeckAPIVersion version : RundeckAPIVersion.values() ) {
 
-			rundeckRundeckAPIVersionTextField.addItem( version );
+			if( rundeckVersion.compareTo( version.getSinceReturnVersion() ) >= 0  ) {
+				rundeckRundeckAPIVersionTextField.addItem( version );
 
-			if( version.getVersionNumber() == rundeckMonitorConfiguration.getRundeckAPIversion() ) {
+				if( rundeckMonitorConfiguration.getRundeckAPIversion() > 0 ) {
+					if( version.getVersion().getVersionNumber() == rundeckMonitorConfiguration.getRundeckAPIversion() ) {
 
-				oldApiVersion = version;
+						oldApiVersion = version;
+					}
+				}
+				else if( version.getVersion().getVersionNumber() <= 10 ){
+
+					oldApiVersion = version;
+				}
 			}
 		}
 
 		if( null != oldApiVersion ) {
 			rundeckRundeckAPIVersionTextField.setSelectedItem( oldApiVersion );
-		}
-		else {
-			rundeckRundeckAPIVersionTextField.setSelectedItem( Version.V10 );
 		}
 	}
 
@@ -124,10 +131,10 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
 		}
 
-		final Version apiVersion = rundeckRundeckAPIVersionTextField.getItemAt( rundeckRundeckAPIVersionTextField.getSelectedIndex() );
+		final RundeckAPIVersion apiVersion = rundeckRundeckAPIVersionTextField.getItemAt( rundeckRundeckAPIVersionTextField.getSelectedIndex() );
 
 		//Initialize the rundeck client
-		final RundeckClient rundeckClient = rundeckClientBuilder.version( apiVersion ).build();
+		final RundeckClient rundeckClient = rundeckClientBuilder.version( apiVersion.getVersion() ).build();
 
 		//Test authentication credentials
 		rundeckClient.ping();
@@ -149,7 +156,7 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		}
 
 		rundeckMonitorConfiguration.setRundeckProject( rundeckProjectNameTextField.getItemAt( rundeckProjectNameTextField.getSelectedIndex() ) );
-		rundeckMonitorConfiguration.setRundeckAPIversion( rundeckRundeckAPIVersionTextField.getItemAt( rundeckRundeckAPIVersionTextField.getSelectedIndex() ).getVersionNumber() );
+		rundeckMonitorConfiguration.setRundeckAPIversion( rundeckRundeckAPIVersionTextField.getItemAt( rundeckRundeckAPIVersionTextField.getSelectedIndex() ).getVersion().getVersionNumber() );
 
 		return true;
 	}
