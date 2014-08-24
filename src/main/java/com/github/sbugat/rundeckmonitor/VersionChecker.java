@@ -93,7 +93,6 @@ public class VersionChecker implements Runnable{
 		try {
 
 			final GitHubClient gitHubClient = new GitHubClient();
-			gitHubClient.setOAuth2Token("511db316ad182b0599137157499a28b3deb7f5ae");
 
 			final RepositoryService rs = new RepositoryService( gitHubClient );
 			final Repository repository = rs.getRepository( gitHubUser, gitHubRepository );
