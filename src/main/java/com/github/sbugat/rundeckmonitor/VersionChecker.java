@@ -52,9 +52,6 @@ public class VersionChecker implements Runnable{
 
 	private final String jarWithDependenciesSuffix;
 
-	/**Maven directory where jar files are located*/
-	private final String repositoryJarDirectory;
-
 	/**Indicate if the download is completed*/
 	private boolean downloadDone;
 
@@ -63,18 +60,17 @@ public class VersionChecker implements Runnable{
 	/**
 	 * Initialize the version checker with jar artifact and suffixnames and path to GitHub
 	 *
+	 * @param gitHubUserArg
+	 * @param gitHubRepositoryArg
 	 * @param mavenArtifactIdArg
-	 * @param mavenVersion
-	 * @param mavenGroupIdArg
 	 * @param jarWithDependenciesSuffixArg
 	 */
-	public VersionChecker( final String gitHubUserArg, final String gitHubRepositoryArg, final String mavenArtifactIdArg, final String repositoryJarDirectoryArg, final String jarWithDependenciesSuffixArg ) {
+	public VersionChecker( final String gitHubUserArg, final String gitHubRepositoryArg, final String mavenArtifactIdArg, final String jarWithDependenciesSuffixArg ) {
 
 		gitHubUser = gitHubUserArg;
 		gitHubRepository = gitHubRepositoryArg;
 
 		mavenArtifactId = mavenArtifactIdArg;
-		repositoryJarDirectory = repositoryJarDirectoryArg;
 		jarWithDependenciesSuffix = jarWithDependenciesSuffixArg;
 	}
 
