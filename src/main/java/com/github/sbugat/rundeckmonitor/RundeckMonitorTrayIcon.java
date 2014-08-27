@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,6 +28,7 @@ import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -239,15 +242,36 @@ public class RundeckMonitorTrayIcon {
 			popupMenu.add( exitItem );
 			exitItem.addActionListener( exitListener );
 
+			final JDialog hiddenDialog = new JDialog ();
+			hiddenDialog.setSize( 10, 10 );
+
+			hiddenDialog.addWindowFocusListener(new WindowFocusListener () {
+
+				@Override
+				public void windowLostFocus ( final WindowEvent e ) {
+					hiddenDialog.setVisible( false );
+				}
+
+				@Override
+				public void windowGainedFocus ( final WindowEvent e ) {
+					//Nothing to do
+				}
+			});
+
 			//Add the icon  to the system tray
 			trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorConfiguration.getRundeckMonitorName() );
 			trayIcon.setImageAutoSize( true );
 
 			trayIcon.addMouseListener( new MouseAdapter() {
-				public void mouseReleased(MouseEvent e) {
+
+				public void mouseReleased( final MouseEvent e) {
+					System.out.println( e.getButton() );
 					if( e.isPopupTrigger() ) {
 						popupMenu.setLocation( e.getX(), e.getY() );
-						popupMenu.setInvoker( popupMenu );
+						hiddenDialog.setLocation( e.getX(), e.getY() );
+
+						popupMenu.setInvoker( hiddenDialog );
+						hiddenDialog.setVisible( true );
 						popupMenu.setVisible( true );
 					}
 				}
