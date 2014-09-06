@@ -11,6 +11,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import org.rundeck.api.RundeckClient;
+import org.rundeck.api.RundeckClientBuilder;
+
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 
 public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescriptor {
@@ -177,6 +180,43 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 
 	public void aboutToDisplayPanel() {
 
+		final RundeckClientBuilder rundeckClientBuilder;
+		final String rundeckUrl = rundeckMonitorConfiguration.getRundeckUrl();
+		if( ! rundeckMonitorConfiguration.getRundeckAPIKey().isEmpty() ) {
+			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckMonitorConfiguration.getRundeckAPIKey() );
+		}
+		else {
+			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
+		}
+
+		//Initialize the rundeck client with the minimal rundeck version (1)
+		final RundeckClient rundeckClient = rundeckClientBuilder.version(1).build();
+
+		//Test authentication credentials
+		rundeckClient.ping();
+		rundeckClient.testAuth();
+
+		final String rundeckVersion = rundeckClient.getSystemInfo().getVersion();
+
+		JobTabRedirection oldJobTabRedirection = null;
+		rundeckMonitorJobTabRedirection.removeAllItems();
+		for( final JobTabRedirection jobTabRedirection : JobTabRedirection.values() ) {
+
+			if( rundeckVersion.compareTo( jobTabRedirection.getSinceRundeckVersion() ) >= 0 ) {
+				rundeckMonitorJobTabRedirection.addItem( jobTabRedirection );
+
+				if( jobTabRedirection.name().equals( rundeckMonitorConfiguration.getJobTabRedirection() ) ) {
+					oldJobTabRedirection = jobTabRedirection;
+				}
+			}
+		}
+
+		if( null != oldJobTabRedirection ) {
+			rundeckMonitorJobTabRedirection.setSelectedItem( oldJobTabRedirection );
+		}
+		else {
+			rundeckMonitorJobTabRedirection.setSelectedItem( JobTabRedirection.SUMMARY );
+		}
 	}
 
 	public boolean validate() {
