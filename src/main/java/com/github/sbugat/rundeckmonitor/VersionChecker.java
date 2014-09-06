@@ -109,33 +109,8 @@ public class VersionChecker implements Runnable{
 				return;
 			}
 
-			try( final InputStream remoteJarInputStream = new URL( recentRelease.getZipballUrl() ).openStream() ) {
-
-				final ZipInputStream zis = new ZipInputStream( remoteJarInputStream );
-
-				ZipEntry entry = zis.getNextEntry();
-
-				while( null != entry ) {
-
-					if( entry.getName().matches( ".*/" + TARGET_DIRECTORY + '/' + mavenArtifactId + "-[0-9\\.]*" + jarWithDependenciesSuffix + JAR_EXTENSION  ) ) { //$NON-NLS-1$ //$NON-NLS-2$
-
-						final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (" + entry.getCompressedSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
-
-							final String jarFileBaseName = entry.getName().replaceFirst( "^.*/", "" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-							downloadFile( zis, jarFileBaseName + TMP_EXTENSION );
-							Files.move( Paths.get( jarFileBaseName + TMP_EXTENSION ), Paths.get( jarFileBaseName ) );
-
-							downloadedJar = jarFileBaseName;
-							downloadDone = true;
-						}
-
-						return;
-					}
-
-					entry = zis.getNextEntry();
-				}
+			if( ! findAndDownloadReleaseJar( recentRelease, true ) ) {
+				findAndDownloadReleaseJar( recentRelease, false );
 			}
 		}
 		catch( final Exception e) {
@@ -144,6 +119,47 @@ public class VersionChecker implements Runnable{
 			//Just delete the temporary file
 			cleanOldAndTemporaryJar();
 		}
+	}
+
+	private boolean findAndDownloadReleaseJar( final RepositoryTag release, final boolean withDependenciesSuffix ) throws IOException {
+
+		final String jarSuffix;
+		if( withDependenciesSuffix ) {
+			jarSuffix = jarWithDependenciesSuffix;
+		}
+		else {
+			jarSuffix = ""; //$NON-NLS-1$
+		}
+		try( final InputStream remoteJarInputStream = new URL( release.getZipballUrl() ).openStream() ) {
+
+			final ZipInputStream zis = new ZipInputStream( remoteJarInputStream );
+
+			ZipEntry entry = zis.getNextEntry();
+
+			while( null != entry ) {
+
+				if( entry.getName().matches( ".*/" + TARGET_DIRECTORY + '/' + mavenArtifactId + "-[0-9\\.]*" + jarSuffix + JAR_EXTENSION  ) ) { //$NON-NLS-1$ //$NON-NLS-2$
+
+					final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (" + entry.getCompressedSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
+
+						final String jarFileBaseName = entry.getName().replaceFirst( "^.*/", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+
+						downloadFile( zis, jarFileBaseName + TMP_EXTENSION );
+						Files.move( Paths.get( jarFileBaseName + TMP_EXTENSION ), Paths.get( jarFileBaseName ) );
+
+						downloadedJar = jarFileBaseName;
+						downloadDone = true;
+					}
+
+					return true;
+				}
+
+				entry = zis.getNextEntry();
+			}
+		}
+
+		return false;
 	}
 
 	public boolean restart() {
@@ -182,11 +198,11 @@ public class VersionChecker implements Runnable{
 				final String fileName = path.getFileName().toString();
 				if( fileName.startsWith( mavenArtifactId) ) {
 
-					if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) && null != currentJar && currentJar.compareTo( fileName ) > 0 ) {
+					if( fileName.endsWith( JAR_EXTENSION ) && null != currentJar && currentJar.compareTo( fileName ) > 0 ) {
 
 						deleteJar( path );
 					}
-					else if( fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION + TMP_EXTENSION ) ) {
+					else if( fileName.endsWith( JAR_EXTENSION + TMP_EXTENSION ) ) {
 
 						deleteJar( path );
 					}
@@ -220,7 +236,7 @@ public class VersionChecker implements Runnable{
 			for( final Path path : directoryStream ) {
 
 				final String fileName = path.getFileName().toString();
-				if( fileName.startsWith( mavenArtifactId) && fileName.endsWith( jarWithDependenciesSuffix + JAR_EXTENSION ) ) {
+				if( fileName.startsWith( mavenArtifactId ) && fileName.endsWith( JAR_EXTENSION ) ) {
 
 					if( null == currentJar || currentJar.compareTo( fileName ) < 0 ) {
 						currentJar = fileName;
