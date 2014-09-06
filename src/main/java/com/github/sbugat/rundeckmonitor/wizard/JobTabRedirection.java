@@ -2,7 +2,7 @@ package com.github.sbugat.rundeckmonitor.wizard;
 
 public enum JobTabRedirection {
 
-	SUMMARY( "show", "", "Exceution summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	SUMMARY( "show", "", "Execution summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	//REPORT( "show", "#state", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	//LOG_OUTPUT( "show", "#output", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	//DEFINITION( "show", "", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -26,7 +26,6 @@ public enum JobTabRedirection {
 	public String getAccessUrlPrefix() {
 		return accessUrlPrefix;
 	}
-
 
 	public String getAccessUrlSuffix() {
 		return accessUrlSuffix;
