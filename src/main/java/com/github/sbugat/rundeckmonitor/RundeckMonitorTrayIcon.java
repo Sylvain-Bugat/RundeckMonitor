@@ -267,7 +267,7 @@ public class RundeckMonitorTrayIcon {
 			trayIcon.addMouseListener( new MouseAdapter() {
 
 				public void mouseReleased( final MouseEvent e) {
-					System.out.println( e.getButton() );
+
 					if( e.isPopupTrigger() ) {
 						popupMenu.setLocation( e.getX(), e.getY() );
 						hiddenDialog.setLocation( e.getX(), e.getY() );
@@ -288,7 +288,7 @@ public class RundeckMonitorTrayIcon {
 				e.printStackTrace( new PrintWriter( stringWriter ) );
 				JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
 
-				System.exit( 1 );
+				System.exit( 3 );
 			}
 		}
 		else {
