@@ -17,7 +17,6 @@ import javax.swing.JTextField;
 import org.rundeck.api.RundeckApiException;
 import org.rundeck.api.RundeckApiException.RundeckApiLoginException;
 import org.rundeck.api.RundeckClient;
-import org.rundeck.api.RundeckClient.Version;
 import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.RundeckApiException.RundeckApiTokenException;
 
@@ -174,7 +173,7 @@ public class RundeckConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			return false;
 		}
 
-		rundeckMonitorConfiguration.setRundeckUrl( rundeckUrlTextField.getText() );
+		rundeckMonitorConfiguration.setRundeckUrl( rundeckUrlTextField.getText().replaceFirst( "/+$", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 		rundeckMonitorConfiguration.setRundeckAPIKey( rundeckAPITokenTextField.getText() );
 		rundeckMonitorConfiguration.setRundeckLogin( rundeckLoginTextField.getText() );
 		rundeckMonitorConfiguration.setRundeckPassword( rundeckPasswordTextField.getText() );
