@@ -23,6 +23,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	final JComboBox<LateExecutionThreshold> rundeckMonitorLateExecutionThreshold = new JComboBox<>();
 	final JComboBox<FailedJobsNumber> rundeckMonitorFailedJobNumber = new JComboBox<>();
 	final JComboBox<DateFormat> rundeckMonitorDateFormat = new JComboBox<>();
+	final JComboBox<JobTabRedirection> rundeckMonitorJobTabRedirection = new JComboBox<>();
 
 	public MonitorConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
@@ -33,6 +34,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		final JLabel rundeckMonitorLateExecutionThresholdLabel = new JLabel( "Late execution detection threshold:" ); //$NON-NLS-1$
 		final JLabel rundeckMonitorFailedJobNumberLabel = new JLabel( "Number of failed/late jobs to display:" ); //$NON-NLS-1$
 		final JLabel rundeckMonitorDateFormatLabel = new JLabel( "Failed/late jobs displayed date format:" ); //$NON-NLS-1$
+		final JLabel rundeckMonitorJobTabRedirectionLabel = new JLabel( "Failed/late job tab redirection: " ); //$NON-NLS-1$
 
 		//Fields initialization
 		if( null == rundeckMonitorConfiguration.getRundeckMonitorName() || rundeckMonitorConfiguration.getRundeckMonitorName().isEmpty() ) {
@@ -108,6 +110,23 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			rundeckMonitorDateFormat.setSelectedItem( DateFormat.DATE_FORMAT_STANDARD );
 		}
 
+		JobTabRedirection oldJobTabRedirection = null;
+		for( final JobTabRedirection jobTabRedirection : JobTabRedirection.values() ) {
+
+			rundeckMonitorJobTabRedirection.addItem( jobTabRedirection );
+
+			if( jobTabRedirection.name().equals( rundeckMonitorConfiguration.getJobTabRedirection() ) ) {
+				oldJobTabRedirection = jobTabRedirection;
+			}
+		}
+
+		if( null != oldJobTabRedirection ) {
+			rundeckMonitorJobTabRedirection.setSelectedItem( oldJobTabRedirection );
+		}
+		else {
+			rundeckMonitorJobTabRedirection.setSelectedItem( JobTabRedirection.SUMMARY );
+		}
+
 		final GridBagConstraints gridBagConstraits = new GridBagConstraints();
 		gridBagConstraits.insets = new Insets( 2,2,2,2 );
 		gridBagConstraits.fill = GridBagConstraints.HORIZONTAL;
@@ -142,6 +161,12 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		container.add( rundeckMonitorDateFormatLabel, gridBagConstraits );
 		gridBagConstraits.gridx=1;
 		container.add( rundeckMonitorDateFormat, gridBagConstraits );
+
+		gridBagConstraits.gridx=0;
+		gridBagConstraits.gridy=5;
+		container.add( rundeckMonitorJobTabRedirectionLabel, gridBagConstraits );
+		gridBagConstraits.gridx=1;
+		container.add( rundeckMonitorJobTabRedirection, gridBagConstraits );
 	}
 
 	@Override
@@ -161,6 +186,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		rundeckMonitorConfiguration.setLateThreshold( rundeckMonitorLateExecutionThreshold.getItemAt( rundeckMonitorLateExecutionThreshold.getSelectedIndex() ).getThreshold() );
 		rundeckMonitorConfiguration.setFailedJobNumber( rundeckMonitorFailedJobNumber.getItemAt( rundeckMonitorFailedJobNumber.getSelectedIndex() ).getFailedJobsNumber() );
 		rundeckMonitorConfiguration.setDateFormat( rundeckMonitorDateFormat.getItemAt( rundeckMonitorDateFormat.getSelectedIndex() ).getDateFormat() );
+		rundeckMonitorConfiguration.setJobTabRedirection( rundeckMonitorJobTabRedirection.getItemAt( rundeckMonitorJobTabRedirection.getSelectedIndex() ).name() );
 
 		try {
 			rundeckMonitorConfiguration.saveMonitorConfigurationPropertieFile();

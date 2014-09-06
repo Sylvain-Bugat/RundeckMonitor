@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
+
 /**
  * Configurationloading  class of the Rundeck Monitor
  *
@@ -40,6 +42,8 @@ public class RundeckMonitorConfiguration {
 	public static final String RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_API_VERSION = "rundeck.monitor.api.version"; //$NON-NLS-1$
 	private static final int RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = 10;
+	private static final String RUNDECK_MONITOR_PROPERTY_JOB_TAB_REDIRECTION = "rundeck.monitor.job.tab.redirection"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_JOB_TAB_REDIRECTION_DEFAULT_VALUE = JobTabRedirection.SUMMARY.name();
 
 	private String rundeckUrl;
 
@@ -66,6 +70,9 @@ public class RundeckMonitorConfiguration {
 
 	private int rundeckAPIversion;
 
+	private String jobTabRedirection;;
+
+
 	public RundeckMonitorConfiguration() {
 		//Nothing to initialize
 	}
@@ -88,6 +95,7 @@ public class RundeckMonitorConfiguration {
 		failedJobNumber = rundeckMonitorConfiguration.failedJobNumber;
 		dateFormat = rundeckMonitorConfiguration.dateFormat;
 		rundeckAPIversion = rundeckMonitorConfiguration.rundeckAPIversion;
+		jobTabRedirection = rundeckMonitorConfiguration.jobTabRedirection;
 	}
 
 	/**
@@ -124,6 +132,7 @@ public class RundeckMonitorConfiguration {
 		failedJobNumber = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER_DEFAULT_VALUE );
 		dateFormat = properties.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
 		rundeckAPIversion = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
+		jobTabRedirection = properties.getProperty( RUNDECK_MONITOR_PROPERTY_JOB_TAB_REDIRECTION, RUNDECK_MONITOR_PROPERTY_JOB_TAB_REDIRECTION_DEFAULT_VALUE );
 	}
 
 	/**
@@ -159,6 +168,15 @@ public class RundeckMonitorConfiguration {
 		catch( final IllegalArgumentException e ) {
 			dateFormat = RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE;
 		}
+
+		//Test the configured tab redirection
+		try {
+			JobTabRedirection.valueOf( jobTabRedirection );
+		}
+		catch( final IllegalArgumentException e ) {
+			jobTabRedirection = RUNDECK_MONITOR_PROPERTY_JOB_TAB_REDIRECTION_DEFAULT_VALUE;
+		}
+
 	}
 
 	private static void checkMandatoryStringProperty( final String property, final String propertyName ) throws MissingPropertyException, InvalidPropertyException {
@@ -203,6 +221,7 @@ public class RundeckMonitorConfiguration {
 		properties.put( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_NUMBER, String.valueOf( failedJobNumber ) );
 		properties.put( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, dateFormat );
 		properties.put( RUNDECK_MONITOR_PROPERTY_API_VERSION, String.valueOf( rundeckAPIversion ) );
+		properties.put( RUNDECK_MONITOR_PROPERTY_JOB_TAB_REDIRECTION, jobTabRedirection );
 
 		//Comment header
 		final StringBuilder commentStringBuilder = new StringBuilder();
@@ -287,6 +306,10 @@ public class RundeckMonitorConfiguration {
 		return rundeckAPIversion;
 	}
 
+	public String getJobTabRedirection() {
+		return jobTabRedirection;
+	}
+
 	public void setRundeckUrl( final String rundeckUrl ) {
 		this.rundeckUrl = rundeckUrl;
 	}
@@ -329,5 +352,9 @@ public class RundeckMonitorConfiguration {
 
 	public void setRundeckAPIversion( final int rundeckAPIversion ) {
 		this.rundeckAPIversion = rundeckAPIversion;
+	}
+
+	public void setJobTabRedirection( final String jobTabRedirection ) {
+		this.jobTabRedirection = jobTabRedirection;
 	}
 }

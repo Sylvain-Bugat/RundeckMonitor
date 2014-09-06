@@ -36,6 +36,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
 /**
@@ -47,7 +48,7 @@ import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard
 public class RundeckMonitorTrayIcon {
 
 	/** URL to access job execution details */
-	private static final String RUNDECK_JOB_EXECUTION_URL = "/execution/show/"; //$NON-NLS-1$
+	private static final String RUNDECK_JOB_EXECUTION_URL = "/execution/"; //$NON-NLS-1$
 
 	/** GitHub Project URL */
 	protected static final String RUNDECK_MONITOR_PROJECT_URL = "https://github.com/Sylvain-Bugat/RundeckMonitor"; //$NON-NLS-1$
@@ -132,9 +133,10 @@ public class RundeckMonitorTrayIcon {
 					if( JMenuItem.class.isInstance( e.getSource() ) ){
 
 						final Long executionId = failedMenuItems.get( e.getSource() );
+						final JobTabRedirection jobTabRedirection = JobTabRedirection.valueOf( rundeckMonitorConfiguration.getJobTabRedirection() );
 
 						try {
-							final URI executionURI = new URI( rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + executionId );
+							final URI executionURI = new URI( rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + executionId + jobTabRedirection.getAccessUrlSuffix() );
 							desktop.browse( executionURI );
 						}
 						catch ( final URISyntaxException | IOException exception) {
