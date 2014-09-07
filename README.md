@@ -89,6 +89,10 @@ Date format of the failed jobs in the popup menu
 
 Optional rundeck rest API version to use (11 cannot be used yet because of https://github.com/rundeck/rundeck-api-java-client/pull/12)
 
+	rundeck.monitor.job.tab.redirection=SUMMARY
+	
+Default opened page when opening a failed/late job. Possible values: SUMMARY or DOWNLOAD_OUTPUT and if version is at least 2.0 RENDER_OUTPUT_TXT or RENDER_OUTPUT_HTML can be used.
+
 ***
 
 ## Compile and build
