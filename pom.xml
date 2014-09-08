@@ -33,14 +33,14 @@
 
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>2.5</maven.pluginclean.version>
-		<maven.plugininstall.version>2.5.1</maven.plugininstall.version>
+		<maven.plugininstall.version>2.5.2</maven.plugininstall.version>
 		<maven.pluginsite.version>3.4</maven.pluginsite.version>
 		<maven.plugincompiler.version>3.1</maven.plugincompiler.version>
 		<maven.pluginsurefire.version>2.17</maven.pluginsurefire.version>
 		<maven.pluginversions.version>2.1</maven.pluginversions.version>
 		<maven.pluginjar.version>2.5</maven.pluginjar.version>
 		<maven.pluginresources.version>2.6</maven.pluginresources.version>
-		<maven.plugindeploy.version>2.8.1</maven.plugindeploy.version>
+		<maven.plugindeploy.version>2.8.2</maven.plugindeploy.version>
 		<maven.pluginassembly.version>2.4.1</maven.pluginassembly.version>
 	</properties>
 
