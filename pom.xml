@@ -26,7 +26,7 @@
 		<rundeck.client>11.0</rundeck.client>
 
 		<!-- GitHub Client -->
-		<github.client>3.4.0.201406110918-r</github.client>
+		<github.client>3.5.0.201409071800-rc1</github.client>
 
 		<!-- Google GSON -->
 		<gson.client>2.3</gson.client>
