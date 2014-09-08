@@ -94,7 +94,7 @@ public class RundeckMonitorTrayIcon {
 	private RundeckMonitorState rundeckMonitorState;
 
 	/**MenuItem for lasts late/failed jobs*/
-	private final Map<JMenuItem, Long> failedMenuItems = new LinkedHashMap<>();
+	private final Map<JMenuItem, JobExecutionInfo> failedMenuItems = new LinkedHashMap<>();
 
 	private final Set<Long> newLateProcess = new HashSet<>();
 
@@ -132,11 +132,18 @@ public class RundeckMonitorTrayIcon {
 
 					if( JMenuItem.class.isInstance( e.getSource() ) ){
 
-						final Long executionId = failedMenuItems.get( e.getSource() );
-						final JobTabRedirection jobTabRedirection = JobTabRedirection.valueOf( rundeckMonitorConfiguration.getJobTabRedirection() );
+						final JobExecutionInfo jobExecutionInfo = failedMenuItems.get( e.getSource() );
+						final JobTabRedirection jobTabRedirection;
+
+						if( jobExecutionInfo.isLongExecution() ) {
+							jobTabRedirection = JobTabRedirection.SUMMARY;
+						}
+						else {
+							jobTabRedirection = JobTabRedirection.valueOf( rundeckMonitorConfiguration.getJobTabRedirection() );
+						}
 
 						try {
-							final URI executionURI = new URI( rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + executionId + jobTabRedirection.getAccessUrlSuffix() );
+							final URI executionURI = new URI( rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix() );
 							desktop.browse( executionURI );
 						}
 						catch ( final URISyntaxException | IOException exception) {
@@ -156,7 +163,7 @@ public class RundeckMonitorTrayIcon {
 					rundeckMonitorState.setFailedJobs( false );
 
 					//Reset all failed icon
-					for( final Entry<JMenuItem,Long> entry: failedMenuItems.entrySet() ) {
+					for( final Entry<JMenuItem,JobExecutionInfo> entry: failedMenuItems.entrySet() ) {
 
 						final JMenuItem menuItem = entry.getKey();
 						menuItem.setIcon( null );
@@ -313,7 +320,7 @@ public class RundeckMonitorTrayIcon {
 
 		int i=0;
 
-		for( final Entry<JMenuItem,Long> entry: failedMenuItems.entrySet() ) {
+		for( final Entry<JMenuItem,JobExecutionInfo> entry: failedMenuItems.entrySet() ) {
 
 			if( i >= listJobExecutionInfo.size() ) {
 				break;
@@ -322,7 +329,7 @@ public class RundeckMonitorTrayIcon {
 			final JobExecutionInfo jobExecutionInfo = listJobExecutionInfo.get( i );
 			final JMenuItem jMenuItem = entry.getKey();
 
-			entry.setValue( jobExecutionInfo.getExecutionId() );
+			entry.setValue( jobExecutionInfo );
 			final SimpleDateFormat formatter = new SimpleDateFormat( rundeckMonitorConfiguration.getDateFormat() );
 			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
 			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription(); //$NON-NLS-1$
