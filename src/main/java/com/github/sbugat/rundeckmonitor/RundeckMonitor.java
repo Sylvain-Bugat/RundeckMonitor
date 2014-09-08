@@ -473,8 +473,10 @@ public class RundeckMonitor implements Runnable {
 				//Start the main thread
 				new Thread( new RundeckMonitor( rundeckMonitorConfiguration, versionChecker ) ).start();
 
-				//Start the version checker thread
-				new Thread( versionChecker ).start();
+				if( rundeckMonitorConfiguration.isVersionCheckerEnabled() ) {
+					//Start the version checker thread
+					new Thread( versionChecker ).start();
+				}
 
 				//Monitor and Version started without exception, end the launch thread
 				return;

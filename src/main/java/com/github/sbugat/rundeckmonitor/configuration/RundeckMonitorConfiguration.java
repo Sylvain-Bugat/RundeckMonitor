@@ -44,6 +44,8 @@ public class RundeckMonitorConfiguration {
 	private static final int RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE = 10;
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION = "rundeck.monitor.failed.job.redirection"; //$NON-NLS-1$
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION_DEFAULT_VALUE = JobTabRedirection.SUMMARY.name();
+	private static final String RUNDECK_MONITOR_PROPERTY_ENABLE_VERSION_CHECKER = "rundeck.monitor.disable.version.checker"; //$NON-NLS-1$
+	private static final boolean RUNDECK_MONITOR_PROPERTY_ENABLE_VERSION_CHECKER_DEFAULT_VALUE = true;
 
 	private String rundeckUrl;
 
@@ -70,7 +72,9 @@ public class RundeckMonitorConfiguration {
 
 	private int rundeckAPIversion;
 
-	private String jobTabRedirection;;
+	private String jobTabRedirection;
+
+	private boolean versionCheckerEnabled;
 
 
 	public RundeckMonitorConfiguration() {
@@ -96,6 +100,7 @@ public class RundeckMonitorConfiguration {
 		dateFormat = rundeckMonitorConfiguration.dateFormat;
 		rundeckAPIversion = rundeckMonitorConfiguration.rundeckAPIversion;
 		jobTabRedirection = rundeckMonitorConfiguration.jobTabRedirection;
+		versionCheckerEnabled = rundeckMonitorConfiguration.versionCheckerEnabled;
 	}
 
 	/**
@@ -133,6 +138,7 @@ public class RundeckMonitorConfiguration {
 		dateFormat = properties.getProperty( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, RUNDECK_MONITOR_PROPERTY_DATE_FORMAT_DEFAULT_VALUE );
 		rundeckAPIversion = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
 		jobTabRedirection = properties.getProperty( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION_DEFAULT_VALUE );
+		versionCheckerEnabled = getBooleanProperty( properties, RUNDECK_MONITOR_PROPERTY_ENABLE_VERSION_CHECKER, RUNDECK_MONITOR_PROPERTY_ENABLE_VERSION_CHECKER_DEFAULT_VALUE );
 	}
 
 	/**
@@ -205,6 +211,22 @@ public class RundeckMonitorConfiguration {
 		}
 	}
 
+	private static boolean getBooleanProperty( final Properties properties, final String propertyName, final boolean defaultValue ) {
+
+		String propertyValue = properties.getProperty( propertyName, String.valueOf( defaultValue ) );
+
+		if( propertyValue.isEmpty() ) {
+			return defaultValue;
+		}
+
+		try {
+			return Boolean.parseBoolean( propertyValue );
+		}
+		catch( final NumberFormatException e ) {
+			return defaultValue;
+		}
+	}
+
 	public void saveMonitorConfigurationPropertieFile() throws IOException {
 
 		//Add all properties
@@ -222,6 +244,7 @@ public class RundeckMonitorConfiguration {
 		properties.put( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, dateFormat );
 		properties.put( RUNDECK_MONITOR_PROPERTY_API_VERSION, String.valueOf( rundeckAPIversion ) );
 		properties.put( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION, jobTabRedirection );
+		properties.put( RUNDECK_MONITOR_PROPERTY_ENABLE_VERSION_CHECKER, versionCheckerEnabled );
 
 		//Comment header
 		final StringBuilder commentStringBuilder = new StringBuilder();
@@ -356,5 +379,9 @@ public class RundeckMonitorConfiguration {
 
 	public void setJobTabRedirection( final String jobTabRedirection ) {
 		this.jobTabRedirection = jobTabRedirection;
+	}
+
+	public boolean isVersionCheckerEnabled() {
+		return versionCheckerEnabled;
 	}
 }
