@@ -55,6 +55,9 @@ public class VersionChecker implements Runnable{
 	/**Indicate if the download is completed*/
 	private boolean downloadDone;
 
+	/**Indicate if the version checker is disabled*/
+	private boolean versionCheckerDisabled;
+
 	private String downloadedJar;
 
 	/**
@@ -140,7 +143,8 @@ public class VersionChecker implements Runnable{
 
 				if( entry.getName().matches( ".*/" + TARGET_DIRECTORY + '/' + mavenArtifactId + "-[0-9\\.]*" + jarSuffix + JAR_EXTENSION  ) ) { //$NON-NLS-1$ //$NON-NLS-2$
 
-					final int confirmDialogChoice = JOptionPane.showConfirmDialog( null, "An update is available, download it? (" + entry.getCompressedSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_OPTION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					final Object[] options = { "Yes", "No", "Never ask me again" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					final int confirmDialogChoice = JOptionPane.showOptionDialog( null, "An update is available, download it? (" + entry.getCompressedSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
 
 						final String jarFileBaseName = entry.getName().replaceFirst( "^.*/", "" ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -150,6 +154,10 @@ public class VersionChecker implements Runnable{
 
 						downloadedJar = jarFileBaseName;
 						downloadDone = true;
+					}
+					else if( JOptionPane.CANCEL_OPTION == confirmDialogChoice ) {
+
+						versionCheckerDisabled = true;
 					}
 
 					return true;
@@ -180,11 +188,6 @@ public class VersionChecker implements Runnable{
 		}
 
 		return false;
-	}
-
-	public boolean isDownloadDone() {
-
-		return downloadDone;
 	}
 
 	public void cleanOldAndTemporaryJar() {
@@ -250,6 +253,21 @@ public class VersionChecker implements Runnable{
 		}
 
 		return currentJar;
+	}
+
+	public boolean isDownloadDone() {
+
+		return downloadDone;
+	}
+
+	public void resetVersionCheckerDisabled() {
+
+		versionCheckerDisabled = false;
+	}
+
+	public boolean isversionCheckerDisabled() {
+
+		return versionCheckerDisabled;
 	}
 
 	/**

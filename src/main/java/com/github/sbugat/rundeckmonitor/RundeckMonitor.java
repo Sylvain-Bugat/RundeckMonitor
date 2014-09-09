@@ -247,6 +247,14 @@ public class RundeckMonitor implements Runnable {
 				//Update the tray icon menu
 				updateRundeckHistory( false );
 
+				if( versionChecker.isversionCheckerDisabled() ) {
+
+					rundeckMonitorConfiguration.disableVersionChecker();
+					rundeckMonitorConfiguration.saveMonitorConfigurationPropertieFile();
+
+					versionChecker.resetVersionCheckerDisabled();
+				}
+
 				if( versionChecker.isDownloadDone() ) {
 
 					//Restart, remove the tray icon and exit

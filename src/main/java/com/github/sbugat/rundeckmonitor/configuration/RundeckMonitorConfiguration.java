@@ -233,7 +233,7 @@ public class RundeckMonitorConfiguration {
 		properties.put( RUNDECK_MONITOR_PROPERTY_DATE_FORMAT, dateFormat );
 		properties.put( RUNDECK_MONITOR_PROPERTY_API_VERSION, String.valueOf( rundeckAPIversion ) );
 		properties.put( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION, jobTabRedirection );
-		properties.put( RUNDECK_MONITOR_PROPERTY_DISABLE_VERSION_CHECKER, versionCheckerDisabled );
+		properties.put( RUNDECK_MONITOR_PROPERTY_DISABLE_VERSION_CHECKER, String.valueOf( versionCheckerDisabled ) );
 
 		//Comment header
 		final StringBuilder commentStringBuilder = new StringBuilder();
@@ -253,6 +253,11 @@ public class RundeckMonitorConfiguration {
 		try( final Writer propertyFilewriter = Files.newBufferedWriter( propertyFile, StandardCharsets.UTF_8 ) ) {
 			properties.store( propertyFilewriter, commentStringBuilder.toString() );
 		}
+	}
+
+	public void disableVersionChecker() throws IOException {
+
+		versionCheckerDisabled = true;
 	}
 
 	public static boolean propertiesFileExists() {
