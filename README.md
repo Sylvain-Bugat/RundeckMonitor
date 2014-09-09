@@ -93,6 +93,10 @@ Optional rundeck rest API version to use (11 cannot be used yet because of https
 	
 Default opened page when opening a failed/late job. Possible values: SUMMARY or DOWNLOAD_OUTPUT and if version is at least 2.0 RENDER_OUTPUT_TXT or RENDER_OUTPUT_HTML can be used.
 
+	rundeck.monitor.disable.version.checker=false
+
+Enable or disable the automatic version checker (true to disable)
+
 ***
 
 ## Compile and build
