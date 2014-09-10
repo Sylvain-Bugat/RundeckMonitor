@@ -12,7 +12,7 @@ Download the latest jar release at this URL: https://github.com/Sylvain-Bugat/Ru
 
 ## Launch and configuration
 
-Just execute the downloaded jar file: `rundeck-monitor-1.5-jar-with-dependencies.jar`.
+Just execute the downloaded jar file: `rundeck-monitor-1.6-jar-with-dependencies.jar`.
 
 And if no configuration file is found, a basic configuration wizard is launched.
 
@@ -40,7 +40,7 @@ Edit the configuration file creatd by the wizard or copy and edit the sample con
 
 	rundeck.monitor.url=
 	
-URL with the http protocol and with only the domain and the port like: `http:\\rundeck.domain.com:4444`
+URL with the http protocol and with only the domain and the port like: `http:\\rundeck.domain.com:4440`
 
 	rundeck.monitor.project=
 	
