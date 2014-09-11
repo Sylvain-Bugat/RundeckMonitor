@@ -1,6 +1,6 @@
 # RundeckMonitor
 
-System tray icon tools that indicates failed rundeck jobs and jobs running for a too long time.
+Rundeck monitor is a system tray icon tools that indicates failed and long execution on a rundeck instance.
 
 ![RundeckMonitor screenshot](Screenshot.png)
 
