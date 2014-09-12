@@ -28,7 +28,7 @@
 		<!-- GitHub Client -->
 		<github.client>3.5.0.201409071800-rc1</github.client>
 
-		<!-- Google GSON -->
+		<!-- Google GSON (used/required by GitHub Client)-->
 		<gson.client>2.3</gson.client>
 
 		<!-- Maven Lifecycle Plugins Version -->
