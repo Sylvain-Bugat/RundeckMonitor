@@ -23,7 +23,7 @@ public class RundeckMonitorAboutDialog extends JFrame{
 			//If System Look&Feel is not supported, stay with the default one
 		}
 
-		add( new JButton( "OK"), BorderLayout.SOUTH );
+		add( new JButton( "OK"), BorderLayout.SOUTH ); //$NON-NLS-1$
 
 		pack();
 		setVisible( true );

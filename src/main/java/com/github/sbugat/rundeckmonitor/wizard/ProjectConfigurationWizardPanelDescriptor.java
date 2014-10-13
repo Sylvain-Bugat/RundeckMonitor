@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.rundeck.api.RundeckClient;
-import org.rundeck.api.RundeckClient.Version;
 import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.domain.RundeckProject;
 
