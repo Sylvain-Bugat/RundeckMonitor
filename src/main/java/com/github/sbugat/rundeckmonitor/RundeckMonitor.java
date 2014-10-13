@@ -110,7 +110,12 @@ public class RundeckMonitor implements Runnable {
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
 
 		//Initialize the tray icon
-		rundeckMonitorTrayIcon = new RundeckMonitorTrayIcon( rundeckMonitorConfiguration, rundeckMonitorState );
+		if( VersionChecker.isWindows() ) {
+			rundeckMonitorTrayIcon = new RundeckMonitorSwingTrayIcon( rundeckMonitorConfiguration, rundeckMonitorState );
+		}
+		else {
+			rundeckMonitorTrayIcon = new RundeckMonitorAWTTrayIcon( rundeckMonitorConfiguration, rundeckMonitorState );
+		}
 
 		//Initialize and update the rundeck monitor failed/late jobs
 		updateRundeckHistory( true );

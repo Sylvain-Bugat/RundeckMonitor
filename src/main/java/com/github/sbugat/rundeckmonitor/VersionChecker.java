@@ -319,7 +319,7 @@ public class VersionChecker implements Runnable{
 	 *
 	 * @return true if the OS is a windows*
 	 */
-	private static boolean isWindows() {
+	public static boolean isWindows() {
 
 		final String operatingSystem = System.getProperty( OS_NAME_PROPERTY );
 
