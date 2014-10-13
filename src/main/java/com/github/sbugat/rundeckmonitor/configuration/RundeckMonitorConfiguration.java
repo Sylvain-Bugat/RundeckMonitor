@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import com.github.sbugat.rundeckmonitor.wizard.InterfaceType;
 import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 
 /**
@@ -46,6 +47,8 @@ public class RundeckMonitorConfiguration {
 	private static final String RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION_DEFAULT_VALUE = JobTabRedirection.SUMMARY.name();
 	private static final String RUNDECK_MONITOR_PROPERTY_DISABLE_VERSION_CHECKER = "rundeck.monitor.disable.version.checker"; //$NON-NLS-1$
 	private static final boolean RUNDECK_MONITOR_PROPERTY_DISABLE_VERSION_CHECKER_DEFAULT_VALUE = false;
+	private static final String RUNDECK_MONITOR_PROPERTY_INTERFACE_TYPE = "rundeck.monitor.interface.type"; //$NON-NLS-1$
+	private static final String RUNDECK_MONITOR_PROPERTY_INTERFACE_TYPE_DEFAULT_VALUE = InterfaceType.SWING.name();
 
 	private String rundeckUrl;
 
@@ -75,6 +78,8 @@ public class RundeckMonitorConfiguration {
 	private String jobTabRedirection;
 
 	private boolean versionCheckerDisabled;
+
+	private String interfaceType;
 
 
 	public RundeckMonitorConfiguration() {
@@ -139,6 +144,7 @@ public class RundeckMonitorConfiguration {
 		rundeckAPIversion = getIntegerProperty( properties, RUNDECK_MONITOR_PROPERTY_API_VERSION, RUNDECK_MONITOR_PROPERTY_API_VERSION_DEFAULT_VALUE );
 		jobTabRedirection = properties.getProperty( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION, RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION_DEFAULT_VALUE );
 		versionCheckerDisabled = getBooleanProperty( properties, RUNDECK_MONITOR_PROPERTY_DISABLE_VERSION_CHECKER, RUNDECK_MONITOR_PROPERTY_DISABLE_VERSION_CHECKER_DEFAULT_VALUE );
+		interfaceType = properties.getProperty( RUNDECK_MONITOR_PROPERTY_INTERFACE_TYPE, RUNDECK_MONITOR_PROPERTY_INTERFACE_TYPE_DEFAULT_VALUE );
 	}
 
 	/**
@@ -234,6 +240,7 @@ public class RundeckMonitorConfiguration {
 		properties.put( RUNDECK_MONITOR_PROPERTY_API_VERSION, String.valueOf( rundeckAPIversion ) );
 		properties.put( RUNDECK_MONITOR_PROPERTY_FAILED_JOB_REDIRECTION, jobTabRedirection );
 		properties.put( RUNDECK_MONITOR_PROPERTY_DISABLE_VERSION_CHECKER, String.valueOf( versionCheckerDisabled ) );
+		properties.put( RUNDECK_MONITOR_PROPERTY_INTERFACE_TYPE, interfaceType );
 
 		//Comment header
 		final StringBuilder commentStringBuilder = new StringBuilder();
@@ -327,6 +334,10 @@ public class RundeckMonitorConfiguration {
 		return jobTabRedirection;
 	}
 
+	public String getInterfaceType() {
+		return interfaceType;
+	}
+
 	public void setRundeckUrl( final String rundeckUrl ) {
 		this.rundeckUrl = rundeckUrl;
 	}
@@ -373,6 +384,10 @@ public class RundeckMonitorConfiguration {
 
 	public void setJobTabRedirection( final String jobTabRedirection ) {
 		this.jobTabRedirection = jobTabRedirection;
+	}
+
+	public void setInterfaceType( final String interfaceType ) {
+		this.interfaceType = interfaceType;
 	}
 
 	public boolean isVersionCheckerEnabled() {

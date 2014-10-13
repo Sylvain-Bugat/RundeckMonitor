@@ -15,6 +15,7 @@ import org.rundeck.api.RundeckClient;
 import org.rundeck.api.RundeckClientBuilder;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
 
 public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescriptor {
 
@@ -27,6 +28,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	final JComboBox<FailedJobsNumber> rundeckMonitorFailedJobNumber = new JComboBox<>();
 	final JComboBox<DateFormat> rundeckMonitorDateFormat = new JComboBox<>();
 	final JComboBox<JobTabRedirection> rundeckMonitorJobTabRedirection = new JComboBox<>();
+	final JComboBox<InterfaceType> rundeckMonitorInterfaceType = new JComboBox<>();
 
 	public MonitorConfigurationWizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		super( panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg );
@@ -38,6 +40,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		final JLabel rundeckMonitorFailedJobNumberLabel = new JLabel( "Number of failed/late jobs to display:" ); //$NON-NLS-1$
 		final JLabel rundeckMonitorDateFormatLabel = new JLabel( "Failed/late jobs displayed date format:" ); //$NON-NLS-1$
 		final JLabel rundeckMonitorJobTabRedirectionLabel = new JLabel( "Failed/late job tab redirection: " ); //$NON-NLS-1$
+		final JLabel rundeckMonitorInterfaceTypeLabel = new JLabel( "Type of Java interface: " ); //$NON-NLS-1$
 
 		//Fields initialization
 		if( null == rundeckMonitorConfiguration.getRundeckMonitorName() || rundeckMonitorConfiguration.getRundeckMonitorName().isEmpty() ) {
@@ -130,6 +133,36 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 			rundeckMonitorJobTabRedirection.setSelectedItem( JobTabRedirection.SUMMARY );
 		}
 
+		InterfaceType oldInterfaceType = null;
+		for( final InterfaceType interfaceType : InterfaceType.values() ) {
+
+			if( InterfaceType.SWING.equals( interfaceType )  ) {
+
+				if( EnvironmentTools.isWindows() ) {
+
+					rundeckMonitorInterfaceType.addItem( interfaceType );
+
+					if( interfaceType.name().equals( rundeckMonitorConfiguration.getInterfaceType() ) ) {
+						oldInterfaceType = interfaceType;
+					}
+				}
+			}
+			else {
+				rundeckMonitorInterfaceType.addItem( interfaceType );
+
+				if( interfaceType.name().equals( rundeckMonitorConfiguration.getInterfaceType() ) ) {
+					oldInterfaceType = interfaceType;
+				}
+			}
+		}
+
+		if( null != oldInterfaceType ) {
+			rundeckMonitorInterfaceType.setSelectedItem( oldInterfaceType );
+		}
+		else {
+			rundeckMonitorInterfaceType.setSelectedItem( InterfaceType.SWING );
+		}
+
 		final GridBagConstraints gridBagConstraits = new GridBagConstraints();
 		gridBagConstraits.insets = new Insets( 2,2,2,2 );
 		gridBagConstraits.fill = GridBagConstraints.HORIZONTAL;
@@ -170,6 +203,12 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		container.add( rundeckMonitorJobTabRedirectionLabel, gridBagConstraits );
 		gridBagConstraits.gridx=1;
 		container.add( rundeckMonitorJobTabRedirection, gridBagConstraits );
+
+		gridBagConstraits.gridx=0;
+		gridBagConstraits.gridy=6;
+		container.add( rundeckMonitorInterfaceTypeLabel, gridBagConstraits );
+		gridBagConstraits.gridx=1;
+		container.add( rundeckMonitorInterfaceType, gridBagConstraits );
 	}
 
 	@Override
@@ -227,6 +266,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		rundeckMonitorConfiguration.setFailedJobNumber( rundeckMonitorFailedJobNumber.getItemAt( rundeckMonitorFailedJobNumber.getSelectedIndex() ).getFailedJobsNumber() );
 		rundeckMonitorConfiguration.setDateFormat( rundeckMonitorDateFormat.getItemAt( rundeckMonitorDateFormat.getSelectedIndex() ).getDateFormat() );
 		rundeckMonitorConfiguration.setJobTabRedirection( rundeckMonitorJobTabRedirection.getItemAt( rundeckMonitorJobTabRedirection.getSelectedIndex() ).name() );
+		rundeckMonitorConfiguration.setInterfaceType( rundeckMonitorInterfaceType.getItemAt( rundeckMonitorInterfaceType.getSelectedIndex() ).name() );
 
 		try {
 			rundeckMonitorConfiguration.saveMonitorConfigurationPropertieFile();

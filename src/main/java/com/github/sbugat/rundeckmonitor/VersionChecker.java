@@ -19,6 +19,8 @@ import org.eclipse.egit.github.core.RepositoryTag;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
+import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
+
 /**
  * Simple generic version checker on GitHub, inpect target jar and local jar build date to determinated if an update is available
  * If one is found, download the full jar and replace the original jar via a double restart
@@ -35,8 +37,6 @@ public class VersionChecker implements Runnable{
 	private static final String TMP_EXTENSION = ".tmp"; //$NON-NLS-1$
 	private static final String WINDOWS_EXE_EXTENSION = ".exe"; //$NON-NLS-1$
 	private static final String JAVA_HOME_PROPERTY = "java.home"; //$NON-NLS-1$
-	private static final String OS_NAME_PROPERTY = "os.name"; //$NON-NLS-1$
-	private static final String WINDOWS_OS_NAME = "windows"; //$NON-NLS-1$
 	private static final String TARGET_DIRECTORY = "target"; //$NON-NLS-1$
 
 	private static final String BIN_DIRECTORY_AND_JAVA = "bin" + FileSystems.getDefault().getSeparator() + "java"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -298,7 +298,7 @@ public class VersionChecker implements Runnable{
 
 		final String javaExecutableFilePath;
 		//Add .exe extension on Windows OS
-		if ( isWindows() ) {
+		if ( EnvironmentTools.isWindows() ) {
 			javaExecutableFilePath = javaDirectory + FileSystems.getDefault().getSeparator() + BIN_DIRECTORY_AND_JAVA + WINDOWS_EXE_EXTENSION;
 		}
 		else {
@@ -312,21 +312,5 @@ public class VersionChecker implements Runnable{
 		}
 
 		return javaExecutableFilePath;
-	}
-
-	/**
-	 * Check if the operating system is a windows based on a property, otherwise it's a Linux/Mac-OS
-	 *
-	 * @return true if the OS is a windows*
-	 */
-	public static boolean isWindows() {
-
-		final String operatingSystem = System.getProperty( OS_NAME_PROPERTY );
-
-		if( null == operatingSystem ) {
-			return false;
-		}
-
-		return operatingSystem.toLowerCase().startsWith( WINDOWS_OS_NAME );
 	}
 }

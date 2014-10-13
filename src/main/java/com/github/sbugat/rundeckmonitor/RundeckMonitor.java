@@ -26,6 +26,8 @@ import com.github.sbugat.rundeckmonitor.configuration.InvalidPropertyException;
 import com.github.sbugat.rundeckmonitor.configuration.MissingPropertyException;
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.configuration.UnknownProjectException;
+import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
+import com.github.sbugat.rundeckmonitor.wizard.InterfaceType;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
 /**
@@ -110,7 +112,7 @@ public class RundeckMonitor implements Runnable {
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
 
 		//Initialize the tray icon
-		if( VersionChecker.isWindows() ) {
+		if( EnvironmentTools.isWindows() && InterfaceType.SWING.name().equals( rundeckMonitorConfiguration.getInterfaceType() ) ) {
 			rundeckMonitorTrayIcon = new RundeckMonitorSwingTrayIcon( rundeckMonitorConfiguration, rundeckMonitorState );
 		}
 		else {
