@@ -12,7 +12,7 @@ Download the latest jar release at this URL: https://github.com/Sylvain-Bugat/Ru
 
 ## Launch and configuration
 
-Just execute the downloaded jar file: `rundeck-monitor-1.6-jar-with-dependencies.jar`.
+Just execute the downloaded jar file: `rundeck-monitor-1.7.jar`.
 
 And if no configuration file is found, a basic configuration wizard is launched.
 
@@ -96,6 +96,10 @@ Default opened page when opening a failed/late job. Possible values: SUMMARY or 
 	rundeck.monitor.disable.version.checker=false
 
 Enable or disable the automatic version checker (true to disable)
+
+	rundeck.monitor.interface.type=SWING
+
+Java interface type to use: SWING for Windows or AWT for other OS
 
 ***
 
