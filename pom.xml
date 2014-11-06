@@ -23,7 +23,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 
 		<!-- Rundeck Java Client -->
-		<rundeck.client>11.0</rundeck.client>
+		<rundeck.client>11.1</rundeck.client>
 
 		<!-- GitHub Client -->
 		<github.client>3.5.0.201409260305-r</github.client>
