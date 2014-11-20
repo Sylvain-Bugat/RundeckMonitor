@@ -184,18 +184,9 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>versions-maven-plugin</artifactId>
 						<version>${maven.pluginversions.version}</version>
-						<executions>
-							<execution>
-								<phase>install</phase>
-								<configuration>
-									<comparisonmethod>mercury</comparisonmethod>
-								</configuration>
-								<goals>
-									<goal>display-dependency-updates</goal>
-									<goal>display-plugin-updates</goal>
-								</goals>
-							</execution>
-						</executions>
+						<configuration>
+							<rulesUri>file:./rules.xml</rulesUri>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
