@@ -29,7 +29,7 @@
 		<github.client>3.6.0.201411121045-m1</github.client>
 
 		<!-- Google GSON (used/required by GitHub Client)-->
-		<gson.client>2.3</gson.client>
+		<gson.client>2.3.1</gson.client>
 
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>2.6.1</maven.pluginclean.version>
