@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<prerequisites>
-		<maven>2.2.1</maven>
+		<maven>3.0</maven>
 	</prerequisites>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -42,6 +42,7 @@
 		<maven.pluginresources.version>2.7</maven.pluginresources.version>
 		<maven.plugindeploy.version>2.8.2</maven.plugindeploy.version>
 		<maven.pluginassembly.version>2.5.1</maven.pluginassembly.version>
+		<maven.pluginowasp.version>1.2.6</maven.pluginowasp.version>
 	</properties>
 
 	<dependencies>
@@ -187,6 +188,20 @@
 						<configuration>
 							<rulesUri>file:./rules.xml</rulesUri>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- OWASP dependencies check profile -->
+		<profile>
+			<id>owasp</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.owasp</groupId>
+						<artifactId>dependency-check-maven</artifactId>
+						<version>${maven.pluginowasp.version}</version>
 					</plugin>
 				</plugins>
 			</build>
