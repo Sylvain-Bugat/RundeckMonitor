@@ -193,7 +193,7 @@
 			</build>
 		</profile>
 
-		<!-- OWASP dependencies check profile -->
+		<!-- OWASP dependencies check profile, use: mvn dependency-check:check -P dependencies.check,default,owasp to generate report -->
 		<profile>
 			<id>owasp</id>
 			<build>
