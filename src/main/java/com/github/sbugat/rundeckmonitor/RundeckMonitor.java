@@ -119,11 +119,16 @@ public class RundeckMonitor implements Runnable {
 			rundeckMonitorTrayIcon = new RundeckMonitorAWTTrayIcon( rundeckMonitorConfiguration, rundeckMonitorState );
 		}
 
-		//Initialize and update the rundeck monitor failed/late jobs
-		updateRundeckHistory( true );
+		try {
+			//Initialize and update the rundeck monitor failed/late jobs
+			updateRundeckHistory( true );
 
-		//Clean any temporary downloaded jar
-		versionChecker.cleanOldAndTemporaryJar();
+			//Clean any temporary downloaded jar
+			versionChecker.cleanOldAndTemporaryJar();
+		}
+		finally {
+			rundeckMonitorTrayIcon.disposeTrayIcon();
+		}
 	}
 
 	public void reloadConfiguration() throws IOException, MissingPropertyException, InvalidPropertyException {
