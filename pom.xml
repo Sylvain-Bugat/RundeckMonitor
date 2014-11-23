@@ -177,7 +177,7 @@
 		</profile>
 
 		<profile>
-			<!-- Dependencies checker profile -->
+			<!-- Dependencies checker profile, use: mvn versions:display-plugin-updates versions:display-property-updates dependency-check:check -P dependencies.check,default -->
 			<id>dependencies.check</id>
 			<build>
 				<plugins>
@@ -189,15 +189,7 @@
 							<rulesUri>file:./rules.xml</rulesUri>
 						</configuration>
 					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<!-- OWASP dependencies check profile, use: mvn dependency-check:check -P dependencies.check,default,owasp to generate report -->
-		<profile>
-			<id>owasp</id>
-			<build>
-				<plugins>
+					<!-- OWASP dependencies check report-->
 					<plugin>
 						<groupId>org.owasp</groupId>
 						<artifactId>dependency-check-maven</artifactId>
@@ -210,5 +202,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>
