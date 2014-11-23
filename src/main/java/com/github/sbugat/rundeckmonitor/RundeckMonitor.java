@@ -126,8 +126,9 @@ public class RundeckMonitor implements Runnable {
 			//Clean any temporary downloaded jar
 			versionChecker.cleanOldAndTemporaryJar();
 		}
-		finally {
+		catch(final Exception e) {
 			rundeckMonitorTrayIcon.disposeTrayIcon();
+			throw e;
 		}
 	}
 
