@@ -12,7 +12,7 @@ Download the latest jar release at this URL: https://github.com/Sylvain-Bugat/Ru
 
 ## Launch and configuration
 
-Just execute the downloaded jar file: `rundeck-monitor-1.7.jar`.
+Just execute the downloaded jar file: `rundeck-monitor-1.8.jar`.
 
 And if no configuration file is found, a basic configuration wizard is launched.
 
@@ -85,9 +85,9 @@ Number of failed jobs to see in the popup menu
 	
 Date format of the failed jobs in the popup menu
 
-	rundeck.monitor.api.version=10
+	rundeck.monitor.api.version=12
 
-Optional rundeck rest API version to use (11 cannot be used yet because of https://github.com/rundeck/rundeck-api-java-client/pull/12)
+Optional rundeck rest API version to use
 
 	rundeck.monitor.job.tab.redirection=SUMMARY
 	
