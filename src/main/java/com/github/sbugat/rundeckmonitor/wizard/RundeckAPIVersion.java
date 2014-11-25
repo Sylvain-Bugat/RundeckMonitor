@@ -15,9 +15,9 @@ public enum RundeckAPIVersion {
 	RUNDECK_APIVERSION_7( Version.V7, "1.5.3" ), //$NON-NLS-1$
 	RUNDECK_APIVERSION_8( Version.V8, "1.6.0" ), //$NON-NLS-1$
 	RUNDECK_APIVERSION_9( Version.V9, "1.6.1" ), //$NON-NLS-1$
-	RUNDECK_APIVERSION_10( Version.V10, "2.0.0" ); //$NON-NLS-1$
-	//Temporary désactivate V11 because of a Rundeck java client bug
-	//RUNDECK_APIVERSION_11( Version.V11, "2.1.0" ); //$NON-NLS-1$
+	RUNDECK_APIVERSION_10( Version.V10, "2.0.0" ), //$NON-NLS-1$
+	RUNDECK_APIVERSION_11( Version.V11, "2.1.0" ), //$NON-NLS-1$
+	RUNDECK_APIVERSION_12( Version.V12, "2.2.0" ); //$NON-NLS-1$
 
 	/**Rundeck API Version*/
 	private final Version version;
