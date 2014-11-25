@@ -23,7 +23,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 
 		<!-- Rundeck Java Client -->
-		<rundeck.client>11.1</rundeck.client>
+		<rundeck.client>12.0</rundeck.client>
 
 		<!-- GitHub Client -->
 		<github.client>3.6.0.201411121045-m1</github.client>
@@ -186,7 +186,7 @@
 						<artifactId>versions-maven-plugin</artifactId>
 						<version>${maven.pluginversions.version}</version>
 						<configuration>
-							<rulesUri>file:./rules.xml</rulesUri>
+							<rulesUri>file:./dependencies-check-rules.xml</rulesUri>
 						</configuration>
 					</plugin>
 					<!-- OWASP dependencies check report-->
