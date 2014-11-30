@@ -1,3 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2014 Sylvain Bugat
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -11,6 +27,40 @@
 	<packaging>jar</packaging>
 	<version>1.9-SNAPSHOT</version>
 	<name>Rundeck monitor</name>
+	<description>Tray-icon to monitor rundeck executions</description>
+	<inceptionYear>2013</inceptionYear>
+	<url>https://github.com/Sylvain-Bugat/RundeckMonitor</url>
+
+	<scm>
+		<url>https://github.com/Sylvain-Bugat/RundeckMonitor</url>
+		<connection>scm:git:git://github.com/Sylvain-Bugat/RundeckMonitor.git</connection>
+		<developerConnection>scm:git:git@github.com:Sylvain-Bugat/RundeckMonitor.git</developerConnection>
+	</scm>
+	<distributionManagement>
+		<site>
+		  <id>github-site</id>
+		  <url>gitsite:git@github.com/Sylvain-Bugat/RundeckMonitor.git</url>
+		</site>
+	</distributionManagement>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/Sylvain-Bugat/RundeckMonitor/issues</url>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>https://github.com/Sylvain-Bugat/RundeckMonitor/LICENSE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>sbugat</id>
+			<name>Sylvain Bugat</name>
+			<url>https://github.com/Sylvain-Bugat</url>
+		</developer>
+	</developers>
 
 	<!-- Global properties -->
 	<properties>
@@ -42,6 +92,9 @@
 		<maven.pluginresources.version>2.7</maven.pluginresources.version>
 		<maven.plugindeploy.version>2.8.2</maven.plugindeploy.version>
 		<maven.pluginassembly.version>2.5.2</maven.pluginassembly.version>
+		<maven.pluginantrun.version>1.7</maven.pluginantrun.version>
+		<maven.plugindependency.version>2.9</maven.plugindependency.version>
+		<maven.pluginrelease.version>2.5.1</maven.pluginrelease.version>
 		<maven.pluginowasp.version>1.2.6</maven.pluginowasp.version>
 	</properties>
 
@@ -63,143 +116,172 @@
 		</dependency>
 	</dependencies>
 
-	<!-- Profiles -->
-	<profiles>
-		<profile>
-			<!-- Default profile -->
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+	<build>
+		<plugins>
 
-			<build>
-				<plugins>
+			<!-- Compiler Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.plugincompiler.version}</version>
+				<configuration>
+					<compilerVersion>${maven.compiler.source}</compilerVersion>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<showDeprecation>true</showDeprecation>
+					<showWarnings>true</showWarnings>
+					<compilerArgs>
+						<arg>-Xlint</arg>
+					</compilerArgs>
+				</configuration>
+				<inherited>true</inherited>
+			</plugin>
 
-					<!-- Compiler Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>${maven.plugincompiler.version}</version>
-						<configuration>
-							<compilerVersion>${maven.compiler.source}</compilerVersion>
-							<source>${maven.compiler.source}</source>
-							<target>${maven.compiler.target}</target>
-							<compilerArgs>
-								<arg>-Xlint</arg>
-							</compilerArgs>
-						</configuration>
-						<inherited>true</inherited>
-					</plugin>
+			<!-- Install Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>${maven.plugininstall.version}</version>
+			</plugin>
 
-					<!-- Install Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-install-plugin</artifactId>
-						<version>${maven.plugininstall.version}</version>
-					</plugin>
+			<!-- Clean Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>${maven.pluginclean.version}</version>
+			</plugin>
 
-					<!-- Clean Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>${maven.pluginclean.version}</version>
-					</plugin>
+			<!-- Clean Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>${maven.pluginsite.version}</version>
+			</plugin>
 
-					<!-- Clean Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-site-plugin</artifactId>
-						<version>${maven.pluginsite.version}</version>
-					</plugin>
+			<!-- Testing Launcher Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.pluginsurefire.version}</version>
+			</plugin>
 
-					<!-- Testing Launcher Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>${maven.pluginsurefire.version}</version>
-					</plugin>
+			<!-- Deploy Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>${maven.plugindeploy.version}</version>
+			</plugin>
 
-					<!-- Deploy Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<version>${maven.plugindeploy.version}</version>
-					</plugin>
+			<!-- Resources Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven.pluginresources.version}</version>
+			</plugin>
 
-					<!-- Resources Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>${maven.pluginresources.version}</version>
-					</plugin>
+			<!-- Jar Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.pluginjar.version}</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.github.sbugat.rundeckmonitor.RundeckMonitor</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 
-					<!-- Jar Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>${maven.pluginjar.version}</version>
-						<configuration>
-							<archive>
-								<manifest>
-									<addClasspath>true</addClasspath>
-									<mainClass>com.github.sbugat.rundeckmonitor.RundeckMonitor</mainClass>
-								</manifest>
-							</archive>
-						</configuration>
-					</plugin>
+			<!-- Assembly Plugins configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven.pluginassembly.version}</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>com.github.sbugat.rundeckmonitor.RundeckMonitor</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${maven.pluginassembly.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>${maven.pluginantrun.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${maven.plugindependency.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>${maven.pluginrelease.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
-					<!-- Assembly Plugins configuration -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>${maven.pluginassembly.version}</version>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifest>
-									<mainClass>com.github.sbugat.rundeckmonitor.RundeckMonitor</mainClass>
-								</manifest>
-							</archive>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<!-- Dependencies checker profile, use: mvn versions:display-plugin-updates versions:display-property-updates dependency-check:check -P dependencies.check,default -->
-			<id>dependencies.check</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>versions-maven-plugin</artifactId>
-						<version>${maven.pluginversions.version}</version>
-						<configuration>
-							<rulesUri>file:./dependencies-check-rules.xml</rulesUri>
-						</configuration>
-					</plugin>
-					<!-- OWASP dependencies check report-->
-					<plugin>
-						<groupId>org.owasp</groupId>
-						<artifactId>dependency-check-maven</artifactId>
-						<version>${maven.pluginowasp.version}</version>
-						<configuration>
-							<suppressionFile>./owasp-false-positive.xml</suppressionFile>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	<!-- Reports for the maven site -->
+	<reporting>
+		<plugins>
+			<!-- Dependencies check -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>${maven.pluginversions.version}</version>
+				<configuration>
+					<rulesUri>file:./dependencies-check-rules.xml</rulesUri>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>property-updates-report</report>
+							<report>plugin-updates-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<!-- OWASP dependencies check report-->
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>${maven.pluginowasp.version}</version>
+				<configuration>
+					<suppressionFile>./owasp-false-positive.xml</suppressionFile>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>check</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
