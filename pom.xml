@@ -96,6 +96,7 @@
 		<maven.plugindependency.version>2.9</maven.plugindependency.version>
 		<maven.pluginrelease.version>2.5.1</maven.pluginrelease.version>
 		<maven.pluginowasp.version>1.2.6</maven.pluginowasp.version>
+		<maven.pluginfindbugs.version>3.0.0</maven.pluginfindbugs.version>
 	</properties>
 
 	<dependencies>
@@ -282,6 +283,16 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>${maven.pluginfindbugs.version}</version>
+				<configuration>
+					<xmlOutput>true</xmlOutput>
+					<findbugsXmlOutput>true</findbugsXmlOutput>
+					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+				</configuration>
+			  </plugin>
 		</plugins>
 	</reporting>
 </project>
