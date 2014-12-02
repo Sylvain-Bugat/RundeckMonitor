@@ -96,7 +96,9 @@
 		<maven.plugindependency.version>2.9</maven.plugindependency.version>
 		<maven.pluginrelease.version>2.5.1</maven.pluginrelease.version>
 		<maven.pluginowasp.version>1.2.6</maven.pluginowasp.version>
+		<maven.pluginpmd.version>3.3</maven.pluginpmd.version>
 		<maven.pluginfindbugs.version>3.0.0</maven.pluginfindbugs.version>
+		<maven.pluginreports.version>2.7</maven.pluginreports.version>
 	</properties>
 
 	<dependencies>
@@ -250,6 +252,12 @@
 	<!-- Reports for the maven site -->
 	<reporting>
 		<plugins>
+			<!-- Reporting plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${maven.pluginreports.version}</version>
+			</plugin>
 			<!-- Dependencies check -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -283,6 +291,18 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			<!-- PMD/CPD -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${maven.pluginpmd.version}</version>
+				<configuration>
+					<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+					<targetJdk>${maven.compiler.source}</targetJdk>
+					<linkXref>true</linkXref>
+				</configuration>
+			</plugin>
+			<!-- Findbugs -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
