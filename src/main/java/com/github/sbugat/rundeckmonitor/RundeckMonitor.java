@@ -186,58 +186,52 @@ public class RundeckMonitor implements Runnable {
 	private boolean checkNewConfiguration( final Date lastConfigurationUpdateDate ) {
 
 		Date lastConfigurationDate = lastConfigurationUpdateDate;
-		try {
 
-			if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationDate ) ) {
+		if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationDate ) ) {
 
-				//Wait until configuration is reloaded or exit
-				while( true ) {
+			//Wait until configuration is reloaded or exit
+			while( true ) {
 
-					if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationDate ) ) {
-						//reload the configuration
-						try {
-							reloadConfiguration();
-							rundeckMonitorTrayIcon.reloadConfiguration();
-
-							//Set the tray icon as reconnected
-							rundeckMonitorState.setDisconnected( false );
-							rundeckMonitorTrayIcon.updateTrayIcon();
-							return true;
-						}
-						catch( final Exception e) {
-
-							//Set the tray icon as disconnected
-							rundeckMonitorState.setDisconnected( true );
-							rundeckMonitorTrayIcon.updateTrayIcon();
-
-							if( handleStartupException( e, false ) ) {
-
-								new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration, true );
-								lastConfigurationDate = new Date();
-							}
-							//Dispose tray icon and exit
-							else {
-								rundeckMonitorTrayIcon.disposeTrayIcon();
-								System.exit( 1 );
-							}
-						}
-					}
-
-					//Wait 1s
+				if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationDate ) ) {
+					//reload the configuration
 					try {
+						reloadConfiguration();
+						rundeckMonitorTrayIcon.reloadConfiguration();
 
-						Thread.sleep( 1000 );
+						//Set the tray icon as reconnected
+						rundeckMonitorState.setDisconnected( false );
+						rundeckMonitorTrayIcon.updateTrayIcon();
+						return true;
 					}
-					catch ( final InterruptedException e1) {
+					catch( final Exception e) {
 
-						//Nothing to do
+						//Set the tray icon as disconnected
+						rundeckMonitorState.setDisconnected( true );
+						rundeckMonitorTrayIcon.updateTrayIcon();
+
+						if( handleStartupException( e, false ) ) {
+
+							new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration, true );
+							lastConfigurationDate = new Date();
+						}
+						//Dispose tray icon and exit
+						else {
+							rundeckMonitorTrayIcon.disposeTrayIcon();
+							System.exit( 1 );
+						}
 					}
 				}
+
+				//Wait 1s
+				try {
+
+					Thread.sleep( 1000 );
+				}
+				catch ( final InterruptedException e1) {
+
+					//Nothing to do
+				}
 			}
-		}
-		catch( final IOException e) {
-			//Ignore configuration checking error
-			return true;
 		}
 
 		return false;
@@ -367,7 +361,7 @@ public class RundeckMonitor implements Runnable {
 			else {
 				jobName = rundeckExecution.getDescription();
 			}
-			listJobExecutionInfo.add( new JobExecutionInfo( Long.valueOf( rundeckExecution.getId() ), rundeckExecution.getStartedAt(), jobName, false, newFailedJob && ! init ) );
+			listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), jobName, false, newFailedJob && ! init ) );
 		}
 
 		//Display failed/late jobs on the trayIcon menu
@@ -458,7 +452,7 @@ public class RundeckMonitor implements Runnable {
 	 * @param args program arguments: none is expected and used
 	 * @throws InterruptedException
 	 */
-	public static void main( final String args[] ) {
+	public static void main( final String args[] ) throws InterruptedException {
 
 		//Launch the configuration wizard if there is no configuration file
 		if( ! RundeckMonitorConfiguration.propertiesFileExists() ) {
@@ -518,13 +512,8 @@ public class RundeckMonitor implements Runnable {
 			boolean configurationFileUpdated = false;
 			while( ! configurationFileUpdated ) {
 
-				try {
-					Thread.sleep( 1000 );
-					configurationFileUpdated = RundeckMonitorConfiguration.propertiesFileUpdated( systemDate );
-				}
-				catch( final IOException | InterruptedException e ) {
-					//Ignore these errors
-				}
+				Thread.sleep( 1000 );
+				configurationFileUpdated = RundeckMonitorConfiguration.propertiesFileUpdated( systemDate );
 			}
 		}
 	}

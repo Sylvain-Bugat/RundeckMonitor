@@ -273,12 +273,18 @@ public class RundeckMonitorConfiguration {
 		return Files.exists( propertyFile );
 	}
 
-	public static boolean propertiesFileUpdated( final Date date ) throws IOException {
+	public static boolean propertiesFileUpdated( final Date date ) {
 
 		final Path propertyFile = Paths.get( RUNDECK_MONITOR_PROPERTIES_FILE );
 		if( Files.exists( propertyFile ) ) {
 
-			final Date fileTime = new Date( Files.getLastModifiedTime( propertyFile ).toMillis() );
+			Date fileTime;
+			try {
+				fileTime = new Date( Files.getLastModifiedTime( propertyFile ).toMillis() );
+			}
+			catch( final IOException e ) {
+				return false;
+			}
 
 			return fileTime.after( date );
 		}
