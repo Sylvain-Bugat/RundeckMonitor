@@ -22,7 +22,7 @@ public class JobExecutionInfo {
 
 	public JobExecutionInfo( final Long executionIdArg, final Date startedAtArg, final String descriptionArg, final boolean longExecutionArg, final boolean newJobArg ){
 		executionId = executionIdArg;
-		startedAt = startedAtArg;
+		startedAt =  new Date( startedAtArg.getTime() );
 		description = descriptionArg;
 		longExecution = longExecutionArg;
 		newJob = newJobArg;
@@ -33,7 +33,7 @@ public class JobExecutionInfo {
 	}
 
 	public Date getStartedAt() {
-		return startedAt;
+		return new Date( startedAt.getTime() );
 	}
 
 	public String getDescription() {

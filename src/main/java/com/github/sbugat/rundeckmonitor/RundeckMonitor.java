@@ -286,7 +286,7 @@ public class RundeckMonitor implements Runnable {
 				}
 			}
 			//If an exception is catch, consider the monitor as disconnected
-			catch ( final Exception e ) {
+			catch ( final IOException | RuntimeException e ) {
 
 				rundeckMonitorState.setDisconnected( true );
 				rundeckMonitorTrayIcon.updateTrayIcon();
