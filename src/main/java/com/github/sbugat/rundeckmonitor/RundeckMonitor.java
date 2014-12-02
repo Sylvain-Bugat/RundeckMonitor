@@ -262,13 +262,12 @@ public class RundeckMonitor implements Runnable {
 					versionChecker.resetVersionCheckerDisabled();
 				}
 
-				if( versionChecker.isDownloadDone() ) {
+				//If download finished
+				if( versionChecker.isDownloadDone() && versionChecker.restart() ) {
 
 					//Restart, remove the tray icon and exit
-					if( versionChecker.restart() ) {
-						rundeckMonitorTrayIcon.disposeTrayIcon();
-						System.exit( 0 );
-					}
+					rundeckMonitorTrayIcon.disposeTrayIcon();
+					System.exit( 0 );
 				}
 
 				try {

@@ -31,7 +31,7 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 		container.setLayout( layout );
 		final JLabel rundeckProjectlabel = new JLabel( "Rundeck project:" ); //$NON-NLS-1$
 		final JLabel rundeckApiVersionlabel = new JLabel( "Rundeck API version:" ); //$NON-NLS-1$
-;
+
 		final GridBagConstraints gridBagConstraits = new GridBagConstraints();
 		gridBagConstraits.insets = new Insets( 2,2,2,2 );
 		gridBagConstraits.fill = GridBagConstraints.HORIZONTAL;
