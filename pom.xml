@@ -272,6 +272,7 @@
 					<reportSet>
 						<reports>
 							<report>property-updates-report</report>
+							<report>dependency-updates-report</report>
 							<report>plugin-updates-report</report>
 						</reports>
 					</reportSet>
