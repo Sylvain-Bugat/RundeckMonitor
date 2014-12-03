@@ -100,6 +100,7 @@
 		<maven.pluginpmd.version>3.3</maven.pluginpmd.version>
 		<maven.pluginfindbugs.version>3.0.0</maven.pluginfindbugs.version>
 		<maven.pluginreports.version>2.7</maven.pluginreports.version>
+		<maven.plugintaglist.version>2.4</maven.plugintaglist.version>
 		<maven.pluginjxr.version>2.5</maven.pluginjxr.version>
 	</properties>
 
@@ -314,6 +315,31 @@
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
 					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+				</configuration>
+			</plugin>
+			<!-- TODO/FIXME tags -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+				<version>${maven.plugintaglist.version}</version>
+				<configuration>
+					<tagListOptions>
+						<tagClasses>
+							<tagClass>
+							<displayName>Todo and fix</displayName>
+							<tags>
+								<tag>
+									<matchString>todo</matchString>
+									<matchType>ignoreCase</matchType>
+								</tag>
+								<tag>
+									<matchString>FIXME</matchString>
+									<matchType>exact</matchType>
+								</tag>
+							</tags>
+						  </tagClass>
+						</tagClasses>
+					</tagListOptions>
 				</configuration>
 			</plugin>
 			<!-- Inline sources report -->
