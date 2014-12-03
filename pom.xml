@@ -101,7 +101,10 @@
 		<maven.pluginfindbugs.version>3.0.0</maven.pluginfindbugs.version>
 		<maven.pluginreports.version>2.7</maven.pluginreports.version>
 		<maven.plugintaglist.version>2.4</maven.plugintaglist.version>
+		<maven.pluginjavadoc.version>2.10.1</maven.pluginjavadoc.version>
 		<maven.pluginjxr.version>2.5</maven.pluginjxr.version>
+		<!-- Doclet -->
+		<doclet.doclava.version>1.0.6</doclet.doclava.version>
 	</properties>
 
 	<dependencies>
@@ -340,6 +343,27 @@
 						  </tagClass>
 						</tagClasses>
 					</tagListOptions>
+				</configuration>
+			</plugin>
+			<!-- Javadoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.pluginjavadoc.version}</version>
+				<configuration>
+					<docletArtifact>
+						<groupId>com.google.doclava</groupId>
+						<artifactId>doclava</artifactId>
+						<version>${doclet.doclava.version}</version>
+					</docletArtifact>
+					<doclet>com.google.doclava.Doclava</doclet>
+					<bootclasspath>${sun.boot.class.path}</bootclasspath>
+					<additionalparam>
+						-hdf project.name "${project.name}"
+						-d .
+						-source ${maven.compiler.source}
+					</additionalparam>
+					<useStandardDocletOptions>false</useStandardDocletOptions>
 				</configuration>
 			</plugin>
 			<!-- Inline sources report -->
