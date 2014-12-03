@@ -95,7 +95,7 @@ public abstract class RundeckMonitorTrayIcon {
 	/**
 	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it
 	 *
-	 * @param rundeckMonitorConfiguration loaded configuration
+	 * @param rundeckMonitorConfigurationArg loaded configuration
 	 * @param rundeckMonitorStateArg state of the rundeck monitor
 	 */
 	public RundeckMonitorTrayIcon( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final RundeckMonitorState rundeckMonitorStateArg ) {
