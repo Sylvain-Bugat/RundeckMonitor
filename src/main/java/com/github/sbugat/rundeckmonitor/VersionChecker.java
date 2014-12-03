@@ -239,11 +239,9 @@ public class VersionChecker implements Runnable{
 			for( final Path path : directoryStream ) {
 
 				final String fileName = path.getFileName().toString();
-				if( fileName.startsWith( mavenArtifactId ) && fileName.endsWith( JAR_EXTENSION ) ) {
+				if( fileName.startsWith( mavenArtifactId ) && fileName.endsWith( JAR_EXTENSION ) && ( null == currentJar || currentJar.compareTo( fileName ) < 0 ) ) {
 
-					if( null == currentJar || currentJar.compareTo( fileName ) < 0 ) {
-						currentJar = fileName;
-					}
+					currentJar = fileName;
 				}
 			}
 		}
