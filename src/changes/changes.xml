@@ -47,5 +47,10 @@
 			<action type='fix' dev='Sylvain-Bugat'>Menu listener after configuration reload</action>
 			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
 		</release>
+		<release date='2014-08-04' description='RundeckMonitor version 1.3' version='1.3'>
+			<action type='add' dev='Sylvain-Bugat'>Add configuration wizard improvements</action>
+			<action type='fix' dev='Sylvain-Bugat'>Error handling improvements</action>
+			<action type='fix' dev='Sylvain-Bugat'>Configuration loading improvements</action>
+		</release>
 	</body>
 </document>
