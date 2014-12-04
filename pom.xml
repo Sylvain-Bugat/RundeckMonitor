@@ -278,6 +278,31 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			<!-- TODO/FIXME tags -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+				<version>${maven.plugintaglist.version}</version>
+				<configuration>
+					<tagListOptions>
+						<tagClasses>
+							<tagClass>
+							<displayName>Todo and fix</displayName>
+							<tags>
+								<tag>
+									<matchString>todo</matchString>
+									<matchType>ignoreCase</matchType>
+								</tag>
+								<tag>
+									<matchString>FIXME</matchString>
+									<matchType>exact</matchType>
+								</tag>
+							</tags>
+						  </tagClass>
+						</tagClasses>
+					</tagListOptions>
+				</configuration>
+			</plugin>
 			<!-- Dependencies check -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -332,31 +357,6 @@
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
 					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-				</configuration>
-			</plugin>
-			<!-- TODO/FIXME tags -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>taglist-maven-plugin</artifactId>
-				<version>${maven.plugintaglist.version}</version>
-				<configuration>
-					<tagListOptions>
-						<tagClasses>
-							<tagClass>
-							<displayName>Todo and fix</displayName>
-							<tags>
-								<tag>
-									<matchString>todo</matchString>
-									<matchType>ignoreCase</matchType>
-								</tag>
-								<tag>
-									<matchString>FIXME</matchString>
-									<matchType>exact</matchType>
-								</tag>
-							</tags>
-						  </tagClass>
-						</tagClasses>
-					</tagListOptions>
 				</configuration>
 			</plugin>
 			<!-- Javadoc -->
