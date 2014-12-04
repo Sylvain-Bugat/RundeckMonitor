@@ -52,5 +52,22 @@
 			<action type='fix' dev='Sylvain-Bugat'>Error handling improvements</action>
 			<action type='fix' dev='Sylvain-Bugat'>Configuration loading improvements</action>
 		</release>
+		<release date='2014-07-27' description='RundeckMonitor version 1.2' version='1.2'>
+			<action type='add' dev='Sylvain-Bugat'>Add API token authentication method</action>
+			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
+		</release>
+		<release date='2014-07-17' description='RundeckMonitor version 1.1' version='1.1'>
+			<action type='add' dev='Sylvain-Bugat'>Global rework</action>
+			<action type='add' dev='Sylvain-Bugat'>Add GitHub markdown readme</action>
+			<action type='add' dev='Sylvain-Bugat'>Add an about menu</action>
+			<action type='add' dev='Sylvain-Bugat'>Add long execution detection</action>
+			<action type='add' dev='Sylvain-Bugat'>Change rundeck client connection method</action>
+			<action type='add' dev='Sylvain-Bugat'>Add popup alert</action>
+			<action type='add' dev='Sylvain-Bugat'>Add automatic version checker using GitHub API</action>
+			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
+		</release>
+		<release date='2013-09-08' description='RundeckMonitor version 1.0' version='1.0'>
+			<action type='add' dev='Sylvain-Bugat'>Initial minimal release</action>
+		</release>
 	</body>
 </document>
