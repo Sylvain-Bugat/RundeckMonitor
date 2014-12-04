@@ -27,5 +27,18 @@
 			<action type='fix' dev='Sylvain-Bugat'>Dispose tray icon in case of error</action>
 			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
 		</release>
+		<release date='2014-10-14' description='RundeckMonitor version 1.7' version='1.7'>
+			<action type='fix' dev='Sylvain-Bugat'>Fix #5: popup menu not working on MacOS X</action>
+			<action type='add' dev='Sylvain-Bugat'>Add option to use AWT or Swing</action>
+			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
+		</release>
+		<release date='2014-09-10' description='RundeckMonitor version 1.6' version='1.6'>
+			<action type='add' dev='Sylvain-Bugat'>Add option to redirect opened execution</action>
+			<action type='add' dev='Sylvain-Bugat'>Add a parameter to disable the version checker</action>
+			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
+		</release>
+		<release date='2014-08-24' description='RundeckMonitor version 1.5' version='1.5'>
+			<action type='fix' dev='Sylvain-Bugat'>Used API fixes with old rundeck versions</action>
+		</release>
 	</body>
 </document>
