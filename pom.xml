@@ -101,6 +101,7 @@
 		<maven.pluginfindbugs.version>3.0.0</maven.pluginfindbugs.version>
 		<maven.pluginreports.version>2.7</maven.pluginreports.version>
 		<maven.plugintaglist.version>2.4</maven.plugintaglist.version>
+		<maven.pluginchanges.version>2.11</maven.pluginchanges.version>
 		<maven.pluginjavadoc.version>2.10.1</maven.pluginjavadoc.version>
 		<maven.pluginjxr.version>2.5</maven.pluginjxr.version>
 		<!-- Doclet -->
@@ -263,6 +264,19 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>${maven.pluginreports.version}</version>
+			</plugin>
+			<!-- Changes report -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>${maven.pluginchanges.version}</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>changes-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 			<!-- Dependencies check -->
 			<plugin>
