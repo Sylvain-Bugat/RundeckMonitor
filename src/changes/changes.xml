@@ -40,5 +40,12 @@
 		<release date='2014-08-24' description='RundeckMonitor version 1.5' version='1.5'>
 			<action type='fix' dev='Sylvain-Bugat'>Used API fixes with old rundeck versions</action>
 		</release>
+		<release date='2014-08-21' description='RundeckMonitor version 1.4' version='1.4'>
+			<action type='add' dev='Sylvain-Bugat'>Configuration wizard improvements</action>
+			<action type='fix' dev='Sylvain-Bugat'>Error handling improvements</action>
+			<action type='fix' dev='Sylvain-Bugat'>Used API fixes with old rundeck versions</action>
+			<action type='fix' dev='Sylvain-Bugat'>Menu listener after configuration reload</action>
+			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
+		</release>
 	</body>
 </document>
