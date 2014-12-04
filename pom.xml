@@ -351,19 +351,11 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>${maven.pluginjavadoc.version}</version>
 				<configuration>
-					<docletArtifact>
-						<groupId>com.google.doclava</groupId>
-						<artifactId>doclava</artifactId>
-						<version>${doclet.doclava.version}</version>
-					</docletArtifact>
-					<doclet>com.google.doclava.Doclava</doclet>
-					<bootclasspath>${sun.boot.class.path}</bootclasspath>
-					<additionalparam>
-						-hdf project.name "${project.name}"
-						-d .
-						-source ${maven.compiler.source}
-					</additionalparam>
-					<useStandardDocletOptions>false</useStandardDocletOptions>
+					<show>private</show>
+					<source>${maven.compiler.source}</source>
+					<links>
+						<link>http://rundeck.github.io/rundeck-api-java-client/apidocs</link>
+					</links>
 				</configuration>
 			</plugin>
 			<!-- Inline sources report -->
