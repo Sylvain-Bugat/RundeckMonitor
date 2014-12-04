@@ -35,7 +35,7 @@ public abstract class WizardPanelDescriptor {
 
 	/**
 	 * Return the next wizard panel or null
-	 * @return
+	 * @return next panel
 	 */
 	public ConfigurationWizardStep getNext() {
 		return next;
@@ -43,6 +43,7 @@ public abstract class WizardPanelDescriptor {
 
 	/**
 	 * Return the previous wizard panel or null
+	 * @return previous panel
 	 */
 	public ConfigurationWizardStep getBack() {
 		return back;
