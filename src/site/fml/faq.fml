@@ -28,8 +28,7 @@
 				Which version or Rundeck API is used by Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>Rundeck Monitor can use Rundeck API from 5 to 12, it fully works with all these versions.<br/>
-				The configuration wizard check the Rundeck version for using only compatible API version :</p>
+				<p>Rundeck Monitor can use Rundeck API from 5 to 12, it fully works with all these versions. The configuration wizard check the Rundeck version for using only compatible API version :</p>
 				<ul>
 					<li>API v5 since Rundeck version 1.4.4</li>
 					<li>API v6 since Rundeck version 1.5.1</li>
@@ -48,8 +47,7 @@
 				How Rundeck Monitor is connecting to Rundeck ?
 			</question>
 			<answer>
-				<p>Rundeck Monitor uses <a href="https://github.com/rundeck/rundeck-api-java-client">the official Rundeck java client</a>.<br/>
-				Possible connection method ares :</p>
+				<p>Rundeck Monitor uses <a href="https://github.com/rundeck/rundeck-api-java-client">the official Rundeck java client</a>. Possible authentication methods are :</p>
 				<ul>
 					<li>Connect with a user and a password</li>
 					<li>Connect with an API token</li>
@@ -57,7 +55,37 @@
 			</answer>
 		</faq>
 	</part>
-	
+
+		<part id="installation">
+		<title>Installation</title>
+
+		<faq id="install">
+			<question>
+				How to install Rundeck Monitor ?
+			</question>
+			<answer>
+				<p>Just download the attached jar in the <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest Rundeck Monitor release</a> on GitHub.</p>
+			</answer>
+		</faq>
+
+		<faq id="execution">
+			<question>
+				How to execute Rundeck Monitor ?
+			</question>
+			<answer>
+				<p>If jar file are correctly associated with Java, just open the file to launch Rundeck Monitor.</p>
+				<p>To manually execute the jar file, just type the command: <code>java -jar rundeck-monitor-X.Y.jar</code>. It can be scripted like this on Linux/UNIX:<br/>
+					<code>
+						#!/usr/bin/env bash<br/>
+						java -jar rundeck-monitor-X.Y.jar &amp;<br/>
+					</code>
+				</p>
+			</answer>
+		</faq>
+
+	</part>
+
+
 	<part id="http">
 		<title>HTTP connections to Rundeck when using Rundeck Monitor</title>
 
@@ -66,7 +94,7 @@
 				Can i use Rundeck Monitor behind an http proxy server ?
 			</question>
 			<answer>
-				<p>Yes, you will need a JAVA_OPTS environment variable with a value like "-Dhttp.proxyHost=my-proxy -Dhttp.proxyPort=80". For more information, loot at <a href="http://download.oracle.com/javase/7/docs/technotes/guides/net/proxies.html">the Java doc</a>.</p>
+				<p>Yes, you will need <code>JAVA_OPTS</code> environment variable with a value like <code>-Dhttp.proxyHost=my-proxy -Dhttp.proxyPort=80</code>. For more information, look at <a href="http://download.oracle.com/javase/7/docs/technotes/guides/net/proxies.html">the Java doc</a>.</p>
 			</answer>
 		</faq>
 
@@ -80,7 +108,7 @@
 				Is Rundeck Monitor vulnerable to CVE-2014-3577?
 			</question>
 			<answer>
-				<p>No Rundeck Monitor is no more vulnerable to <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. The<a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest Rundeck Monitor version</a> (since <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.8">1.8</a>) uses <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">the fixed Rundeck java client</a> (12.0).</p>
+				<p>No Rundeck Monitor is no more vulnerable to <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. The <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest Rundeck Monitor version</a> (since <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.8">1.8</a>) uses <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">the fixed Rundeck java client</a> (12.0).</p>
 			</answer>
 		</faq>
 	</part>
