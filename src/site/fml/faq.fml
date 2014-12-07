@@ -73,7 +73,7 @@
 				How to execute Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>If jar file are correctly associated with Java, just open the file to launch Rundeck Monitor.</p>
+				<p>If jar files are correctly associated with Java, just open the file to launch Rundeck Monitor.</p>
 				<p>To manually execute the jar file, just type the command: <code>java -jar rundeck-monitor-X.Y.jar</code>. It can be scripted like this on Linux/UNIX:<br/>
 					<code>
 						#!/usr/bin/env bash<br/>
