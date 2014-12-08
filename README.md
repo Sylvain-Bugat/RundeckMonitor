@@ -2,7 +2,7 @@
 
 Rundeck monitor is a system tray icon tools that indicates failed and long execution on a rundeck instance.
 
-![RundeckMonitor screenshot](Screenshot.png)
+![RundeckMonitor screenshot](https://github.com/Sylvain-Bugat/RundeckMonitor/blob/master/Screenshot.png)
 
 ***
 
@@ -20,11 +20,11 @@ After configuration, the tray icon can be in these colors:
 
 | color | description |
 | ---------- | ---------- |
-| ![RundeckMonitor OK](src/main/resources/OK.png) | no failed jobs has failed since the launch or the last alert reset and no long execution is detected |
-| ![RundeckMonitor KO](src/main/resources/KO.png) | a new failed job is detected since the launch or the last alert reset |
-| ![RundeckMonitor late](src/main/resources/LATE.png) | a job is running for too long |
-| ![RundeckMonitor KO and late](src/main/resources/KO_LATE.png) | a new failed job is detected since the launch or the last alert reset and another job is running for too long |
-| ![RundeckMonitor disconnected](src/main/resources/DISCONNECTED.png) | the connection with rundeck is lost |
+| ![RundeckMonitor OK](https://github.com/Sylvain-Bugat/RundeckMonitor/blob/master/src/main/resources/OK.png) | no failed jobs has failed since the launch or the last alert reset and no long execution is detected |
+| ![RundeckMonitor KO](https://github.com/Sylvain-Bugat/RundeckMonitor/blob/master/src/main/resources/KO.png) | a new failed job is detected since the launch or the last alert reset |
+| ![RundeckMonitor late](https://github.com/Sylvain-Bugat/RundeckMonitor/blob/master/src/main/resources/LATE.png) | a job is running for too long |
+| ![RundeckMonitor KO and late](https://github.com/Sylvain-Bugat/RundeckMonitor/blob/master/src/main/resources/KO_LATE.png) | a new failed job is detected since the launch or the last alert reset and another job is running for too long |
+| ![RundeckMonitor disconnected](https://github.com/Sylvain-Bugat/RundeckMonitor/blob/master/src/main/resources/DISCONNECTED.png) | the connection with rundeck is lost |
 
 When the tray icon is marqued with red, this alert can be reset to get back to green/black.
 
