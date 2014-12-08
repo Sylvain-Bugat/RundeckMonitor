@@ -7,3 +7,4 @@ target/site/
 .classpath
 .project
 .settings
+doxia-github-markdown.properties
