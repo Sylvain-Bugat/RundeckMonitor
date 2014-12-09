@@ -81,6 +81,9 @@
 		<!-- Google GSON (used/required by GitHub Client)-->
 		<gson.client>2.3.1</gson.client>
 
+		<!-- Doxia version for site -->
+		<doxia.version></doxia.version>
+
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>2.6.1</maven.pluginclean.version>
 		<maven.plugininstall.version>2.5.2</maven.plugininstall.version>
@@ -167,6 +170,23 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>${maven.pluginsite.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.github.sbugat</groupId>
+						<artifactId>doxia-module-github-markdown</artifactId>
+						<version>${doxia.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.mylyn.github</groupId>
+						<artifactId>org.eclipse.egit.github.core</artifactId>
+						<version>${github.client}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.google.code.gson</groupId>
+						<artifactId>gson</artifactId>
+						<version>${gson.client}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 			<!-- Testing Launcher Plugins configuration -->
