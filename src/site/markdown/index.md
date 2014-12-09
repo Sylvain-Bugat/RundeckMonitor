@@ -1,4 +1,4 @@
-# RunDeckMonitor
+# RunDeck Monitor
 
 RunDeck Monitor is a system tray icon tools that indicates failed and long execution on a RunDeck instance.
 
