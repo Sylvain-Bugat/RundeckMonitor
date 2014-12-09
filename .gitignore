@@ -1,9 +1,13 @@
 target/archive-tmp/
 target/classes/
+target/dependency-check.ser
 target/generated-sources/
+target/javadoc-bundle-options/
 target/maven-archiver/
 target/maven-status/
 target/site/
+target/taglist
+target/*.xml
 .classpath
 .project
 .settings
