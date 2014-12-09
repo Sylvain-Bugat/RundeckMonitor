@@ -82,7 +82,7 @@
 		<gson.client>2.3.1</gson.client>
 
 		<!-- Doxia version for site -->
-		<doxia.version></doxia.version>
+		<doxia.version>1.6</doxia.version>
 
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>2.6.1</maven.pluginclean.version>
