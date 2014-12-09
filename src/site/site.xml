@@ -32,9 +32,9 @@
 		</breadcrumbs>
 		<menu name="${project.name}">
 			<item name="Introduction" href="index.html" />
-			<item name="Status" href="status.html" />
+			<item name="Download and install" href="download-install.html" />
+			<item name="GitHub readme" href="README.html" />
 			<item name="FAQ" href="faq.html" />
-			<item name="Download" href="download.html" />
 			<item name="Changelog" href="changes-report.html" />
 		</menu>
 		<menu ref="reports" />
