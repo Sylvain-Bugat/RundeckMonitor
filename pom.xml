@@ -29,7 +29,7 @@
 	<name>Rundeck monitor</name>
 	<description>Tray-icon to monitor rundeck executions</description>
 	<inceptionYear>2013</inceptionYear>
-	<url>https://github.com/Sylvain-Bugat/RundeckMonitor</url>
+	<url>http://sylvain-bugat.github.io/RundeckMonitor</url>
 
 	<scm>
 		<url>https://github.com/Sylvain-Bugat/RundeckMonitor</url>
@@ -108,8 +108,6 @@
 		<maven.pluginchanges.version>2.11</maven.pluginchanges.version>
 		<maven.pluginjavadoc.version>2.10.1</maven.pluginjavadoc.version>
 		<maven.pluginjxr.version>2.5</maven.pluginjxr.version>
-		<!-- Doclet -->
-		<doclet.doclava.version>1.0.6</doclet.doclava.version>
 	</properties>
 
 	<dependencies>
