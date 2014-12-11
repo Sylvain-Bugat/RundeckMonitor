@@ -1,6 +1,6 @@
-# RundeckMonitor
+# RunDeckMonitor
 
-Rundeck monitor is a system tray icon tools that indicates failed and long execution on a rundeck instance.
+RunDeck monitor is a system tray icon tools that indicates failed and long execution on a RunDeck instance.
 
 ![RundeckMonitor screenshot](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/Screenshot.png)
 
@@ -20,11 +20,11 @@ After configuration, the tray icon can be in these colors:
 
 | color | description |
 | ---------- | ---------- |
-| ![RundeckMonitor OK](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/OK.png) | no failed jobs has failed since the launch or the last alert reset and no long execution is detected |
-| ![RundeckMonitor KO](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/KO.png) | a new failed job is detected since the launch or the last alert reset |
-| ![RundeckMonitor late](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/LATE.png) | a job is running for too long |
-| ![RundeckMonitor KO and late](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/KO_LATE.png) | a new failed job is detected since the launch or the last alert reset and another job is running for too long |
-| ![RundeckMonitor disconnected](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/DISCONNECTED.png) | the connection with rundeck is lost |
+| ![RunDeckMonitor OK](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/OK.png) | no failed jobs has failed since the launch or the last alert reset and no long execution is detected |
+| ![RunDeckMonitor KO](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/KO.png) | a new failed job is detected since the launch or the last alert reset |
+| ![RunDeckMonitor late](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/LATE.png) | a job is running for too long |
+| ![RunDeckMonitor KO and late](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/KO_LATE.png) | a new failed job is detected since the launch or the last alert reset and another job is running for too long |
+| ![RunDeckMonitor disconnected](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/src/main/resources/DISCONNECTED.png) | the connection with RunDeck is lost |
 
 When the tray icon is marqued with red, this alert can be reset to get back to green/black.
 
@@ -36,25 +36,25 @@ Failed and long  jobs list can be clicked in order to see the rundeck execution 
 
 Edit the configuration file creatd by the wizard or copy and edit the sample configuration file `rundeckMonitor.properties` from the master `target\` directory and change these parameters:  
 
-### Rundeck project parameters
+### RunDeck project parameters
 
 	rundeck.monitor.url=
 	
-URL with the http protocol and with only the domain and the port like: `http:\\rundeck.domain.com:4440`
+URL with the http/https protocol and with only the domain and the port like: `http://rundeck.domain.com:4440`
 
 	rundeck.monitor.project=
 	
-Rundeck project containing jobs to scan
+RunDeck project containing jobs to scan
 
 ### Authentication parameters
 
 	rundeck.monitor.api.key=
 
-Rundeck API key can be used instead of login/password
+RunDeck API key can be used instead of login/password
 
 	rundeck.monitor.login=
 	
-Login with access to the Rundeck REST API if no API key is defined
+Login with access to the RunDeck REST API if no API key is defined
 
 	rundeck.monitor.password=
 	
