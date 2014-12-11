@@ -84,6 +84,10 @@
 		<!-- Doxia version for site -->
 		<doxia.version>1.6</doxia.version>
 
+		<!--  Log Frameworks Version  -->
+		<slf4j.version>1.7.7</slf4j.version>
+		<logback.version>1.1.2</logback.version>
+
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>2.6.1</maven.pluginclean.version>
 		<maven.plugininstall.version>2.5.2</maven.plugininstall.version>
@@ -111,11 +115,14 @@
 	</properties>
 
 	<dependencies>
+		<!-- Rundeck client -->
 		<dependency>
 			<groupId>org.rundeck</groupId>
 			<artifactId>rundeck-api-java-client</artifactId>
 			<version>${rundeck.client}</version>
 		</dependency>
+
+		<!-- GitHub client and needed GSON dependency -->
 		<dependency>
 			<groupId>org.eclipse.mylyn.github</groupId>
 			<artifactId>org.eclipse.egit.github.core</artifactId>
@@ -125,6 +132,26 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>${gson.client}</version>
+		</dependency>
+
+		<!-- Log Dependencies (SLF4J, LogBack)  -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>${logback.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
