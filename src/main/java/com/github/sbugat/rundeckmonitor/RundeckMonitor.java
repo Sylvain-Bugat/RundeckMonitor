@@ -21,6 +21,8 @@ import org.rundeck.api.domain.RundeckExecution.ExecutionStatus;
 import org.rundeck.api.domain.RundeckProject;
 import org.rundeck.api.query.ExecutionQuery;
 import org.rundeck.api.util.PagedResults;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 import com.github.sbugat.rundeckmonitor.configuration.InvalidPropertyException;
 import com.github.sbugat.rundeckmonitor.configuration.MissingPropertyException;
@@ -37,6 +39,8 @@ import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard
  *
  */
 public class RundeckMonitor implements Runnable {
+
+	private static final XLogger log = XLoggerFactory.getXLogger( RundeckMonitor.class );
 
 	private final VersionChecker versionChecker;
 
@@ -69,6 +73,8 @@ public class RundeckMonitor implements Runnable {
 	 * @throws UnknownProjectException
 	 */
 	public RundeckMonitor( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final VersionChecker versionCheckerArg ) throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException {
+
+		log.entry();
 
 		versionChecker = versionCheckerArg;
 		rundeckMonitorConfiguration = rundeckMonitorConfigurationArg;
@@ -105,7 +111,9 @@ public class RundeckMonitor implements Runnable {
 
 		if( ! existingProject ) {
 
-			throw new UnknownProjectException(  rundeckMonitorConfiguration.getRundeckProject() );
+			final UnknownProjectException exception = new UnknownProjectException( rundeckMonitorConfiguration.getRundeckProject() );
+			log.exit( exception );
+			throw exception;
 		}
 
 		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
@@ -128,8 +136,11 @@ public class RundeckMonitor implements Runnable {
 		}
 		catch(final Exception e) {
 			rundeckMonitorTrayIcon.disposeTrayIcon();
+			log.exit( e );
 			throw e;
 		}
+
+		log.exit();
 	}
 
 	public void reloadConfiguration() throws IOException, MissingPropertyException, InvalidPropertyException {
@@ -167,6 +178,7 @@ public class RundeckMonitor implements Runnable {
 
 		if( ! existingProject ) {
 			JOptionPane.showMessageDialog( null, "Invalid rundeck project," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + '=' + rundeckMonitorConfiguration.getRundeckProject() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			log.exit( 1 );
 			System.exit( 1 );
 		}
 
@@ -180,10 +192,14 @@ public class RundeckMonitor implements Runnable {
 
 		//Initialize and update the rundeck monitor failed/late jobs
 		updateRundeckHistory( true );
+
+		log.exit();
 	}
 
 
 	private boolean checkNewConfiguration( final Date lastConfigurationUpdateDate ) {
+
+		log.entry( lastConfigurationUpdateDate );
 
 		Date lastConfigurationDate = lastConfigurationUpdateDate;
 
@@ -201,6 +217,7 @@ public class RundeckMonitor implements Runnable {
 						//Set the tray icon as reconnected
 						rundeckMonitorState.setDisconnected( false );
 						rundeckMonitorTrayIcon.updateTrayIcon();
+						log.exit( true );
 						return true;
 					}
 					catch( final Exception e) {
@@ -217,6 +234,7 @@ public class RundeckMonitor implements Runnable {
 						//Dispose tray icon and exit
 						else {
 							rundeckMonitorTrayIcon.disposeTrayIcon();
+							log.exit( 1 );
 							System.exit( 1 );
 						}
 					}
@@ -234,6 +252,7 @@ public class RundeckMonitor implements Runnable {
 			}
 		}
 
+		log.exit( false );
 		return false;
 	}
 
@@ -241,6 +260,8 @@ public class RundeckMonitor implements Runnable {
 	 * RundeckMonitor background process method executing the main loop
 	 */
 	public void run() {
+
+		log.entry();
 
 		Date lastConfigurationUpdateDate = new Date();
 
@@ -267,6 +288,7 @@ public class RundeckMonitor implements Runnable {
 
 					//Restart, remove the tray icon and exit
 					rundeckMonitorTrayIcon.disposeTrayIcon();
+					log.exit( 0 );
 					System.exit( 0 );
 				}
 
@@ -302,6 +324,8 @@ public class RundeckMonitor implements Runnable {
 	 * @param init boolean to indicate if it's the first call to this method for the monitor initialization
 	 */
 	private void updateRundeckHistory( final boolean init ) {
+
+		log.entry( init );
 
 		//call Rundeck rest API
 		final ExecutionQuery executionQuery = ExecutionQuery.builder().project( rundeckMonitorConfiguration.getRundeckProject() ).status( ExecutionStatus.FAILED ).build();
@@ -373,6 +397,8 @@ public class RundeckMonitor implements Runnable {
 
 		//Update the tray icon color
 		rundeckMonitorTrayIcon.updateTrayIcon();
+
+		log.exit();
 	}
 
 	/**
@@ -383,6 +409,8 @@ public class RundeckMonitor implements Runnable {
 	 * @return true if the wizard needs to be launched
 	 */
 	private static boolean handleStartupException( final Exception exception, final boolean initialization ) {
+
+		log.entry( exception, initialization );
 
 		final String errorMessage;
 
@@ -439,9 +467,11 @@ public class RundeckMonitor implements Runnable {
 
 		if( JOptionPane.NO_OPTION == errorUserReturn ) {
 
+			log.exit( true );
 			return true;
 		}
 
+		log.exit( false );
 		return false;
 	}
 
@@ -453,8 +483,11 @@ public class RundeckMonitor implements Runnable {
 	 */
 	public static void main( final String args[] ) throws InterruptedException {
 
+		log.entry( ( Object[] ) args );
+
 		//Launch the configuration wizard if there is no configuration file
 		if( ! RundeckMonitorConfiguration.propertiesFileExists() ) {
+			log.info( "Launching configuration wizard" ); //$NON-NLS-1$
 			new RundeckMonitorConfigurationWizard( new RundeckMonitorConfiguration(), true );
 		}
 
@@ -489,6 +522,7 @@ public class RundeckMonitor implements Runnable {
 
 				if( rundeckMonitorConfiguration.isVersionCheckerEnabled() ) {
 					//Start the version checker thread
+					log.info( "Launching version checker" ); //$NON-NLS-1$
 					new Thread( versionChecker ).start();
 				}
 
@@ -498,6 +532,7 @@ public class RundeckMonitor implements Runnable {
 			catch ( final Exception e ) {
 
 				if( ! handleStartupException( e, true ) ) {
+					log.exit( 1 );
 					System.exit( 1 );
 				}
 			}
