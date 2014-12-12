@@ -25,10 +25,15 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
+
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
 public abstract class RundeckMonitorTrayIcon {
+
+	private static final XLogger log = XLoggerFactory.getXLogger( RundeckMonitor.class );
 
 	/** URL to access job execution details */
 	static final String RUNDECK_JOB_EXECUTION_URL = "/execution/"; //$NON-NLS-1$
@@ -100,6 +105,8 @@ public abstract class RundeckMonitorTrayIcon {
 	 */
 	public RundeckMonitorTrayIcon( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final RundeckMonitorState rundeckMonitorStateArg ) {
 
+		log.entry( rundeckMonitorConfigurationArg, rundeckMonitorStateArg );
+
 		rundeckMonitorConfiguration = rundeckMonitorConfigurationArg;
 		rundeckMonitorState = rundeckMonitorStateArg;
 
@@ -151,6 +158,7 @@ public abstract class RundeckMonitorTrayIcon {
 				@SuppressWarnings("synthetic-access")
 				public void actionPerformed( final ActionEvent e) {
 					tray.remove( trayIcon );
+					log.exit( 0 );
 					System.exit( 0 );
 				}
 			};
@@ -181,6 +189,7 @@ public abstract class RundeckMonitorTrayIcon {
 
 			JOptionPane.showMessageDialog( null, "SystemTray cannot be initialized", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
 
+			log.exit( 2 );
 			System.exit( 2 );
 		}
 	}
@@ -196,6 +205,8 @@ public abstract class RundeckMonitorTrayIcon {
 	 * Update the image of the tray icon
 	 */
 	public void updateTrayIcon() {
+
+		log.entry();
 
 		if( rundeckMonitorState.isDisconnected() ) {
 			trayIcon.setImage( IMAGE_DISCONNECTED );
@@ -215,14 +226,20 @@ public abstract class RundeckMonitorTrayIcon {
 		else {
 			trayIcon.setImage( IMAGE_OK );
 		}
+
+		log.exit();
 	}
 
 	public void reloadConfiguration() {
+
+		log.entry();
 
 		newLateProcess.clear();
 		newFailedProcess.clear();
 
 		trayIcon.setToolTip( rundeckMonitorConfiguration.getRundeckMonitorName() );
+
+		log.exit();
 	}
 
 	/**
@@ -230,6 +247,8 @@ public abstract class RundeckMonitorTrayIcon {
 	 */
 	public void disposeTrayIcon() {
 
+		log.entry();
 		tray.remove( trayIcon );
+		log.exit();
 	}
 }
