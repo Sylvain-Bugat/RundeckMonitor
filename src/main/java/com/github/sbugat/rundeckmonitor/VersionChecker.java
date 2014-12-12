@@ -18,6 +18,8 @@ import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryTag;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
+import org.slf4j.ext.XLogger;
+import org.slf4j.ext.XLoggerFactory;
 
 import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
 
@@ -32,6 +34,8 @@ import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
  *
  */
 public class VersionChecker implements Runnable{
+
+	private static final XLogger log = XLoggerFactory.getXLogger( VersionChecker.class );
 
 	private static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 	private static final String TMP_EXTENSION = ".tmp"; //$NON-NLS-1$
@@ -83,6 +87,8 @@ public class VersionChecker implements Runnable{
 	@Override
 	public void run() {
 
+		log.entry();
+
 		final String currentJar = currentJar();
 
 		if( null == currentJar ) {
@@ -109,22 +115,28 @@ public class VersionChecker implements Runnable{
 			}
 
 			if( null == recentRelease  ) {
+				log.exit();
 				return;
 			}
 
 			if( ! findAndDownloadReleaseJar( recentRelease, true ) ) {
 				findAndDownloadReleaseJar( recentRelease, false );
 			}
+
+			log.exit();
 		}
 		catch( final Exception e) {
 
 			//Ignore any error during update process
 			//Just delete the temporary file
 			cleanOldAndTemporaryJar();
+			log.exit( e );
 		}
 	}
 
 	private boolean findAndDownloadReleaseJar( final RepositoryTag release, final boolean withDependenciesSuffix ) throws IOException {
+
+		log.entry( release, withDependenciesSuffix );
 
 		final String jarSuffix;
 		if( withDependenciesSuffix ) {
@@ -160,6 +172,7 @@ public class VersionChecker implements Runnable{
 						versionCheckerDisabled = true;
 					}
 
+					log.exit( true );
 					return true;
 				}
 
@@ -167,10 +180,13 @@ public class VersionChecker implements Runnable{
 			}
 		}
 
+		log.exit( false );
 		return false;
 	}
 
 	public boolean restart() {
+
+		log.entry();
 
 		if( Files.exists( Paths.get( downloadedJar ) ) ) {
 
@@ -179,6 +195,7 @@ public class VersionChecker implements Runnable{
 				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), JAR_ARGUMENT, downloadedJar );
 				processBuilder.start();
 
+				log.exit( true );
 				return true;
 			}
 			catch( final IOException e ) {
@@ -187,10 +204,13 @@ public class VersionChecker implements Runnable{
 			}
 		}
 
+		log.exit( false );
 		return false;
 	}
 
 	public void cleanOldAndTemporaryJar() {
+
+		log.entry();
 
 		String currentJar = currentJar();
 
@@ -211,27 +231,36 @@ public class VersionChecker implements Runnable{
 					}
 				}
 			}
+
+			log.exit();
 		}
-		catch ( final IOException ex ) {
+		catch ( final IOException e ) {
 			//Ignore any error during the delete process
+			log.exit( e );
 		}
 	}
 
 	private static void deleteJar( final Path jarFileToDelete ) {
 
+		log.entry();
+
 		if( Files.exists( jarFileToDelete ) ) {
 
 			try {
 				Files.delete( jarFileToDelete );
+				log.exit();
 			}
 			catch ( final IOException e ) {
 
 				//Ignore any error during the delete process
+				log.exit( e );
 			}
 		}
 	}
 
 	private String currentJar() {
+
+		log.entry();
 
 		String currentJar = null;
 		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) { //$NON-NLS-1$
@@ -250,6 +279,7 @@ public class VersionChecker implements Runnable{
 			currentJar = null;
 		}
 
+		log.exit( currentJar );
 		return currentJar;
 	}
 
@@ -288,6 +318,8 @@ public class VersionChecker implements Runnable{
 	 */
 	private static String getJavaExecutable() throws NoSuchFileException {
 
+		log.entry();
+
 		final String javaDirectory = System.getProperty( JAVA_HOME_PROPERTY );
 
 		if ( javaDirectory == null ) {
@@ -306,9 +338,13 @@ public class VersionChecker implements Runnable{
 		//Check if the executable exists and is executable
 		final Path javaExecutablePath = Paths.get( javaExecutableFilePath );
 		if ( ! Files.exists( javaExecutablePath ) || ! Files.isExecutable( javaExecutablePath ) ) {
-			throw new NoSuchFileException( javaExecutableFilePath );
+
+			final NoSuchFileException exception = new NoSuchFileException( javaExecutableFilePath );
+			log.exit( exception );
+			throw exception;
 		}
 
+		log.exit( javaExecutableFilePath );
 		return javaExecutableFilePath;
 	}
 }
