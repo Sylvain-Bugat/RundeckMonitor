@@ -137,7 +137,7 @@
 		<!-- Log Dependencies (SLF4J, LogBack)  -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<artifactId>slf4j-ext</artifactId>
 			<version>${slf4j.version}</version>
 			<scope>compile</scope>
 		</dependency>
