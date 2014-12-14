@@ -39,7 +39,7 @@ public abstract class RundeckMonitorTrayIcon {
 	static final String RUNDECK_JOB_EXECUTION_URL = "/execution/"; //$NON-NLS-1$
 
 	/** GitHub Project URL */
-	static final String RUNDECK_MONITOR_PROJECT_URL = "https://github.com/Sylvain-Bugat/RundeckMonitor"; //$NON-NLS-1$
+	static final String RUNDECK_MONITOR_PROJECT_URL = "https://sylvain-bugat.github.com/RundeckMonitor"; //$NON-NLS-1$
 
 	/** Marker on the job when it is too long*/
 	static final String LONG_EXECUTION_MARKER = " - LONG EXECUTION"; //$NON-NLS-1$
