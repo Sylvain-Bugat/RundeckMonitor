@@ -26,8 +26,8 @@
 	<artifactId>rundeck-monitor</artifactId>
 	<packaging>jar</packaging>
 	<version>1.9-SNAPSHOT</version>
-	<name>Rundeck monitor</name>
-	<description>Tray-icon to monitor rundeck executions</description>
+	<name>RunDeck Monitor</name>
+	<description>a tray-icon to monitor RunDeck executions</description>
 	<inceptionYear>2013</inceptionYear>
 	<url>http://sylvain-bugat.github.io/RundeckMonitor</url>
 
