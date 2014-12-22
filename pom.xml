@@ -196,6 +196,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>${maven.pluginsite.version}</version>
+				<configuration>
+					<locales>en,fr</locales>
+				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>com.github.sbugat</groupId>
@@ -381,7 +384,7 @@
 				</reportSets>
 			</plugin>
 			<!-- OWASP dependencies check report-->
-			<plugin>
+			<!--<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
 				<version>${maven.pluginowasp.version}</version>
@@ -395,7 +398,7 @@
 						</reports>
 					</reportSet>
 				</reportSets>
-			</plugin>
+			</plugin>-->
 			<!-- PMD/CPD -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
