@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright 2014 Sylvain Bugat
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+		title="Frequently Asked Questions"
+		toplink="false">
+
+	<part id="general">
+		<title>Généralités</title>
+
+		<faq id="api">
+			<question>
+				Quelle version de l'API RunDeck est utilisé par RunDeck Monitor ?
+			</question>
+			<answer>
+				<p>RunDeck Monitor peut utiliser l'API de la version 5 à 12, toutes les fonctionnalités sont disponible avec ces versions. Le configurateur automatique ne propose que les API compatible avec la version de RunDeck utilisée :</p>
+				<ul>
+					<li>API v5 depuis RunDeck version 1.4.4</li>
+					<li>API v6 depuis RunDeck version 1.5.1</li>
+					<li>API v7 depuis RunDeck version 1.5.3</li>
+					<li>API v8 depuis RunDeck version 1.6.0</li>
+					<li>API v9 depuis RunDeck version 1.6.1</li>
+					<li>API v10 depuis RunDeck version 2.0.0</li>
+					<li>API v11 depuis RunDeck version 2.1.0</li>
+					<li>API v12 depuis RunDeck version 2.2.0</li>
+				</ul>
+			</answer>
+		</faq>
+
+		<faq id="client">
+			<question>
+				Comment RunDeck Monitor se connecte-t-il à RunDeck ?
+			</question>
+			<answer>
+				<p>RunDeck Monitor utilise <a href="https://github.com/rundeck/rundeck-api-java-client">le client java officiel</a>. Les méthodes d'authentification possible sont :</p>
+				<ul>
+					<li>Connexion avec un utilisateur et un mot de passe</li>
+					<li>Connexion avec un jeton d'authentifcation généré dans RunDeck</li>
+				</ul>
+			</answer>
+		</faq>
+	</part>
+
+	<part id="installation">
+		<title>Installation</title>
+
+		<faq id="install">
+			<question>
+				Comment installer RunDeck Monitor ?
+			</question>
+			<answer>
+				<p>Il suffit de télécharger la dernière version du jar sur la<a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">dernière version de RunDeck Monitor</a> sur GitHub.</p>
+			</answer>
+		</faq>
+
+		<faq id="package">
+			<question>
+				Sous quel format RunDeck Monitor est disponible ?
+			</question>
+			<answer>
+				<p>RunDeck Monitor est disponible sous la forme d'un jar autonome intégrant toutes les dépendances nécessaires à son fonctionnement.</p>
+			</answer>
+		</faq>
+
+		<faq id="jre">
+			<question>
+				Quelles versions de Java sont compatibles avec RunDeck Monitor ?
+			</question>
+			<answer>
+				<p>La version 1.7 de Java ou supérieure est requise pour pouvoir exécuter RunDeck Monitor.</p>
+			</answer>
+		</faq>
+
+		<faq id="execution">
+			<question>
+				Comment exécuter RunDeck Monitor ?
+			</question>
+			<answer>
+				<p>Si les fichiers jar sont bien associé au programme Java, il suffit d'ouvrir le fichier pour lancer RunDeck Monitor.</p>
+				<p>Pour exécuter manuellement le fichier jar, il suffti d'entrer la commande suivante: <code>java -jar rundeck-monitor-X.Y.jar</code>. Ceci peut être scripté sur Linux/UNIX de cette manière:<br/>
+					<code>
+						#!/usr/bin/env bash<br/>
+						java -jar rundeck-monitor-X.Y.jar &amp;<br/>
+					</code>
+				</p>
+			</answer>
+		</faq>
+
+	</part>
+
+
+	<part id="http">
+		<title>Connexions HTTP à RunDeck depuis RunDeck Monitor</title>
+
+		<faq id="proxy">
+			<question>
+				Est-il possible d'utiliser RunDeck Monitor derrière un serveur proxy HTTP ?
+			</question>
+			<answer>
+				<p>Oui c'est possible. Pour cela, il faut configurer la variable d'environnement <code>JAVA_OPTS</code> avec une valeur de la forme: <code>-Dhttp.proxyHost=my-proxy -Dhttp.proxyPort=80</code>. Pour plus d'information sur l'utilisation de proxy HTTP avec Java, consultez la <a href="http://download.oracle.com/javase/7/docs/technotes/guides/net/proxies.html">documentation Java</a>.</p>
+			</answer>
+		</faq>
+
+	</part>
+
+	<part id="security">
+		<title>Sécurité</title>
+
+		<faq id="CVE-2014-3577">
+			<question>
+				Est-ce que RunDeck Monitor est vulnérable à la faille CVE-2014-3577?
+			</question>
+			<answer>
+				<p>Non, RunDeck Monitor n'est plus vulnérable à la faille <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. La <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">dernière version</a> (depuis la <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.8">1.8</a>) utilise <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">le client java intégrant la correction</a> (12.0).</p>
+			</answer>
+		</faq>
+	</part>
+</faqs>
