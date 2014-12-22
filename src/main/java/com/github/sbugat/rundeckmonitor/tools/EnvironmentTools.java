@@ -1,5 +1,7 @@
 package com.github.sbugat.rundeckmonitor.tools;
 
+import java.util.Locale;
+
 /**
  * Tools class to detect Operating System type
  *
@@ -24,6 +26,6 @@ public class EnvironmentTools {
 			return false;
 		}
 
-		return operatingSystem.toLowerCase().startsWith( WINDOWS_OS_NAME );
+		return operatingSystem.toLowerCase( Locale.getDefault() ).startsWith( WINDOWS_OS_NAME );
 	}
 }

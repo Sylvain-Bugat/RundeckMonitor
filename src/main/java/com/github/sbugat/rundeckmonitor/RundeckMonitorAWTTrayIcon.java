@@ -143,34 +143,14 @@ public class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 		final JDialog hiddenDialog = new JDialog ();
 		hiddenDialog.setSize( 10, 10 );
 
-		hiddenDialog.addWindowFocusListener(new WindowFocusListener () {
-
-			@Override
-			public void windowLostFocus ( final WindowEvent e ) {
-				hiddenDialog.setVisible( false );
-			}
-
-			@Override
-			public void windowGainedFocus ( final WindowEvent e ) {
-				//Nothing to do
-			}
-		});
+		final RundeckMonitorAWTListenerAdapter listenerAdapter= new RundeckMonitorAWTListenerAdapter( hiddenDialog );
+		hiddenDialog.addWindowFocusListener( listenerAdapter );
 
 		//Add the icon  to the system tray
 		trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorConfiguration.getRundeckMonitorName(), popupMenu );
 		trayIcon.setImageAutoSize( true );
 
-		trayIcon.addMouseListener( new MouseAdapter() {
-
-			public void mouseReleased( final MouseEvent e) {
-
-				if( e.isPopupTrigger() ) {
-					hiddenDialog.setLocation( e.getX(), e.getY() );
-
-					hiddenDialog.setVisible( true );
-				}
-			}
-		});
+		trayIcon.addMouseListener( listenerAdapter );
 
 		try {
 			tray.add( trayIcon );
@@ -260,5 +240,39 @@ public class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 		}
 
 		super.reloadConfiguration();
+	}
+
+	/**
+	 * Mouse Adapter and WindowsFocusListener to auto-hide the hidden dialog
+	 *
+	 * @author Sylvain Bugat
+	 *
+	 */
+	private static class RundeckMonitorAWTListenerAdapter extends MouseAdapter implements WindowFocusListener {
+
+		private final JDialog dialog;
+
+		private RundeckMonitorAWTListenerAdapter( final JDialog dialogArg ) {
+			dialog = dialogArg;
+		}
+
+		@Override
+		public void windowLostFocus ( final WindowEvent e ) {
+			dialog.setVisible( false );
+		}
+
+		@Override
+		public void windowGainedFocus ( final WindowEvent e ) {
+			//Nothing to do
+		}
+
+		public void mouseReleased( final MouseEvent e) {
+
+			if( e.isPopupTrigger() ) {
+				dialog.setLocation( e.getX(), e.getY() );
+
+				dialog.setVisible( true );
+			}
+		}
 	}
 }

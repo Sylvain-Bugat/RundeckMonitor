@@ -220,7 +220,7 @@ public class RundeckMonitor implements Runnable {
 						log.exit( true );
 						return true;
 					}
-					catch( final Exception e) {
+					catch( final  IOException | MissingPropertyException | InvalidPropertyException | RuntimeException e) {
 
 						//Set the tray icon as disconnected
 						rundeckMonitorState.setDisconnected( true );
@@ -292,7 +292,7 @@ public class RundeckMonitor implements Runnable {
 				}
 
 				try {
-					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000 );
+					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000l );
 				}
 				catch ( final Exception e ) {
 
@@ -308,7 +308,7 @@ public class RundeckMonitor implements Runnable {
 
 				try {
 
-					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000 );
+					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000l );
 				}
 				catch ( final InterruptedException e1) {
 
@@ -346,7 +346,7 @@ public class RundeckMonitor implements Runnable {
 		//Scan runnings jobs to detect if they are late
 		for( final RundeckExecution rundeckExecution : currentExecutions ) {
 
-			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > rundeckMonitorConfiguration.getLateThreshold() * 1000 ) {
+			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > rundeckMonitorConfiguration.getLateThreshold() * 1000l ) {
 
 				lateExecutionFound = true;
 
@@ -529,7 +529,7 @@ public class RundeckMonitor implements Runnable {
 				//Monitor and Version started without exception, end the launch thread
 				return;
 			}
-			catch ( final Exception e ) {
+			catch ( final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException e ) {
 
 				if( ! handleStartupException( e, true ) ) {
 					SystemTools.exit( SystemTools.EXIT_CODE_ERROR );
