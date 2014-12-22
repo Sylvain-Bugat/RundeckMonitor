@@ -32,13 +32,13 @@
 	</skin>
 	<custom>
 		<fluidoSkin>
-		  <gitHub>
-			<projectId>Sylvain-Bugat/RundeckMonitor</projectId>
-			<ribbonOrientation>right</ribbonOrientation>
-			<ribbonColor>red</ribbonColor>
-			<sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
-			<breadcrumbDivider>-></breadcrumbDivider>
-		  </gitHub>
+			<breadcrumbDivider>&#xbb;</breadcrumbDivider>
+			<gitHub>
+				<projectId>Sylvain-Bugat/RundeckMonitor</projectId>
+				<ribbonOrientation>right</ribbonOrientation>
+				<ribbonColor>red</ribbonColor>
+				<sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+			</gitHub>
 		</fluidoSkin>
 	</custom>
 	<poweredBy>
@@ -58,5 +58,8 @@
 			<item name="Changelog" href="changes-report.html" />
 		</menu>
 		<menu ref="reports" />
+		<menu name="Other languages">
+			<item name="Français" href="/fr/index.html"/> 
+		</menu>
 	</body>
 </project>
