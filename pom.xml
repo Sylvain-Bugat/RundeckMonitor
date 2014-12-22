@@ -416,6 +416,8 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>${maven.pluginfindbugs.version}</version>
 				<configuration>
+					<effort>Max</effort>
+					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
 					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
