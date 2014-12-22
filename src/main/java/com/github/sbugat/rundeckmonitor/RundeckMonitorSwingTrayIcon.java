@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 
 /**
@@ -196,7 +197,7 @@ public class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon{
 			e.printStackTrace( new PrintWriter( stringWriter ) );
 			JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
 
-			System.exit( 3 );
+			SystemTools.exit( SystemTools.EXIT_CODE_TRAY_ICON_ERROR );
 		}
 	}
 

@@ -17,6 +17,7 @@ import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 
 /**
  * Class of the configuration Wizard
@@ -127,7 +128,7 @@ public class RundeckMonitorConfigurationWizard {
 			public void actionPerformed( final ActionEvent e) {
 
 				if( exitOnClose ) {
-					System.exit( 0 );
+					SystemTools.exit( SystemTools.EXIT_CODE_OK );
 				}
 				else {
 					wizardFrame.setVisible( false );

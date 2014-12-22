@@ -92,6 +92,7 @@ public class VersionChecker implements Runnable{
 		final String currentJar = currentJar();
 
 		if( null == currentJar ) {
+			log.exit();
 			return;
 		}
 
@@ -190,9 +191,11 @@ public class VersionChecker implements Runnable{
 
 		if( Files.exists( Paths.get( downloadedJar ) ) ) {
 
+			String javaExecutable= null;
 			try {
 
-				final ProcessBuilder processBuilder = new ProcessBuilder( getJavaExecutable(), JAR_ARGUMENT, downloadedJar );
+				javaExecutable = getJavaExecutable();
+				final ProcessBuilder processBuilder = new ProcessBuilder( javaExecutable, JAR_ARGUMENT, downloadedJar );
 				processBuilder.start();
 
 				log.exit( true );
@@ -201,6 +204,7 @@ public class VersionChecker implements Runnable{
 			catch( final IOException e ) {
 
 				//Ignore any error during restart process
+				log.error( "Error during restarting process {} with arguments: {} {}", javaExecutable, JAR_ARGUMENT, downloadedJar, e ); //$NON-NLS-1$
 			}
 		}
 

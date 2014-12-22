@@ -29,6 +29,7 @@ import com.github.sbugat.rundeckmonitor.configuration.MissingPropertyException;
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.configuration.UnknownProjectException;
 import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
+import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 import com.github.sbugat.rundeckmonitor.wizard.InterfaceType;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
@@ -178,8 +179,7 @@ public class RundeckMonitor implements Runnable {
 
 		if( ! existingProject ) {
 			JOptionPane.showMessageDialog( null, "Invalid rundeck project," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + '=' + rundeckMonitorConfiguration.getRundeckProject() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			log.exit( 1 );
-			System.exit( 1 );
+			SystemTools.exit( SystemTools.EXIT_CODE_ERROR );
 		}
 
 		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
@@ -234,8 +234,7 @@ public class RundeckMonitor implements Runnable {
 						//Dispose tray icon and exit
 						else {
 							rundeckMonitorTrayIcon.disposeTrayIcon();
-							log.exit( 1 );
-							System.exit( 1 );
+							SystemTools.exit( SystemTools.EXIT_CODE_ERROR );
 						}
 					}
 				}
@@ -245,9 +244,10 @@ public class RundeckMonitor implements Runnable {
 
 					Thread.sleep( 1000 );
 				}
-				catch ( final InterruptedException e1) {
+				catch ( final InterruptedException e) {
 
 					//Nothing to do
+					log.error( "Waiting interrupted", e ); //$NON-NLS-1$
 				}
 			}
 		}
@@ -288,8 +288,7 @@ public class RundeckMonitor implements Runnable {
 
 					//Restart, remove the tray icon and exit
 					rundeckMonitorTrayIcon.disposeTrayIcon();
-					log.exit( 0 );
-					System.exit( 0 );
+					SystemTools.exit( SystemTools.EXIT_CODE_OK );
 				}
 
 				try {
@@ -298,6 +297,7 @@ public class RundeckMonitor implements Runnable {
 				catch ( final Exception e ) {
 
 					//Nothing to do
+					log.error( "Waiting interrupted", e ); //$NON-NLS-1$
 				}
 			}
 			//If an exception is catch, consider the monitor as disconnected
@@ -313,6 +313,7 @@ public class RundeckMonitor implements Runnable {
 				catch ( final InterruptedException e1) {
 
 					//Nothing to do
+					log.error( "Waiting interrupted", e1 ); //$NON-NLS-1$
 				}
 			}
 		}
@@ -479,9 +480,8 @@ public class RundeckMonitor implements Runnable {
 	 * RundeckMonitor main method
 	 *
 	 * @param args program arguments: none is expected and used
-	 * @throws InterruptedException
 	 */
-	public static void main( final String args[] ) throws InterruptedException {
+	public static void main( final String args[] ) {
 
 		log.entry( ( Object[] ) args );
 
@@ -498,7 +498,7 @@ public class RundeckMonitor implements Runnable {
 				Thread.sleep( 1000 );
 			}
 			catch( final InterruptedException e ) {
-				//Ignore this error
+				log.error( "Waiting interrupted", e ); //$NON-NLS-1$
 			}
 		}
 
@@ -532,8 +532,7 @@ public class RundeckMonitor implements Runnable {
 			catch ( final Exception e ) {
 
 				if( ! handleStartupException( e, true ) ) {
-					log.exit( 1 );
-					System.exit( 1 );
+					SystemTools.exit( SystemTools.EXIT_CODE_ERROR );
 				}
 			}
 
@@ -546,7 +545,12 @@ public class RundeckMonitor implements Runnable {
 			boolean configurationFileUpdated = false;
 			while( ! configurationFileUpdated ) {
 
-				Thread.sleep( 1000 );
+				try {
+					Thread.sleep( 1000 );
+				}
+				catch( final InterruptedException e ) {
+					log.error( "Waiting interrupted", e ); //$NON-NLS-1$
+				}
 				configurationFileUpdated = RundeckMonitorConfiguration.propertiesFileUpdated( systemDate );
 			}
 		}

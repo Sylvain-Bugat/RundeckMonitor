@@ -29,6 +29,7 @@ import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
 public abstract class RundeckMonitorTrayIcon {
@@ -119,6 +120,7 @@ public abstract class RundeckMonitorTrayIcon {
 			catch( final ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e ) {
 
 				//If System Look&Feel is not supported, stay with the default one
+				log.warn( "Unsupported System Look&Feel", e ); //$NON-NLS-1$
 			}
 
 			// Get the system default browser to open execution details
@@ -158,8 +160,7 @@ public abstract class RundeckMonitorTrayIcon {
 				@SuppressWarnings("synthetic-access")
 				public void actionPerformed( final ActionEvent e) {
 					tray.remove( trayIcon );
-					log.exit( 0 );
-					System.exit( 0 );
+					SystemTools.exit( SystemTools.EXIT_CODE_OK );
 				}
 			};
 
@@ -189,8 +190,7 @@ public abstract class RundeckMonitorTrayIcon {
 
 			JOptionPane.showMessageDialog( null, "SystemTray cannot be initialized", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$
 
-			log.exit( 2 );
-			System.exit( 2 );
+			SystemTools.exit( SystemTools.EXIT_CODE_TRAY_ICON_UNSUPPORTED );
 		}
 	}
 
