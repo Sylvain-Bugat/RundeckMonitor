@@ -107,19 +107,13 @@ public class RundeckMonitor implements Runnable {
 		log.exit();
 	}
 
-	public void reloadConfiguration() throws IOException, MissingPropertyException, InvalidPropertyException {
+	public void reloadConfiguration() throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException {
 
 		//Configuration checking
 		rundeckMonitorConfiguration.loadConfigurationPropertieFile();
 
 		//Configuration checking and initialize a new Rundeck client
-		try {
-			initRundeckClient();
-		}
-		catch( final UnknownProjectException e ) {
-			JOptionPane.showMessageDialog( null, "Invalid rundeck project," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + '=' + rundeckMonitorConfiguration.getRundeckProject() + "\".", "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			SystemTools.exit( SystemTools.EXIT_CODE_ERROR );
-		}
+		initRundeckClient();
 
 		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
@@ -209,7 +203,7 @@ public class RundeckMonitor implements Runnable {
 						log.exit( true );
 						return true;
 					}
-					catch( final IOException | MissingPropertyException | InvalidPropertyException | RuntimeException e) {
+					catch( final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException e) {
 
 						//Set the tray icon as disconnected
 						rundeckMonitorState.setDisconnected( true );
