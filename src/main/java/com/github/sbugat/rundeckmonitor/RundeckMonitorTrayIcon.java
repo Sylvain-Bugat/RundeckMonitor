@@ -30,6 +30,7 @@ import org.slf4j.ext.XLoggerFactory;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.tools.SystemTools;
+import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
 public abstract class RundeckMonitorTrayIcon {
@@ -250,5 +251,32 @@ public abstract class RundeckMonitorTrayIcon {
 		log.entry();
 		tray.remove( trayIcon );
 		log.exit();
+	}
+
+	/**
+	 * Open a browser page using the default browser to a job execution
+	 *
+	 * @param jobExecutionInfo the job exeuction to open
+	 */
+	void openBrowser( final JobExecutionInfo jobExecutionInfo ) {
+		final JobTabRedirection jobTabRedirection;
+
+		if( jobExecutionInfo.isLongExecution() ) {
+			jobTabRedirection = JobTabRedirection.SUMMARY;
+		}
+		else {
+			jobTabRedirection = JobTabRedirection.valueOf( rundeckMonitorConfiguration.getJobTabRedirection() );
+		}
+
+		try {
+			final URI executionURI = new URI( rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix() );
+			desktop.browse( executionURI );
+		}
+		catch ( final URISyntaxException | IOException exception) {
+
+			final StringWriter stringWriter = new StringWriter();
+			exception.printStackTrace( new PrintWriter( stringWriter ) );
+			JOptionPane.showMessageDialog( null, exception.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor redirection error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
+		}
 	}
 }

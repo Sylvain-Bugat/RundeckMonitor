@@ -11,11 +11,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,7 +24,6 @@ import javax.swing.JOptionPane;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.tools.SystemTools;
-import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 
 /**
  * Tray icon management class
@@ -60,26 +56,7 @@ public class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 
 				if( MenuItem.class.isInstance( e.getSource() ) ){
 
-					final JobExecutionInfo jobExecutionInfo = failedMenuItems.get( e.getSource() );
-					final JobTabRedirection jobTabRedirection;
-
-					if( jobExecutionInfo.isLongExecution() ) {
-						jobTabRedirection = JobTabRedirection.SUMMARY;
-					}
-					else {
-						jobTabRedirection = JobTabRedirection.valueOf( rundeckMonitorConfiguration.getJobTabRedirection() );
-					}
-
-					try {
-						final URI executionURI = new URI( rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix() );
-						desktop.browse( executionURI );
-					}
-					catch ( final URISyntaxException | IOException exception) {
-
-						final StringWriter stringWriter = new StringWriter();
-						exception.printStackTrace( new PrintWriter( stringWriter ) );
-						JOptionPane.showMessageDialog( null, exception.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor redirection error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
-					}
+					openBrowser( failedMenuItems.get( e.getSource() ) );
 				}
 			}
 		};
