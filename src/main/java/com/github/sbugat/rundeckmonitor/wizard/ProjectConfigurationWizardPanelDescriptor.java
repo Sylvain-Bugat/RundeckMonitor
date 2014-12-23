@@ -15,6 +15,7 @@ import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.domain.RundeckProject;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
+import com.github.sbugat.rundeckmonitor.tools.RundeckClientTools;
 
 public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescriptor {
 
@@ -58,21 +59,8 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 
 	public void aboutToDisplayPanel() {
 
-		final RundeckClientBuilder rundeckClientBuilder;
-		final String rundeckUrl = rundeckMonitorConfiguration.getRundeckUrl();
-		if( ! rundeckMonitorConfiguration.getRundeckAPIKey().isEmpty() ) {
-			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckMonitorConfiguration.getRundeckAPIKey() );
-		}
-		else {
-			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
-		}
-
 		//Initialize the rundeck client with the minimal rundeck version (1)
-		final RundeckClient rundeckClient = rundeckClientBuilder.version(1).build();
-
-		//Test authentication credentials
-		rundeckClient.ping();
-		rundeckClient.testAuth();
+		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient( rundeckMonitorConfiguration );
 
 		rundeckProjectNameTextField.removeAllItems();
 		//Check if the configured project exists
