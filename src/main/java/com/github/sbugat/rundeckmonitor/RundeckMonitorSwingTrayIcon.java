@@ -128,8 +128,9 @@ public class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon{
 		reinitItem.addActionListener( reinitListener );
 		final JMenuItem aboutItem = new JMenuItem( "About RundeckMonitor" ); //$NON-NLS-1$
 		popupMenu.add( aboutItem );
-
 		aboutItem.addActionListener( aboutListener );
+		aboutItem.setToolTipText( "Open " + RUNDECK_MONITOR_PROJECT_URL ); //$NON-NLS-1$
+
 		final JMenuItem configurationItem = new JMenuItem( "Edit configuration" ); //$NON-NLS-1$
 		popupMenu.add( configurationItem );
 		configurationItem.addActionListener( configurationListener );
@@ -224,6 +225,17 @@ public class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon{
 			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
 			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription(); //$NON-NLS-1$
 			jMenuItem.setText( message + longExecution );
+
+			//Add tooltip
+			final JobTabRedirection jobTabRedirection;
+
+			if( jobExecutionInfo.isLongExecution() ) {
+				jobTabRedirection = JobTabRedirection.SUMMARY;
+			}
+			else {
+				jobTabRedirection = JobTabRedirection.valueOf( rundeckMonitorConfiguration.getJobTabRedirection() );
+			}
+			jMenuItem.setToolTipText( "Open " + rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix() ); //$NON-NLS-1$
 
 			if( jobExecutionInfo.isNewJob() ) {
 
