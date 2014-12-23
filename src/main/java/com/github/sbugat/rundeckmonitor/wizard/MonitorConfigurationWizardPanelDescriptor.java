@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.rundeck.api.RundeckClient;
-import org.rundeck.api.RundeckClientBuilder;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
@@ -221,7 +220,7 @@ public class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	public void aboutToDisplayPanel() {
 
 		//Initialize the rundeck client with the minimal rundeck version (1)
-		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient( rundeckMonitorConfiguration );
+		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient( rundeckMonitorConfiguration, true );
 
 		final String rundeckVersion = rundeckClient.getSystemInfo().getVersion();
 

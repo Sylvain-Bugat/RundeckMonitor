@@ -13,11 +13,19 @@ import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguratio
  */
 public class RundeckClientTools {
 
-	public static RundeckClient buildRundeckClient( final RundeckMonitorConfiguration rundeckMonitorConfiguration ) {
+	/**
+	 * Build a rundeck client with the argument configuration
+	 *
+	 * @param rundeckMonitorConfiguration configuration to use
+	 * @param minimalRundeckAPIVersion use API version 1 if true
+	 * @return build rundeck client
+	 */
+	public static RundeckClient buildRundeckClient( final RundeckMonitorConfiguration rundeckMonitorConfiguration, final boolean minimalRundeckAPIVersion ) {
+
+		final String rundeckUrl = rundeckMonitorConfiguration.getRundeckUrl();
 
 		//Client builder using API token if it is present, otherwise use login and password
 		final RundeckClientBuilder rundeckClientBuilder;
-		final String rundeckUrl = rundeckMonitorConfiguration.getRundeckUrl();
 		if( null != rundeckMonitorConfiguration.getRundeckAPIKey() && ! rundeckMonitorConfiguration.getRundeckAPIKey().isEmpty() ) {
 			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckMonitorConfiguration.getRundeckAPIKey() );
 		}
@@ -25,8 +33,15 @@ public class RundeckClientTools {
 			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
 		}
 
-		//Initialize the rundeck client with the minimal rundeck version (1)
-		final RundeckClient rundeckClient = rundeckClientBuilder.version(1).build();
+		final RundeckClient rundeckClient;
+		if( minimalRundeckAPIVersion ) {
+			//Initialize the rundeck client with the minimal rundeck version (1)
+			rundeckClient = rundeckClientBuilder.version( 1 ).build();
+		}
+		else {
+			//Use the configured RunDeck API version
+			rundeckClient = rundeckClientBuilder.version( rundeckMonitorConfiguration.getRundeckAPIversion() ).build();
+		}
 
 		//Test authentication credentials
 		rundeckClient.ping();

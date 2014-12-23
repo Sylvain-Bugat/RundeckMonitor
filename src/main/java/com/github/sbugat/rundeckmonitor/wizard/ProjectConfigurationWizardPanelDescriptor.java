@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.rundeck.api.RundeckClient;
-import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.domain.RundeckProject;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
@@ -60,7 +59,7 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 	public void aboutToDisplayPanel() {
 
 		//Initialize the rundeck client with the minimal rundeck version (1)
-		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient( rundeckMonitorConfiguration );
+		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient( rundeckMonitorConfiguration, true );
 
 		rundeckProjectNameTextField.removeAllItems();
 		//Check if the configured project exists
@@ -109,23 +108,8 @@ public class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescri
 
 	public boolean validate() {
 
-		final RundeckClientBuilder rundeckClientBuilder;
-		final String rundeckUrl = rundeckMonitorConfiguration.getRundeckUrl();
-		if( ! rundeckMonitorConfiguration.getRundeckAPIKey().isEmpty() ) {
-			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckMonitorConfiguration.getRundeckAPIKey() );
-		}
-		else {
-			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
-		}
-
-		final RundeckAPIVersion apiVersion = rundeckRundeckAPIVersionTextField.getItemAt( rundeckRundeckAPIVersionTextField.getSelectedIndex() );
-
 		//Initialize the rundeck client
-		final RundeckClient rundeckClient = rundeckClientBuilder.version( apiVersion.getVersion() ).build();
-
-		//Test authentication credentials
-		rundeckClient.ping();
-		rundeckClient.testAuth();
+		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient( rundeckMonitorConfiguration, true );
 
 		//Check if the configured project exists
 		boolean existingProject = false;

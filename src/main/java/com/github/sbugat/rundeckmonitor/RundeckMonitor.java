@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import org.rundeck.api.RundeckApiException.RundeckApiLoginException;
 import org.rundeck.api.RundeckApiException.RundeckApiTokenException;
 import org.rundeck.api.RundeckClient;
-import org.rundeck.api.RundeckClientBuilder;
 import org.rundeck.api.domain.RundeckExecution;
 import org.rundeck.api.domain.RundeckExecution.ExecutionStatus;
 import org.rundeck.api.domain.RundeckProject;
@@ -29,6 +28,7 @@ import com.github.sbugat.rundeckmonitor.configuration.MissingPropertyException;
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.configuration.UnknownProjectException;
 import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
+import com.github.sbugat.rundeckmonitor.tools.RundeckClientTools;
 import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 import com.github.sbugat.rundeckmonitor.wizard.InterfaceType;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
@@ -141,22 +141,8 @@ public class RundeckMonitor implements Runnable {
 		//Configuration checking
 		rundeckMonitorConfiguration.verifyConfiguration();
 
-		//Initialize the client builder with token  or login/password authentication
-		final RundeckClientBuilder rundeckClientBuilder;
-		final String rundeckAPIKey = rundeckMonitorConfiguration.getRundeckAPIKey();
-		final String rundeckUrl = rundeckMonitorConfiguration.getRundeckUrl();
-		if( null != rundeckAPIKey && ! rundeckAPIKey.isEmpty() ) {
-			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).token( rundeckAPIKey );
-		}
-		else {
-			rundeckClientBuilder = RundeckClient.builder().url( rundeckUrl ).login( rundeckMonitorConfiguration.getRundeckLogin(), rundeckMonitorConfiguration.getRundeckPassword() );
-		}
-
-		//Initialize the rundeck client with version
-		rundeckClient = rundeckClientBuilder.version( rundeckMonitorConfiguration.getRundeckAPIversion() ).build();
-
-		//Test authentication credentials
-		rundeckClient.testAuth();
+		//Initialize the rundeck client with the API version
+		rundeckClient = RundeckClientTools.buildRundeckClient( rundeckMonitorConfiguration, false );
 
 		//Check if the configured project exists
 		boolean existingProject = false;
