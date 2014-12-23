@@ -318,7 +318,7 @@
 		</pluginManagement>
 	</build>
 
-	<!-- Reports for the maven site -->
+	<!-- Reports for the maven site, publish with "mvn scm-publish:publish-scm" from a git shell-->
 	<reporting>
 		<plugins>
 			<!-- Reporting plugin -->
