@@ -93,10 +93,12 @@ public abstract class RundeckMonitorTrayIcon {
 	final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
 	/**Current state of the trayIcon */
-	RundeckMonitorState rundeckMonitorState;
+	final RundeckMonitorState rundeckMonitorState;
 
+	/** Already known late/long process*/
 	final Set<Long> newLateProcess = new HashSet<>();
 
+	/** Already known failed process*/
 	final Set<Long> newFailedProcess = new HashSet<>();
 
 	/**
@@ -231,6 +233,9 @@ public abstract class RundeckMonitorTrayIcon {
 		log.exit();
 	}
 
+	/**
+	 * Called when configuration is reloaded, clear all known process and reinitialize the tooltip
+	 */
 	public void reloadConfiguration() {
 
 		log.entry();
@@ -259,6 +264,8 @@ public abstract class RundeckMonitorTrayIcon {
 	 * @param jobExecutionInfo the job exeuction to open
 	 */
 	void openBrowser( final JobExecutionInfo jobExecutionInfo ) {
+
+		log.entry();
 		final JobTabRedirection jobTabRedirection;
 
 		if( jobExecutionInfo.isLongExecution() ) {
@@ -269,7 +276,9 @@ public abstract class RundeckMonitorTrayIcon {
 		}
 
 		try {
-			final URI executionURI = new URI( rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix() );
+			final String uRI = rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix();
+			log.info( "Open execution with URL: {}", uRI ); //$NON-NLS-1$
+			final URI executionURI = new URI( uRI );
 			desktop.browse( executionURI );
 		}
 		catch ( final URISyntaxException | IOException exception) {
@@ -278,5 +287,7 @@ public abstract class RundeckMonitorTrayIcon {
 			exception.printStackTrace( new PrintWriter( stringWriter ) );
 			JOptionPane.showMessageDialog( null, exception.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor redirection error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
 		}
+
+		log.exit();
 	}
 }
