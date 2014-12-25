@@ -3,12 +3,12 @@ package com.github.sbugat.rundeckmonitor;
 import java.util.Date;
 
 /**
- * A Job information class
+ * A Job information class.
  *
  * @author Sylvain Bugat
  *
  */
-public class JobExecutionInfo {
+public final class JobExecutionInfo {
 
 	private final Long executionId;
 
@@ -28,23 +28,23 @@ public class JobExecutionInfo {
 		newJob = newJobArg;
 	}
 
-	public Long getExecutionId() {
+	public final Long getExecutionId() {
 		return executionId;
 	}
 
-	public Date getStartedAt() {
+	public final Date getStartedAt() {
 		return new Date( startedAt.getTime() );
 	}
 
-	public String getDescription() {
+	public final String getDescription() {
 		return description;
 	}
 
-	public boolean isLongExecution() {
+	public final boolean isLongExecution() {
 		return longExecution;
 	}
 
-	public boolean isNewJob() {
+	public final boolean isNewJob() {
 		return newJob;
 	}
 }

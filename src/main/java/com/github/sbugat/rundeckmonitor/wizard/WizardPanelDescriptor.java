@@ -18,7 +18,7 @@ public abstract class WizardPanelDescriptor {
 
 	private final ConfigurationWizardStep next;
 
-	protected RundeckMonitorConfiguration rundeckMonitorConfiguration;
+	protected final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
 	public WizardPanelDescriptor( final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg ) {
 		panelIdentifier = panelIdentifierArg;
