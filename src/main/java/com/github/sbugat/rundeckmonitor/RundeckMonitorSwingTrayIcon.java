@@ -21,6 +21,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
@@ -200,7 +202,13 @@ public class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon{
 
 			entry.setValue( jobExecutionInfo );
 			final SimpleDateFormat formatter = new SimpleDateFormat( rundeckMonitorConfiguration.getDateFormat() );
-			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
+			final String longExecution;
+			if( jobExecutionInfo.isLongExecution() ) {
+				longExecution = LONG_EXECUTION_MARKER;
+			}
+			else {
+				longExecution = StringUtils.EMPTY;
+			}
 			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription(); //$NON-NLS-1$
 			jMenuItem.setText( message + longExecution );
 

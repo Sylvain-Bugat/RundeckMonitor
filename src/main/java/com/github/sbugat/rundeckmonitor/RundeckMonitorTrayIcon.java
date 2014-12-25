@@ -33,6 +33,12 @@ import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
+/**
+ * Tray icon common class with no-AWT/Swing components.
+ *
+ * @author Sylvain Bugat
+ *
+ */
 public abstract class RundeckMonitorTrayIcon {
 
 	private static final XLogger log = XLoggerFactory.getXLogger( RundeckMonitor.class );
@@ -53,17 +59,17 @@ public abstract class RundeckMonitorTrayIcon {
 	static final String NEW_LONG_EXECUTION_ALERT = "New long execution"; //$NON-NLS-1$
 
 	/** OK image*/
-	final Image IMAGE_OK = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "OK.png" ) ); //$NON-NLS-1$
+	static final Image IMAGE_OK = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "OK.png" ) ); //$NON-NLS-1$
 	/** WARNING image when a job seems to be blocked*/
-	private final Image IMAGE_LATE = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "LATE.png" ) ); //$NON-NLS-1$
-	final Icon ICON_LATE_SMALL = new ImageIcon( Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "LATE_SMALL.png" ) ) ); //$NON-NLS-1$
+	private static final Image IMAGE_LATE = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "LATE.png" ) ); //$NON-NLS-1$
+	static final Icon ICON_LATE_SMALL = new ImageIcon( Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "LATE_SMALL.png" ) ) ); //$NON-NLS-1$
 	/** KO image when a job has failed*/
-	private final Image IMAGE_KO = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "KO.png" ) ); //$NON-NLS-1$
-	final Icon ICON_KO_SMALL = new ImageIcon( Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "KO_SMALL.png" ) ) ); //$NON-NLS-1$
+	private static final Image IMAGE_KO = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "KO.png" ) ); //$NON-NLS-1$
+	static final Icon ICON_KO_SMALL = new ImageIcon( Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "KO_SMALL.png" ) ) ); //$NON-NLS-1$
 	/** KO image when a job has failed and a job seems to be blocked*/
-	private final Image IMAGE_KO_LATE = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "KO_LATE.png" ) ); //$NON-NLS-1$
+	private static final Image IMAGE_KO_LATE = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "KO_LATE.png" ) ); //$NON-NLS-1$
 	/** Disconnected from rundeck image */
-	private final Image IMAGE_DISCONNECTED = Toolkit.getDefaultToolkit().getImage( getClass().getClassLoader().getResource( "DISCONNECTED.png" ) ); //$NON-NLS-1$
+	private static final Image IMAGE_DISCONNECTED = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "DISCONNECTED.png" ) ); //$NON-NLS-1$
 
 	/** System tray */
 	final SystemTray tray;

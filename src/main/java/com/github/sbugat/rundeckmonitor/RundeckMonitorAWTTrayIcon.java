@@ -22,6 +22,8 @@ import java.util.Map.Entry;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 
@@ -162,7 +164,13 @@ public class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 
 			entry.setValue( jobExecutionInfo );
 			final SimpleDateFormat formatter = new SimpleDateFormat( rundeckMonitorConfiguration.getDateFormat() );
-			final String longExecution = jobExecutionInfo.isLongExecution() ? LONG_EXECUTION_MARKER : ""; //$NON-NLS-1$
+			final String longExecution;
+			if( jobExecutionInfo.isLongExecution() ) {
+				longExecution = LONG_EXECUTION_MARKER;
+			}
+			else {
+				longExecution = StringUtils.EMPTY;
+			}
 			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription(); //$NON-NLS-1$
 			menuItem.setLabel( message + longExecution );
 
@@ -225,7 +233,7 @@ public class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 	 * @author Sylvain Bugat
 	 *
 	 */
-	private static class RundeckMonitorAWTListenerAdapter extends MouseAdapter implements WindowFocusListener {
+	private static final class RundeckMonitorAWTListenerAdapter extends MouseAdapter implements WindowFocusListener {
 
 		private final JDialog dialog;
 
