@@ -34,7 +34,7 @@ import com.github.sbugat.rundeckmonitor.wizard.InterfaceType;
 import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard;
 
 /**
- * Primary and main class of the Rundeck Monitor
+ * Primary and main class of the Rundeck Monitor.
  *
  * @author Sylvain Bugat
  *
@@ -70,9 +70,9 @@ public class RundeckMonitor implements Runnable {
 	 * Initialize the rundeck monitor, load configuration and try to connect to the configured rundeck.
 	 *
 	 * @throws IOException in case of loading configuration error
-	 * @throws InvalidPropertyException
-	 * @throws MissingPropertyException
-	 * @throws UnknownProjectException
+	 * @throws InvalidPropertyException in case of loading configuration property error
+	 * @throws MissingPropertyException in case of loading configuration property error
+	 * @throws UnknownProjectException in case of unknown RunDeck project
 	 */
 	public RundeckMonitor( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final VersionChecker versionCheckerArg ) throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException {
 
@@ -131,9 +131,9 @@ public class RundeckMonitor implements Runnable {
 	}
 
 	/**
-	 * Check the configuration and initialize a new rundeck client
+	 * Check the configuration and initialize a new rundeck client.
 	 *
-	 * @throws MissingPropertyException  when check configuration
+	 * @throws MissingPropertyException when check configuration
 	 * @throws InvalidPropertyException when check configuration
 	 * @throws UnknownProjectException if the configured project is unknown
 	 */
@@ -227,7 +227,7 @@ public class RundeckMonitor implements Runnable {
 	}
 
 	/**
-	 * RundeckMonitor background process method executing the main loop
+	 * RundeckMonitor background process method executing the main loop.
 	 */
 	public void run() {
 
@@ -290,7 +290,7 @@ public class RundeckMonitor implements Runnable {
 	}
 
 	/**
-	 * Call Rundeck rest API and update the monitor state and displayed jobs if there are new failed/late jobs
+	 * Call Rundeck rest API and update the monitor state and displayed jobs if there are new failed/late jobs.
 	 *
 	 * @param init boolean to indicate if it's the first call to this method for the monitor initialization
 	 */
@@ -373,7 +373,7 @@ public class RundeckMonitor implements Runnable {
 	}
 
 	/**
-	 * Rundeck launcher exception handler, display an error message based on the argument exception
+	 * Rundeck launcher exception handler, display an error message based on the argument exception.
 	 *
 	 * @param exception exception to analyze
 	 * @param initialization indicate if the tray icon is not loaded yet
@@ -447,7 +447,7 @@ public class RundeckMonitor implements Runnable {
 	}
 
 	/**
-	 * RundeckMonitor main method
+	 * RundeckMonitor main method.
 	 *
 	 * @param args program arguments: none is expected and used
 	 */
