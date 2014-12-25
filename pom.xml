@@ -107,6 +107,7 @@
 		<maven.pluginowasp.version>1.2.7</maven.pluginowasp.version>
 		<maven.pluginpmd.version>3.3</maven.pluginpmd.version>
 		<maven.pluginfindbugs.version>3.0.0</maven.pluginfindbugs.version>
+		<maven.plugincheckstyle.version>2.13</maven.plugincheckstyle.version>
 		<maven.pluginreports.version>2.7</maven.pluginreports.version>
 		<maven.plugintaglist.version>2.4</maven.plugintaglist.version>
 		<maven.pluginchanges.version>2.11</maven.pluginchanges.version>
@@ -421,6 +422,15 @@
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
 					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+				</configuration>
+			</plugin>
+			<!-- CheckStyle -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven.plugincheckstyle.version}</version>
+				<configuration>
+					<suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
 				</configuration>
 			</plugin>
 			<!-- Javadoc -->
