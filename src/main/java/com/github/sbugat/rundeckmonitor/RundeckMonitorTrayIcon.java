@@ -41,81 +41,81 @@ import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard
  */
 public abstract class RundeckMonitorTrayIcon {
 
-	private static final XLogger log = XLoggerFactory.getXLogger( RundeckMonitor.class );
+	private static final XLogger LOG = XLoggerFactory.getXLogger( RundeckMonitor.class );
 
-	/** URL to access job execution details */
+	/** URL to access job execution details. */
 	static final String RUNDECK_JOB_EXECUTION_URL = "/execution/"; //$NON-NLS-1$
 
-	/** GitHub Project URL */
+	/** GitHub Project URL. */
 	static final String RUNDECK_MONITOR_PROJECT_URL = "https://sylvain-bugat.github.com/RundeckMonitor"; //$NON-NLS-1$
 
-	/** Marker on the job when it is too long*/
+	/** Marker on the job when it is too long.*/
 	static final String LONG_EXECUTION_MARKER = " - LONG EXECUTION"; //$NON-NLS-1$
 
-	/** Alert message when a new failed job is detected*/
+	/** Alert message when a new failed job is detected.*/
 	static final String NEW_FAILED_JOB_ALERT = "New failed job"; //$NON-NLS-1$
 
-	/** Alert message when a new long execution is detected*/
+	/** Alert message when a new long execution is detected.*/
 	static final String NEW_LONG_EXECUTION_ALERT = "New long execution"; //$NON-NLS-1$
 
-	/** OK image*/
+	/** OK image.*/
 	static final Image IMAGE_OK = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "OK.png" ) ); //$NON-NLS-1$
-	/** WARNING image when a job seems to be blocked*/
+	/** WARNING image when a job seems to be blocked.*/
 	private static final Image IMAGE_LATE = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "LATE.png" ) ); //$NON-NLS-1$
 	static final Icon ICON_LATE_SMALL = new ImageIcon( Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "LATE_SMALL.png" ) ) ); //$NON-NLS-1$
-	/** KO image when a job has failed*/
+	/** KO image when a job has failed.*/
 	private static final Image IMAGE_KO = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "KO.png" ) ); //$NON-NLS-1$
 	static final Icon ICON_KO_SMALL = new ImageIcon( Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "KO_SMALL.png" ) ) ); //$NON-NLS-1$
-	/** KO image when a job has failed and a job seems to be blocked*/
+	/** KO image when a job has failed and a job seems to be blocked.*/
 	private static final Image IMAGE_KO_LATE = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "KO_LATE.png" ) ); //$NON-NLS-1$
-	/** Disconnected from rundeck image */
+	/** Disconnected from rundeck image. */
 	private static final Image IMAGE_DISCONNECTED = Toolkit.getDefaultToolkit().getImage( RundeckMonitorTrayIcon.class.getClassLoader().getResource( "DISCONNECTED.png" ) ); //$NON-NLS-1$
 
-	/** System tray */
+	/** System tray. */
 	final SystemTray tray;
 
-	/** Task bar tray icon*/
+	/** Task bar tray icon.*/
 	TrayIcon trayIcon;
 
-	/** Desktop to get the default browser*/
+	/** Desktop to get the default browser.*/
 	final Desktop desktop;
 
-	/** Menu failed item listener*/
+	/** Menu failed item listener.*/
 	ActionListener menuListener;
 
-	/** Edit configuration listener*/
+	/** Edit configuration listener.*/
 	final ActionListener configurationListener;
 
-	/** About menu listener*/
+	/** About menu listener.*/
 	final ActionListener aboutListener;
 
-	/** Exit menu listener*/
+	/** Exit menu listener.*/
 	final ActionListener exitListener;
 
-	/** Dialog to auto-hade the popup menu*/
+	/** Dialog to auto-hade the popup menu.*/
 	JDialog hiddenDialog;
 
-	/**Date format to use for printing the Job start date*/
+	/**Date format to use for printing the Job start date.*/
 	final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
-	/**Current state of the trayIcon */
+	/**Current state of the trayIcon. */
 	final RundeckMonitorState rundeckMonitorState;
 
-	/** Already known late/long process*/
+	/** Already known late/long process.*/
 	final Set<Long> newLateProcess = new HashSet<>();
 
-	/** Already known failed process*/
+	/** Already known failed process.*/
 	final Set<Long> newFailedProcess = new HashSet<>();
 
 	/**
-	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it
+	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it.
 	 *
 	 * @param rundeckMonitorConfigurationArg loaded configuration
 	 * @param rundeckMonitorStateArg state of the rundeck monitor
 	 */
 	public RundeckMonitorTrayIcon( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final RundeckMonitorState rundeckMonitorStateArg ) {
 
-		log.entry( rundeckMonitorConfigurationArg, rundeckMonitorStateArg );
+		LOG.entry( rundeckMonitorConfigurationArg, rundeckMonitorStateArg );
 
 		rundeckMonitorConfiguration = rundeckMonitorConfigurationArg;
 		rundeckMonitorState = rundeckMonitorStateArg;
@@ -129,7 +129,7 @@ public abstract class RundeckMonitorTrayIcon {
 			catch( final ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e ) {
 
 				//If System Look&Feel is not supported, stay with the default one
-				log.warn( "Unsupported System Look&Feel", e ); //$NON-NLS-1$
+				LOG.warn( "Unsupported System Look&Feel", e ); //$NON-NLS-1$
 			}
 
 			// Get the system default browser to open execution details
@@ -204,18 +204,18 @@ public abstract class RundeckMonitorTrayIcon {
 	}
 
 	/**
-	 * Update the list of failed/late jobs
+	 * Update the list of failed/late jobs.
 	 *
 	 * @param listJobExecutionInfo list of failed and late jobs informations
 	 */
 	public abstract void updateExecutionIdsList( final List<JobExecutionInfo> listJobExecutionInfo );
 
 	/**
-	 * Update the image of the tray icon
+	 * Update the image of the tray icon.
 	 */
 	public void updateTrayIcon() {
 
-		log.entry();
+		LOG.entry();
 
 		if( rundeckMonitorState.isDisconnected() ) {
 			trayIcon.setImage( IMAGE_DISCONNECTED );
@@ -236,42 +236,42 @@ public abstract class RundeckMonitorTrayIcon {
 			trayIcon.setImage( IMAGE_OK );
 		}
 
-		log.exit();
+		LOG.exit();
 	}
 
 	/**
-	 * Called when configuration is reloaded, clear all known process and reinitialize the tooltip
+	 * Called when configuration is reloaded, clear all known process and reinitialize the tooltip.
 	 */
 	public void reloadConfiguration() {
 
-		log.entry();
+		LOG.entry();
 
 		newLateProcess.clear();
 		newFailedProcess.clear();
 
 		trayIcon.setToolTip( rundeckMonitorConfiguration.getRundeckMonitorName() );
 
-		log.exit();
+		LOG.exit();
 	}
 
 	/**
-	 * remove the RundeckMonitor icon from the system tray
+	 * remove the RundeckMonitor icon from the system tray.
 	 */
 	public void disposeTrayIcon() {
 
-		log.entry();
+		LOG.entry();
 		tray.remove( trayIcon );
-		log.exit();
+		LOG.exit();
 	}
 
 	/**
-	 * Open a browser page using the default browser to a job execution
+	 * Open a browser page using the default browser to a job execution.
 	 *
 	 * @param jobExecutionInfo the job exeuction to open
 	 */
 	void openBrowser( final JobExecutionInfo jobExecutionInfo ) {
 
-		log.entry();
+		LOG.entry();
 		final JobTabRedirection jobTabRedirection;
 
 		if( jobExecutionInfo.isLongExecution() ) {
@@ -283,7 +283,7 @@ public abstract class RundeckMonitorTrayIcon {
 
 		try {
 			final String uRI = rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix();
-			log.info( "Open execution with URL: {}", uRI ); //$NON-NLS-1$
+			LOG.info( "Open execution with URL: {}", uRI ); //$NON-NLS-1$
 			final URI executionURI = new URI( uRI );
 			desktop.browse( executionURI );
 		}
@@ -294,6 +294,6 @@ public abstract class RundeckMonitorTrayIcon {
 			JOptionPane.showMessageDialog( null, exception.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor redirection error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
 		}
 
-		log.exit();
+		LOG.exit();
 	}
 }
