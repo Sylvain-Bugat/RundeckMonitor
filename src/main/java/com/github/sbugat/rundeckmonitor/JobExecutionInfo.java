@@ -28,23 +28,23 @@ public final class JobExecutionInfo {
 		newJob = newJobArg;
 	}
 
-	public final Long getExecutionId() {
+	public Long getExecutionId() {
 		return executionId;
 	}
 
-	public final Date getStartedAt() {
+	public Date getStartedAt() {
 		return new Date( startedAt.getTime() );
 	}
 
-	public final String getDescription() {
+	public String getDescription() {
 		return description;
 	}
 
-	public final boolean isLongExecution() {
+	public boolean isLongExecution() {
 		return longExecution;
 	}
 
-	public final boolean isNewJob() {
+	public boolean isNewJob() {
 		return newJob;
 	}
 }
