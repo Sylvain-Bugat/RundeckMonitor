@@ -98,7 +98,7 @@
 		<maven.pluginresources.version>2.7</maven.pluginresources.version>
 		<maven.plugindeploy.version>2.8.2</maven.plugindeploy.version>
 		<maven.pluginassembly.version>2.5.3</maven.pluginassembly.version>
-		<maven.pluginantrun.version>1.7</maven.pluginantrun.version>
+		<maven.pluginantrun.version>1.8</maven.pluginantrun.version>
 		<maven.plugindependency.version>2.9</maven.plugindependency.version>
 		<maven.pluginrelease.version>2.5.1</maven.pluginrelease.version>
 		<maven.pluginscmpublish.version>1.1</maven.pluginscmpublish.version>
