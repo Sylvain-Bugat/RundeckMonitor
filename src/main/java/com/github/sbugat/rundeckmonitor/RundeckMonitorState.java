@@ -6,7 +6,7 @@ package com.github.sbugat.rundeckmonitor;
  * @author Sylvain Bugat
  *
  */
-public class RundeckMonitorState {
+public final class RundeckMonitorState {
 
 	private boolean failedJobs;
 
