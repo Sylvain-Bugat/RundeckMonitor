@@ -262,7 +262,7 @@ public class RundeckMonitor implements Runnable {
 				}
 
 				try {
-					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000l );
+					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000L );
 				}
 				catch ( final Exception e ) {
 
@@ -278,7 +278,7 @@ public class RundeckMonitor implements Runnable {
 
 				try {
 
-					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000l );
+					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000L );
 				}
 				catch ( final InterruptedException e1) {
 
@@ -316,7 +316,7 @@ public class RundeckMonitor implements Runnable {
 		//Scan runnings jobs to detect if they are late
 		for( final RundeckExecution rundeckExecution : currentExecutions ) {
 
-			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > rundeckMonitorConfiguration.getLateThreshold() * 1000l ) {
+			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > rundeckMonitorConfiguration.getLateThreshold() * 1000L ) {
 
 				lateExecutionFound = true;
 
