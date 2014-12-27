@@ -12,7 +12,7 @@ import org.slf4j.ext.XLoggerFactory;
 
 public class RundeckMonitorAboutDialog extends JFrame{
 
-	private static final XLogger log = XLoggerFactory.getXLogger( RundeckMonitorAboutDialog.class );
+	private static final XLogger LOG = XLoggerFactory.getXLogger( RundeckMonitorAboutDialog.class );
 
 	private static final long serialVersionUID = 8614361410937565222L;
 
@@ -27,7 +27,7 @@ public class RundeckMonitorAboutDialog extends JFrame{
 		catch( final ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e ) {
 
 			//If System Look&Feel is not supported, stay with the default one
-			log.warn( "Unsupported System Look&Feel", e ); //$NON-NLS-1$
+			LOG.warn( "Unsupported System Look&Feel", e ); //$NON-NLS-1$
 		}
 
 		add( new JButton( "OK"), BorderLayout.SOUTH ); //$NON-NLS-1$
