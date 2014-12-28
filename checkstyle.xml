@@ -44,7 +44,9 @@
 		<!-- See http://checkstyle.sourceforge.net/config_javadoc.html -->
 		<module name="JavadocMethod"/>
 		<module name="JavadocType"/>
-		<module name="JavadocVariable"/>
+		<module name="JavadocVariable">
+			<property name="ignoreNamePattern" value="serialVersionUID|LOG"/>
+		</module>
 		<module name="JavadocStyle"/>
 
 		<!-- Checks for Naming Conventions. -->
