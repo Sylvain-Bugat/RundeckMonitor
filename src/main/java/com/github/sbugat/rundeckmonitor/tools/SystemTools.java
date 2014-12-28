@@ -5,14 +5,14 @@ import org.slf4j.ext.XLoggerFactory;
 
 /**
  * Tools class to do System class calls.
- *
+ * 
  * @author Sylvain Bugat
- *
+ * 
  */
 public final class SystemTools {
 
-	/**SLF4J XLogger.*/
-	private static final XLogger LOG = XLoggerFactory.getXLogger( SystemTools.class );
+	/** SLF4J XLogger. */
+	private static final XLogger LOG = XLoggerFactory.getXLogger(SystemTools.class);
 
 	/**
 	 * Normal return code.
@@ -43,22 +43,22 @@ public final class SystemTools {
 
 	/**
 	 * Log and call System.exit method.
-	 *
+	 * 
 	 * @param returnCode return code of the java program, argument to System.exit( returnCode )
 	 */
-	public static void exit( final int returnCode ) {
+	public static void exit(final int returnCode) {
 
-		LOG.entry( returnCode );
+		LOG.entry(returnCode);
 
-		if( EXIT_CODE_OK == returnCode ) {
-			LOG.info( "RunDeck Monitor exit with code {}", EXIT_CODE_OK ); //$NON-NLS-1$
+		if (EXIT_CODE_OK == returnCode) {
+			LOG.info("RunDeck Monitor exit with code {}", EXIT_CODE_OK); //$NON-NLS-1$
 		}
 		else {
-			LOG.error( "RunDeck Monitor exit with code {}", returnCode ); //$NON-NLS-1$
+			LOG.error("RunDeck Monitor exit with code {}", returnCode); //$NON-NLS-1$
 		}
 
-		//Stop the JVM with the expected return code
-		LOG.exit( returnCode );
-		System.exit( returnCode );
+		// Stop the JVM with the expected return code
+		LOG.exit(returnCode);
+		System.exit(returnCode);
 	}
 }
