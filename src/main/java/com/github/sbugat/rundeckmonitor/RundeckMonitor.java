@@ -35,217 +35,241 @@ import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard
 
 /**
  * Primary and main class of the Rundeck Monitor.
- *
+ * 
  * @author Sylvain Bugat
- *
+ * 
  */
-public class RundeckMonitor implements Runnable {
+public final class RundeckMonitor implements Runnable {
 
-	/**SLF4J XLogger.*/
-	private static final XLogger LOG = XLoggerFactory.getXLogger( RundeckMonitor.class );
+	/** SLF4J XLogger. */
+	private static final XLogger LOG = XLoggerFactory.getXLogger(RundeckMonitor.class);
 
+	/** One second in mille-seconds. */
+	private static final long ONE_SECOND = 1_000L;
+
+	/** Version checker instance. */
 	private final VersionChecker versionChecker;
 
-	/**Configuration of the rundeck monitor with default values if some properties are missing or are empty.*/
+	/** Configuration of the rundeck monitor with default values if some properties are missing or are empty. */
 	private final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
-	/**Time zone difference between local machine and rundeck server to correctly detect late execution.*/
+	/** Time zone difference between local machine and rundeck server to correctly detect late execution. */
 	private long dateDelta;
 
-	/**Rundeck client API used to interact with rundeck rest API.*/
+	/** Rundeck client API used to interact with rundeck rest API. */
 	private RundeckClient rundeckClient;
 
-	/**Tray icon and his menu for updating jobs and state displayed.*/
+	/** Tray icon and his menu for updating jobs and state displayed. */
 	private final RundeckMonitorTrayIcon rundeckMonitorTrayIcon;
 
-	/**Current state (failed job/long process/disconnected) of the rundeck monitor.*/
+	/** Current state (failed job/long process/disconnected) of the rundeck monitor. */
 	private final RundeckMonitorState rundeckMonitorState = new RundeckMonitorState();
 
-	/**Set for all known late execution identifiers.*/
-	private Set<Long> knownLateExecutionIds = new LinkedHashSet<>();
-	/**Set for all known failed execution identifiers.*/
-	private Set<Long> knownFailedExecutionIds = new LinkedHashSet<>();
+	/** Set for all known late execution identifiers. */
+	private final Set<Long> knownLateExecutionIds = new LinkedHashSet<>();
+	/** Set for all known failed execution identifiers. */
+	private final Set<Long> knownFailedExecutionIds = new LinkedHashSet<>();
 
 	/**
 	 * Initialize the rundeck monitor, load configuration and try to connect to the configured rundeck.
-	 *
+	 * 
+	 * @param rundeckMonitorConfigurationArg rundeck monitor loaded configuration
+	 * @param versionCheckerArg optionaly launched automatic version checker
+	 * 
 	 * @throws IOException in case of loading configuration error
 	 * @throws InvalidPropertyException in case of loading configuration property error
 	 * @throws MissingPropertyException in case of loading configuration property error
 	 * @throws UnknownProjectException in case of unknown RunDeck project
 	 */
-	public RundeckMonitor( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final VersionChecker versionCheckerArg ) throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException {
+	public RundeckMonitor(final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final VersionChecker versionCheckerArg) throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException {
 
 		LOG.entry();
 
 		versionChecker = versionCheckerArg;
 		rundeckMonitorConfiguration = rundeckMonitorConfigurationArg;
 
-		//Configuration checking and initialize a new Rundeck client
+		// Configuration checking and initialize a new Rundeck client
 		initRundeckClient();
 
-		//Initialize the tray icon
-		if( EnvironmentTools.isWindows() && InterfaceType.SWING.name().equals( rundeckMonitorConfiguration.getInterfaceType() ) ) {
-			rundeckMonitorTrayIcon = new RundeckMonitorSwingTrayIcon( rundeckMonitorConfiguration, rundeckMonitorState );
+		// Initialize the tray icon
+		if (EnvironmentTools.isWindows() && InterfaceType.SWING.name().equals(rundeckMonitorConfiguration.getInterfaceType())) {
+			rundeckMonitorTrayIcon = new RundeckMonitorSwingTrayIcon(rundeckMonitorConfiguration, rundeckMonitorState);
 		}
 		else {
-			rundeckMonitorTrayIcon = new RundeckMonitorAWTTrayIcon( rundeckMonitorConfiguration, rundeckMonitorState );
+			rundeckMonitorTrayIcon = new RundeckMonitorAWTTrayIcon(rundeckMonitorConfiguration, rundeckMonitorState);
 		}
 
 		try {
-			//Initialize and update the rundeck monitor failed/late jobs
-			updateRundeckHistory( true );
+			// Initialize and update the rundeck monitor failed/late jobs
+			updateRundeckHistory(true);
 
-			//Clean any temporary downloaded jar
+			// Clean any temporary downloaded jar
 			versionChecker.cleanOldAndTemporaryJar();
 		}
-		catch(final Exception e) {
+		catch (final Exception e) {
 			rundeckMonitorTrayIcon.disposeTrayIcon();
-			LOG.exit( e );
+			LOG.exit(e);
 			throw e;
 		}
 
 		LOG.exit();
 	}
 
+	/**
+	 * Reload the configuration file and update the RunDeck Moinitor with new datas.
+	 * 
+	 * @throws IOException in case of loading configuration error
+	 * @throws MissingPropertyException in case of loading configuration property error
+	 * @throws InvalidPropertyException in case of loading configuration property error
+	 * @throws UnknownProjectException in case of unknown RunDeck project
+	 */
 	public void reloadConfiguration() throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException {
 
-		//Configuration checking
+		LOG.entry();
+
+		// Configuration checking
 		rundeckMonitorConfiguration.loadConfigurationPropertieFile();
 
-		//Configuration checking and initialize a new Rundeck client
+		// Configuration checking and initialize a new Rundeck client
 		initRundeckClient();
 
-		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
+		// Time-zone delta between srundeck server and the computer where rundeck monitor is running
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
 
-		//Reinit monitor state
-		rundeckMonitorState.setFailedJobs( false );
-		rundeckMonitorState.setLateJobs( false );
-		rundeckMonitorState.setDisconnected( false );
+		// Reinit monitor state
+		rundeckMonitorState.setFailedJobs(false);
+		rundeckMonitorState.setLateJobs(false);
+		rundeckMonitorState.setDisconnected(false);
 
-		//Initialize and update the rundeck monitor failed/late jobs
-		updateRundeckHistory( true );
+		// Initialize and update the rundeck monitor failed/late jobs
+		updateRundeckHistory(true);
 
 		LOG.exit();
 	}
 
 	/**
 	 * Check the configuration and initialize a new rundeck client.
-	 *
+	 * 
 	 * @throws MissingPropertyException when check configuration
 	 * @throws InvalidPropertyException when check configuration
 	 * @throws UnknownProjectException if the configured project is unknown
 	 */
 	private void initRundeckClient() throws MissingPropertyException, InvalidPropertyException, UnknownProjectException {
 
-		//Configuration checking
+		// Configuration checking
 		rundeckMonitorConfiguration.verifyConfiguration();
 
-		//Initialize the rundeck client with the API version
-		rundeckClient = RundeckClientTools.buildRundeckClient( rundeckMonitorConfiguration, false );
+		// Initialize the rundeck client with the API version
+		rundeckClient = RundeckClientTools.buildRundeckClient(rundeckMonitorConfiguration, false);
 
-		//Check if the configured project exists
+		// Check if the configured project exists
 		boolean existingProject = false;
-		for( final RundeckProject rundeckProject: rundeckClient.getProjects() ) {
+		for (final RundeckProject rundeckProject : rundeckClient.getProjects()) {
 
-			if( rundeckMonitorConfiguration.getRundeckProject().equals( rundeckProject.getName() ) ) {
+			if (rundeckMonitorConfiguration.getRundeckProject().equals(rundeckProject.getName())) {
 				existingProject = true;
 				break;
 			}
 		}
 
-		if( ! existingProject ) {
+		if (!existingProject) {
 
-			final UnknownProjectException exception = new UnknownProjectException( rundeckMonitorConfiguration.getRundeckProject() );
-			LOG.error( "Error unknown project: {}", rundeckMonitorConfiguration.getRundeckProject() ); //$NON-NLS-1$
-			LOG.exit( exception );
+			final UnknownProjectException exception = new UnknownProjectException(rundeckMonitorConfiguration.getRundeckProject());
+			LOG.error("Error unknown project: {}", rundeckMonitorConfiguration.getRundeckProject()); //$NON-NLS-1$
+			LOG.exit(exception);
 			throw exception;
 		}
 
-		//Time-zone delta between srundeck server and the computer where rundeck monitor is running
+		// Time-zone delta between srundeck server and the computer where rundeck monitor is running
 		dateDelta = rundeckClient.getSystemInfo().getDate().getTime() - new Date().getTime();
 	}
 
-	private boolean checkNewConfiguration( final Date lastConfigurationUpdateDate ) {
+	/**
+	 * Check if the configuration file has been modified and reload it if needed.
+	 * 
+	 * @param lastConfigurationUpdateDate last configuration update date
+	 * @return true if the configuration has been reloaded, false otherwise
+	 */
+	private boolean checkNewConfiguration(final Date lastConfigurationUpdateDate) {
 
-		LOG.entry( lastConfigurationUpdateDate );
+		LOG.entry(lastConfigurationUpdateDate);
 
 		Date lastConfigurationDate = lastConfigurationUpdateDate;
 
-		if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationDate ) ) {
+		if (RundeckMonitorConfiguration.propertiesFileUpdated(lastConfigurationDate)) {
 
-			//Wait until configuration is reloaded or exit
-			while( true ) {
+			// Wait until configuration is reloaded or exit
+			while (true) {
 
-				if( RundeckMonitorConfiguration.propertiesFileUpdated( lastConfigurationDate ) ) {
-					//reload the configuration
+				if (RundeckMonitorConfiguration.propertiesFileUpdated(lastConfigurationDate)) {
+					// reload the configuration
 					try {
 						reloadConfiguration();
 						rundeckMonitorTrayIcon.reloadConfiguration();
 
-						//Set the tray icon as reconnected
-						rundeckMonitorState.setDisconnected( false );
+						// Set the tray icon as reconnected
+						rundeckMonitorState.setDisconnected(false);
 						rundeckMonitorTrayIcon.updateTrayIcon();
-						LOG.exit( true );
+						LOG.exit(true);
 						return true;
 					}
-					catch( final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException e) {
+					catch (final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException e) {
 
-						//Set the tray icon as disconnected
-						rundeckMonitorState.setDisconnected( true );
+						// Set the tray icon as disconnected
+						rundeckMonitorState.setDisconnected(true);
 						rundeckMonitorTrayIcon.updateTrayIcon();
 
-						if( handleStartupException( e, false ) ) {
+						if (handleStartupException(e, false)) {
 
-							new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration, true );
+							new RundeckMonitorConfigurationWizard(rundeckMonitorConfiguration, true);
 							lastConfigurationDate = new Date();
 						}
-						//Dispose tray icon and exit
+						// Dispose tray icon and exit
 						else {
 							rundeckMonitorTrayIcon.disposeTrayIcon();
-							SystemTools.exit( SystemTools.EXIT_CODE_ERROR );
+							SystemTools.exit(SystemTools.EXIT_CODE_ERROR);
 						}
 					}
 				}
 
-				//Wait 1s
+				// Wait 1s
 				try {
 
-					Thread.sleep( 1000 );
+					Thread.sleep(ONE_SECOND);
 				}
-				catch ( final InterruptedException e) {
+				catch (final InterruptedException e) {
 
-					//Nothing to do
-					LOG.error( "Waiting interrupted", e ); //$NON-NLS-1$
+					// Nothing to do
+					LOG.error("Waiting interrupted", e); //$NON-NLS-1$
 				}
 			}
 		}
 
-		LOG.exit( false );
+		LOG.exit(false);
 		return false;
 	}
 
 	/**
 	 * RundeckMonitor background process method executing the main loop.
 	 */
+	@Override
 	public void run() {
 
 		LOG.entry();
 
 		Date lastConfigurationUpdateDate = new Date();
 
-		while( true ){
+		while (true) {
 			try {
 
-				if( checkNewConfiguration( lastConfigurationUpdateDate ) ) {
+				if (checkNewConfiguration(lastConfigurationUpdateDate)) {
 					lastConfigurationUpdateDate = new Date();
 				}
 
-				//Update the tray icon menu
-				updateRundeckHistory( false );
+				// Update the tray icon menu
+				updateRundeckHistory(false);
 
-				if( versionChecker.isversionCheckerDisabled() ) {
+				if (versionChecker.isversionCheckerDisabled()) {
 
 					rundeckMonitorConfiguration.disableVersionChecker();
 					rundeckMonitorConfiguration.saveMonitorConfigurationPropertieFile();
@@ -253,37 +277,37 @@ public class RundeckMonitor implements Runnable {
 					versionChecker.resetVersionCheckerDisabled();
 				}
 
-				//If download finished
-				if( versionChecker.isDownloadDone() && versionChecker.restart() ) {
+				// If download finished
+				if (versionChecker.isDownloadDone() && versionChecker.restart()) {
 
-					//Restart, remove the tray icon and exit
+					// Restart, remove the tray icon and exit
 					rundeckMonitorTrayIcon.disposeTrayIcon();
-					SystemTools.exit( SystemTools.EXIT_CODE_OK );
+					SystemTools.exit(SystemTools.EXIT_CODE_OK);
 				}
 
 				try {
-					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000L );
+					Thread.sleep(rundeckMonitorConfiguration.getRefreshDelay() * ONE_SECOND);
 				}
-				catch ( final Exception e ) {
+				catch (final Exception e) {
 
-					//Nothing to do
-					LOG.error( "Waiting interrupted", e ); //$NON-NLS-1$
+					// Nothing to do
+					LOG.error("Waiting interrupted", e); //$NON-NLS-1$
 				}
 			}
-			//If an exception is catch, consider the monitor as disconnected
-			catch ( final IOException | RuntimeException e ) {
+			// If an exception is catch, consider the monitor as disconnected
+			catch (final IOException | RuntimeException e) {
 
-				rundeckMonitorState.setDisconnected( true );
+				rundeckMonitorState.setDisconnected(true);
 				rundeckMonitorTrayIcon.updateTrayIcon();
 
 				try {
 
-					Thread.sleep( rundeckMonitorConfiguration.getRefreshDelay() * 1000L );
+					Thread.sleep(rundeckMonitorConfiguration.getRefreshDelay() * ONE_SECOND);
 				}
-				catch ( final InterruptedException e1) {
+				catch (final InterruptedException e1) {
 
-					//Nothing to do
-					LOG.error( "Waiting interrupted", e1 ); //$NON-NLS-1$
+					// Nothing to do
+					LOG.error("Waiting interrupted", e1); //$NON-NLS-1$
 				}
 			}
 		}
@@ -291,21 +315,21 @@ public class RundeckMonitor implements Runnable {
 
 	/**
 	 * Call Rundeck rest API and update the monitor state and displayed jobs if there are new failed/late jobs.
-	 *
+	 * 
 	 * @param init boolean to indicate if it's the first call to this method for the monitor initialization
 	 */
-	private void updateRundeckHistory( final boolean init ) {
+	private void updateRundeckHistory(final boolean init) {
 
-		LOG.entry( init );
+		LOG.entry(init);
 
-		//call Rundeck rest API
-		final ExecutionQuery executionQuery = ExecutionQuery.builder().project( rundeckMonitorConfiguration.getRundeckProject() ).status( ExecutionStatus.FAILED ).build();
-		final PagedResults<RundeckExecution> lastFailedJobs = rundeckClient.getExecutions( executionQuery, Long.valueOf( rundeckMonitorConfiguration.getFailedJobNumber() ), null );
+		// call Rundeck rest API
+		final ExecutionQuery executionQuery = ExecutionQuery.builder().project(rundeckMonitorConfiguration.getRundeckProject()).status(ExecutionStatus.FAILED).build();
+		final PagedResults<RundeckExecution> lastFailedJobs = rundeckClient.getExecutions(executionQuery, Long.valueOf(rundeckMonitorConfiguration.getFailedJobNumber()), null);
 
-		final List<RundeckExecution> currentExecutions = rundeckClient.getRunningExecutions( rundeckMonitorConfiguration.getRundeckProject() );
+		final List<RundeckExecution> currentExecutions = rundeckClient.getRunningExecutions(rundeckMonitorConfiguration.getRundeckProject());
 
-		//Rundeck calls are OK
-		rundeckMonitorState.setDisconnected( false );
+		// Rundeck calls are OK
+		rundeckMonitorState.setDisconnected(false);
 
 		final Date currentTime = new Date();
 
@@ -313,60 +337,60 @@ public class RundeckMonitor implements Runnable {
 
 		boolean lateExecutionFound = false;
 
-		//Scan runnings jobs to detect if they are late
-		for( final RundeckExecution rundeckExecution : currentExecutions ) {
+		// Scan runnings jobs to detect if they are late
+		for (final RundeckExecution rundeckExecution : currentExecutions) {
 
-			if( currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > rundeckMonitorConfiguration.getLateThreshold() * 1000L ) {
+			if (currentTime.getTime() - rundeckExecution.getStartedAt().getTime() + dateDelta > rundeckMonitorConfiguration.getLateThreshold() * ONE_SECOND) {
 
 				lateExecutionFound = true;
 
-				final boolean newLongExecution = ! knownLateExecutionIds.contains( rundeckExecution.getId() );
-				if( newLongExecution ) {
-					knownLateExecutionIds.add( rundeckExecution.getId() );
+				final boolean newLongExecution = !knownLateExecutionIds.contains(rundeckExecution.getId());
+				if (newLongExecution) {
+					knownLateExecutionIds.add(rundeckExecution.getId());
 				}
 
 				final String jobName;
-				if( null != rundeckExecution.getJob() ) {
+				if (null != rundeckExecution.getJob()) {
 					jobName = rundeckExecution.getJob().getName();
 				}
 				else {
 					jobName = rundeckExecution.getDescription();
 				}
-				listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), jobName, true, newLongExecution ) );
+				listJobExecutionInfo.add(new JobExecutionInfo(rundeckExecution.getId(), rundeckExecution.getStartedAt(), jobName, true, newLongExecution));
 			}
 		}
 
-		rundeckMonitorState.setLateJobs( lateExecutionFound );
+		rundeckMonitorState.setLateJobs(lateExecutionFound);
 
-		//Add all lasts failed jobs to the list
-		for( final RundeckExecution rundeckExecution : lastFailedJobs.getResults() ) {
+		// Add all lasts failed jobs to the list
+		for (final RundeckExecution rundeckExecution : lastFailedJobs.getResults()) {
 
-			final boolean newFailedJob = ! knownFailedExecutionIds.contains( rundeckExecution.getId() );
-			if( newFailedJob ) {
+			final boolean newFailedJob = !knownFailedExecutionIds.contains(rundeckExecution.getId());
+			if (newFailedJob) {
 
-				rundeckMonitorState.setFailedJobs( true );
-				knownFailedExecutionIds.add( rundeckExecution.getId() );
+				rundeckMonitorState.setFailedJobs(true);
+				knownFailedExecutionIds.add(rundeckExecution.getId());
 			}
 
 			final String jobName;
-			if( null != rundeckExecution.getJob() ) {
+			if (null != rundeckExecution.getJob()) {
 				jobName = rundeckExecution.getJob().getName();
 			}
 			else {
 				jobName = rundeckExecution.getDescription();
 			}
-			listJobExecutionInfo.add( new JobExecutionInfo( rundeckExecution.getId(), rundeckExecution.getStartedAt(), jobName, false, newFailedJob && ! init ) );
+			listJobExecutionInfo.add(new JobExecutionInfo(rundeckExecution.getId(), rundeckExecution.getStartedAt(), jobName, false, newFailedJob && !init));
 		}
 
-		//Display failed/late jobs on the trayIcon menu
-		rundeckMonitorTrayIcon.updateExecutionIdsList( listJobExecutionInfo );
+		// Display failed/late jobs on the trayIcon menu
+		rundeckMonitorTrayIcon.updateExecutionIdsList(listJobExecutionInfo);
 
-		if( init ) {
+		if (init) {
 
-			rundeckMonitorState.setFailedJobs( false );
+			rundeckMonitorState.setFailedJobs(false);
 		}
 
-		//Update the tray icon color
+		// Update the tray icon color
 		rundeckMonitorTrayIcon.updateTrayIcon();
 
 		LOG.exit();
@@ -374,154 +398,154 @@ public class RundeckMonitor implements Runnable {
 
 	/**
 	 * Rundeck launcher exception handler, display an error message based on the argument exception.
-	 *
+	 * 
 	 * @param exception exception to analyze
 	 * @param initialization indicate if the tray icon is not loaded yet
 	 * @return true if the wizard needs to be launched
 	 */
-	private static boolean handleStartupException( final Exception exception, final boolean initialization ) {
+	private static boolean handleStartupException(final Exception exception, final boolean initialization) {
 
-		LOG.entry( exception, initialization );
+		LOG.entry(exception, initialization);
 
 		final String errorMessage;
 
-		//Loading properties exceptions
-		if( MissingPropertyException.class.isInstance( exception ) ) {
+		// Loading properties exceptions
+		if (MissingPropertyException.class.isInstance(exception)) {
 
-			errorMessage = "Missing mandatory property," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + (( MissingPropertyException ) exception).getProperty() + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			errorMessage = "Missing mandatory property," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + ((MissingPropertyException) exception).getProperty() + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		else if( InvalidPropertyException.class.isInstance( exception ) ) {
+		else if (InvalidPropertyException.class.isInstance(exception)) {
 
-			errorMessage = "Invalid property value:" + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + (( InvalidPropertyException ) exception).getProperty() + '=' + (( InvalidPropertyException ) exception).getPropertyValue() + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			errorMessage = "Invalid property value:" + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + ((InvalidPropertyException) exception).getProperty() + '=' + ((InvalidPropertyException) exception).getPropertyValue() + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		//Unknown rundeck project exception
-		else if( UnknownProjectException.class.isInstance( exception ) ) {
+		// Unknown rundeck project exception
+		else if (UnknownProjectException.class.isInstance(exception)) {
 
-			errorMessage = "Unknown rundeck project:" + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + '=' + (( UnknownProjectException ) exception).getProjectName() + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			errorMessage = "Unknown rundeck project:" + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PROJECT + '=' + ((UnknownProjectException) exception).getProjectName() + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		//Property file not found
-		else if( FileNotFoundException.class.isInstance( exception ) ) {
+		// Property file not found
+		else if (FileNotFoundException.class.isInstance(exception)) {
 
 			errorMessage = "Property file not found:" + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTIES_FILE + "check this file."; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		//Loading configuration file I/O exception
-		else if( IOException.class.isInstance( exception ) ) {
+		// Loading configuration file I/O exception
+		else if (IOException.class.isInstance(exception)) {
 
 			errorMessage = "Error loading property file:" + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTIES_FILE + "check access rights of this file."; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		//Authentication exceptions
-		else if( RundeckApiTokenException.class.isInstance( exception ) ) {
+		// Authentication exceptions
+		else if (RundeckApiTokenException.class.isInstance(exception)) {
 
 			errorMessage = "Invalid authentication token," + System.lineSeparator() + "check and change this parameter value:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_API_KEY + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		else if( RundeckApiLoginException.class.isInstance( exception ) ) {
+		else if (RundeckApiLoginException.class.isInstance(exception)) {
 
 			errorMessage = "Invalid login/password," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_LOGIN + '"' + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PASSWORD + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		else {
 
 			final StringWriter stringWriter = new StringWriter();
-			exception.printStackTrace( new PrintWriter( stringWriter ) );
+			exception.printStackTrace(new PrintWriter(stringWriter));
 			errorMessage = exception.getMessage() + System.lineSeparator() + stringWriter.toString();
 		}
 
-		//Show a dialog with edit configuration option
+		// Show a dialog with edit configuration option
 		final Object[] options = { "Exit", "Edit configuration" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 		final int errorUserReturn;
-		if( initialization ) {
-			errorUserReturn = JOptionPane.showOptionDialog( null, errorMessage, "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$
+		if (initialization) {
+			errorUserReturn = JOptionPane.showOptionDialog(null, errorMessage, "RundeckMonitor initialization error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]); //$NON-NLS-1$
 		}
 		else {
-			errorUserReturn = JOptionPane.showOptionDialog( null, errorMessage, "RundeckMonitor reload configuration error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$
+			errorUserReturn = JOptionPane.showOptionDialog(null, errorMessage, "RundeckMonitor reload configuration error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]); //$NON-NLS-1$
 		}
 
-		if( JOptionPane.NO_OPTION == errorUserReturn ) {
+		if (JOptionPane.NO_OPTION == errorUserReturn) {
 
-			LOG.exit( true );
+			LOG.exit(true);
 			return true;
 		}
 
-		LOG.exit( false );
+		LOG.exit(false);
 		return false;
 	}
 
 	/**
 	 * RundeckMonitor main method.
-	 *
+	 * 
 	 * @param args program arguments: none is expected and used
 	 */
-	public static void main( final String[] args ) {
+	public static void main(final String[] args) {
 
-		LOG.entry( ( Object[] ) args );
+		LOG.entry((Object[]) args);
 
-		//Launch the configuration wizard if there is no configuration file
-		if( ! RundeckMonitorConfiguration.propertiesFileExists() ) {
-			LOG.info( "Launching configuration wizard" ); //$NON-NLS-1$
-			new RundeckMonitorConfigurationWizard( new RundeckMonitorConfiguration(), true );
+		// Launch the configuration wizard if there is no configuration file
+		if (!RundeckMonitorConfiguration.propertiesFileExists()) {
+			LOG.info("Launching configuration wizard"); //$NON-NLS-1$
+			new RundeckMonitorConfigurationWizard(new RundeckMonitorConfiguration(), true);
 		}
 
-		//Wait until the configuration file is created
-		while( ! RundeckMonitorConfiguration.propertiesFileExists() ) {
+		// Wait until the configuration file is created
+		while (!RundeckMonitorConfiguration.propertiesFileExists()) {
 
 			try {
-				Thread.sleep( 1000 );
+				Thread.sleep(ONE_SECOND);
 			}
-			catch( final InterruptedException e ) {
-				LOG.error( "Waiting interrupted", e ); //$NON-NLS-1$
+			catch (final InterruptedException e) {
+				LOG.error("Waiting interrupted", e); //$NON-NLS-1$
 			}
 		}
 
-		//Initialization of the version checker
-		final VersionChecker versionChecker = new VersionChecker( "Sylvain-Bugat", "RundeckMonitor", "rundeck-monitor", "-jar-with-dependencies" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		// Initialization of the version checker
+		final VersionChecker versionChecker = new VersionChecker("Sylvain-Bugat", "RundeckMonitor", "rundeck-monitor", "-jar-with-dependencies"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-		//Clean any temporary downloaded jar
+		// Clean any temporary downloaded jar
 		versionChecker.cleanOldAndTemporaryJar();
 
-		while( true ) {
+		while (true) {
 
 			final RundeckMonitorConfiguration rundeckMonitorConfiguration = new RundeckMonitorConfiguration();
 
 			try {
 
-				//Configuration loading
+				// Configuration loading
 				rundeckMonitorConfiguration.loadConfigurationPropertieFile();
 
-				//Start the main thread
-				new Thread( new RundeckMonitor( rundeckMonitorConfiguration, versionChecker ) ).start();
+				// Start the main thread
+				new Thread(new RundeckMonitor(rundeckMonitorConfiguration, versionChecker)).start();
 
-				if( rundeckMonitorConfiguration.isVersionCheckerEnabled() ) {
-					//Start the version checker thread
-					LOG.info( "Launching version checker" ); //$NON-NLS-1$
-					new Thread( versionChecker ).start();
+				if (rundeckMonitorConfiguration.isVersionCheckerEnabled()) {
+					// Start the version checker thread
+					LOG.info("Launching version checker"); //$NON-NLS-1$
+					new Thread(versionChecker).start();
 				}
 
-				//Monitor and Version started without exception, end the launch thread
+				// Monitor and Version started without exception, end the launch thread
 				return;
 			}
-			catch ( final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException e ) {
+			catch (final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException e) {
 
-				if( ! handleStartupException( e, true ) ) {
-					SystemTools.exit( SystemTools.EXIT_CODE_ERROR );
+				if (!handleStartupException(e, true)) {
+					SystemTools.exit(SystemTools.EXIT_CODE_ERROR);
 				}
 			}
 
-			//Date the current time and launch the configuration wizard
+			// Date the current time and launch the configuration wizard
 			final Date systemDate = new Date();
 
-			new RundeckMonitorConfigurationWizard( rundeckMonitorConfiguration, true );
+			new RundeckMonitorConfigurationWizard(rundeckMonitorConfiguration, true);
 
-			//Wait until the configuration file is updated
+			// Wait until the configuration file is updated
 			boolean configurationFileUpdated = false;
-			while( ! configurationFileUpdated ) {
+			while (!configurationFileUpdated) {
 
 				try {
-					Thread.sleep( 1000 );
+					Thread.sleep(ONE_SECOND);
 				}
-				catch( final InterruptedException e ) {
-					LOG.error( "Waiting interrupted", e ); //$NON-NLS-1$
+				catch (final InterruptedException e) {
+					LOG.error("Waiting interrupted", e); //$NON-NLS-1$
 				}
-				configurationFileUpdated = RundeckMonitorConfiguration.propertiesFileUpdated( systemDate );
+				configurationFileUpdated = RundeckMonitorConfiguration.propertiesFileUpdated(systemDate);
 			}
 		}
 	}
