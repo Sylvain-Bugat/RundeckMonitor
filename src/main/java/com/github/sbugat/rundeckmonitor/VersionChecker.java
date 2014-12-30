@@ -24,55 +24,64 @@ import org.slf4j.ext.XLoggerFactory;
 import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
 
 /**
- * Simple generic version checker on GitHub, inpect target jar and local jar build date to determinated if an update is available
- * If one is found, download the full jar and replace the original jar via a double restart
- *
- * The checker use an independant thread to check and download the file.
- * The main thread have to check is the download is done and order to restart the program
- *
+ * Simple generic version checker on GitHub, inpect target jar and local jar build date to determinated if an update is available. If one is found, download the full jar and replace the original jar via a double restart.
+ * 
+ * The checker use an independant thread to check and download the file. The main thread have to check is the download is done and order to restart the program.
+ * 
  * @author Sylvain Bugat
- *
+ * 
  */
-public class VersionChecker implements Runnable{
+public final class VersionChecker implements Runnable {
 
-	private static final XLogger log = XLoggerFactory.getXLogger( VersionChecker.class );
+	/** SLF4J XLogger. */
+	private static final XLogger LOG = XLoggerFactory.getXLogger(VersionChecker.class);
 
+	/** Jar extension. */
 	private static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
+	/** Tmp extension. */
 	private static final String TMP_EXTENSION = ".tmp"; //$NON-NLS-1$
+	/** Executable extension on Windows. */
 	private static final String WINDOWS_EXE_EXTENSION = ".exe"; //$NON-NLS-1$
+	/** Java home property. */
 	private static final String JAVA_HOME_PROPERTY = "java.home"; //$NON-NLS-1$
+	/** Target directory in zipball releases. */
 	private static final String TARGET_DIRECTORY = "target"; //$NON-NLS-1$
 
+	/** bin subdirectory and java executable. */
 	private static final String BIN_DIRECTORY_AND_JAVA = "bin" + FileSystems.getDefault().getSeparator() + "java"; //$NON-NLS-1$ //$NON-NLS-2$
 
+	/** Jar argument for java reloading. */
 	private static final String JAR_ARGUMENT = "-jar"; //$NON-NLS-1$
 
-	/**Root URL of the GitHub project to update*/
+	/** Root URL of the GitHub project to update. */
 	private final String gitHubUser;
+	/** GitHub repository. */
 	private final String gitHubRepository;
 
-	/**Maven artifact identifier*/
+	/** Maven artifact identifier. */
 	private final String mavenArtifactId;
 
+	/** Suffix of the full jar including all dependencies. */
 	private final String jarWithDependenciesSuffix;
 
-	/**Indicate if the download is completed*/
+	/** Indicate if the download is completed. */
 	private boolean downloadDone;
 
-	/**Indicate if the version checker is disabled*/
+	/** Indicate if the version checker is disabled. */
 	private boolean versionCheckerDisabled;
 
+	/** Name of the downloaded jar. */
 	private String downloadedJar;
 
 	/**
-	 * Initialize the version checker with jar artifact and suffixnames and path to GitHub
-	 *
-	 * @param gitHubUserArg
-	 * @param gitHubRepositoryArg
-	 * @param mavenArtifactIdArg
-	 * @param jarWithDependenciesSuffixArg
+	 * Initialize the version checker with jar artifact and suffixnames and path to GitHub.
+	 * 
+	 * @param gitHubUserArg GitHub user
+	 * @param gitHubRepositoryArg GitHub repository
+	 * @param mavenArtifactIdArg maven artifact id
+	 * @param jarWithDependenciesSuffixArg suffix of the full jar including all dependencies
 	 */
-	public VersionChecker( final String gitHubUserArg, final String gitHubRepositoryArg, final String mavenArtifactIdArg, final String jarWithDependenciesSuffixArg ) {
+	public VersionChecker(final String gitHubUserArg, final String gitHubRepositoryArg, final String mavenArtifactIdArg, final String jarWithDependenciesSuffixArg) {
 
 		gitHubUser = gitHubUserArg;
 		gitHubRepository = gitHubRepositoryArg;
@@ -82,17 +91,17 @@ public class VersionChecker implements Runnable{
 	}
 
 	/**
-	 * Background thread launched to check the version on GitHub
+	 * Background thread launched to check the version on GitHub.
 	 */
 	@Override
 	public void run() {
 
-		log.entry();
+		LOG.entry();
 
 		final String currentJar = currentJar();
 
-		if( null == currentJar ) {
-			log.exit();
+		if (null == currentJar) {
+			LOG.exit();
 			return;
 		}
 
@@ -100,80 +109,87 @@ public class VersionChecker implements Runnable{
 
 			final GitHubClient gitHubClient = new GitHubClient();
 
-			final RepositoryService rs = new RepositoryService( gitHubClient );
-			final Repository repository = rs.getRepository( gitHubUser, gitHubRepository );
+			final RepositoryService rs = new RepositoryService(gitHubClient);
+			final Repository repository = rs.getRepository(gitHubUser, gitHubRepository);
 
-			final String currentVersion = 'v' + currentJar.replaceFirst( "^" + mavenArtifactId + '-', "" ).replaceFirst( jarWithDependenciesSuffix + ".*$", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			final String currentVersion = 'v' + currentJar.replaceFirst("^" + mavenArtifactId + '-', "").replaceFirst(jarWithDependenciesSuffix + ".*$", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			RepositoryTag recentRelease = null;
-			for( final RepositoryTag tag : rs.getTags( repository ) ) {
+			for (final RepositoryTag tag : rs.getTags(repository)) {
 
-				if( null != recentRelease && tag.getName().compareTo( recentRelease.getName() ) > 0 ) {
+				if (null != recentRelease && tag.getName().compareTo(recentRelease.getName()) > 0) {
 					recentRelease = tag;
 				}
-				else if( ( tag.getName() ).compareTo( currentVersion ) > 0 ) {
+				else if (tag.getName().compareTo(currentVersion) > 0) {
 					recentRelease = tag;
 				}
 			}
 
-			if( null == recentRelease  ) {
-				log.exit();
+			if (null == recentRelease) {
+				LOG.exit();
 				return;
 			}
 
-			if( ! findAndDownloadReleaseJar( recentRelease, true ) ) {
-				findAndDownloadReleaseJar( recentRelease, false );
+			if (!findAndDownloadReleaseJar(recentRelease, true)) {
+				findAndDownloadReleaseJar(recentRelease, false);
 			}
 
-			log.exit();
+			LOG.exit();
 		}
-		catch( final Exception e) {
+		catch (final Exception e) {
 
-			//Ignore any error during update process
-			//Just delete the temporary file
+			// Ignore any error during update process
+			// Just delete the temporary file
 			cleanOldAndTemporaryJar();
-			log.exit( e );
+			LOG.exit(e);
 		}
 	}
 
-	private boolean findAndDownloadReleaseJar( final RepositoryTag release, final boolean withDependenciesSuffix ) throws IOException {
+	/**
+	 * 
+	 * 
+	 * @param release GitHub last release to use
+	 * @param withDependenciesSuffix indicate if the jar to download have a dependencies suffix
+	 * @throws IOException in case of reading error
+	 */
+	private boolean findAndDownloadReleaseJar(final RepositoryTag release, final boolean withDependenciesSuffix) throws IOException {
 
-		log.entry( release, withDependenciesSuffix );
+		LOG.entry(release, withDependenciesSuffix);
 
 		final String jarSuffix;
-		if( withDependenciesSuffix ) {
+		if (withDependenciesSuffix) {
 			jarSuffix = jarWithDependenciesSuffix;
 		}
 		else {
 			jarSuffix = ""; //$NON-NLS-1$
 		}
-		try( final InputStream remoteJarInputStream = new URL( release.getZipballUrl() ).openStream() ) {
+		try (final InputStream remoteJarInputStream = new URL(release.getZipballUrl()).openStream()) {
 
-			final ZipInputStream zis = new ZipInputStream( remoteJarInputStream );
+			final ZipInputStream zis = new ZipInputStream(remoteJarInputStream);
 
 			ZipEntry entry = zis.getNextEntry();
 
-			while( null != entry ) {
+			while (null != entry) {
 
-				if( entry.getName().matches( ".*/" + TARGET_DIRECTORY + '/' + mavenArtifactId + "-[0-9\\.]*" + jarSuffix + JAR_EXTENSION  ) ) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (entry.getName().matches(".*/" + TARGET_DIRECTORY + '/' + mavenArtifactId + "-[0-9\\.]*" + jarSuffix + JAR_EXTENSION)) { //$NON-NLS-1$ //$NON-NLS-2$
 
 					final Object[] options = { "Yes", "No", "Never ask me again" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					final int confirmDialogChoice = JOptionPane.showOptionDialog( null, "An update is available, download it? (" + entry.getCompressedSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[ 0 ] );  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					if( JOptionPane.YES_OPTION == confirmDialogChoice ) {
+					final int confirmDialogChoice = JOptionPane.showOptionDialog(null, "An update is available, download it? (" + entry.getCompressedSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					if (JOptionPane.YES_OPTION == confirmDialogChoice) {
 
-						final String jarFileBaseName = entry.getName().replaceFirst( "^.*/", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+						final String jarFileBaseName = entry.getName().replaceFirst("^.*/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
-						downloadFile( zis, jarFileBaseName + TMP_EXTENSION );
-						Files.move( Paths.get( jarFileBaseName + TMP_EXTENSION ), Paths.get( jarFileBaseName ) );
+						downloadFile(zis, jarFileBaseName + TMP_EXTENSION);
+						Files.move(Paths.get(jarFileBaseName + TMP_EXTENSION), Paths.get(jarFileBaseName));
 
 						downloadedJar = jarFileBaseName;
 						downloadDone = true;
 					}
-					else if( JOptionPane.CANCEL_OPTION == confirmDialogChoice ) {
+					else if (JOptionPane.CANCEL_OPTION == confirmDialogChoice) {
 
 						versionCheckerDisabled = true;
 					}
 
-					log.exit( true );
+					LOG.exit(true);
 					return true;
 				}
 
@@ -181,174 +197,205 @@ public class VersionChecker implements Runnable{
 			}
 		}
 
-		log.exit( false );
+		LOG.exit(false);
 		return false;
 	}
 
+	/**
+	 * Restart the RunDeck monitor and use the newer jar file.
+	 * 
+	 * @return true if a java file has been launched on the new jar file
+	 */
 	public boolean restart() {
 
-		log.entry();
+		LOG.entry();
 
-		if( Files.exists( Paths.get( downloadedJar ) ) ) {
+		if (Files.exists(Paths.get(downloadedJar))) {
 
-			String javaExecutable= null;
+			String javaExecutable = null;
 			try {
 
 				javaExecutable = getJavaExecutable();
-				final ProcessBuilder processBuilder = new ProcessBuilder( javaExecutable, JAR_ARGUMENT, downloadedJar );
+				final ProcessBuilder processBuilder = new ProcessBuilder(javaExecutable, JAR_ARGUMENT, downloadedJar);
 				processBuilder.start();
 
-				log.exit( true );
+				LOG.exit(true);
 				return true;
 			}
-			catch( final IOException e ) {
+			catch (final IOException e) {
 
-				//Ignore any error during restart process
-				log.error( "Error during restarting process {} with arguments: {} {}", javaExecutable, JAR_ARGUMENT, downloadedJar, e ); //$NON-NLS-1$
+				// Ignore any error during restart process
+				LOG.error("Error during restarting process {} with arguments: {} {}", javaExecutable, JAR_ARGUMENT, downloadedJar, e); //$NON-NLS-1$
 			}
 		}
 
-		log.exit( false );
+		LOG.exit(false);
 		return false;
 	}
 
+	/**
+	 * Clean the old jar and any existing temporary file.
+	 */
 	public void cleanOldAndTemporaryJar() {
 
-		log.entry();
+		LOG.entry();
 
-		String currentJar = currentJar();
+		final String currentJar = currentJar();
 
-		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) { //$NON-NLS-1$
+		try (final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("."))) { //$NON-NLS-1$
 
-			for( final Path path : directoryStream ) {
+			for (final Path path : directoryStream) {
 
 				final String fileName = path.getFileName().toString();
-				if( fileName.startsWith( mavenArtifactId) ) {
+				if (fileName.startsWith(mavenArtifactId)) {
 
-					if( fileName.endsWith( JAR_EXTENSION ) && null != currentJar && currentJar.compareTo( fileName ) > 0 ) {
+					if (fileName.endsWith(JAR_EXTENSION) && null != currentJar && currentJar.compareTo(fileName) > 0) {
 
-						deleteJar( path );
+						deleteJar(path);
 					}
-					else if( fileName.endsWith( JAR_EXTENSION + TMP_EXTENSION ) ) {
+					else if (fileName.endsWith(JAR_EXTENSION + TMP_EXTENSION)) {
 
-						deleteJar( path );
+						deleteJar(path);
 					}
 				}
 			}
 
-			log.exit();
+			LOG.exit();
 		}
-		catch ( final IOException e ) {
-			//Ignore any error during the delete process
-			log.exit( e );
+		catch (final IOException e) {
+			// Ignore any error during the delete process
+			LOG.exit(e);
 		}
 	}
 
-	private static void deleteJar( final Path jarFileToDelete ) {
+	/**
+	 * Delete a jar file.
+	 * 
+	 * @param jarFileToDelete file to delete
+	 */
+	private static void deleteJar(final Path jarFileToDelete) {
 
-		log.entry();
+		LOG.entry();
 
-		if( Files.exists( jarFileToDelete ) ) {
+		if (Files.exists(jarFileToDelete)) {
 
 			try {
-				Files.delete( jarFileToDelete );
-				log.exit();
+				Files.delete(jarFileToDelete);
+				LOG.exit();
 			}
-			catch ( final IOException e ) {
+			catch (final IOException e) {
 
-				//Ignore any error during the delete process
-				log.exit( e );
+				// Ignore any error during the delete process
+				LOG.exit(e);
 			}
 		}
 	}
 
+	/**
+	 * Return the current executed jar.
+	 * 
+	 * @return the name of the current executed jar
+	 */
 	private String currentJar() {
 
-		log.entry();
+		LOG.entry();
 
 		String currentJar = null;
-		try( final DirectoryStream<Path> directoryStream = Files.newDirectoryStream( Paths.get( "." ) ) ) { //$NON-NLS-1$
+		try (final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("."))) { //$NON-NLS-1$
 
-			for( final Path path : directoryStream ) {
+			for (final Path path : directoryStream) {
 
 				final String fileName = path.getFileName().toString();
-				if( fileName.startsWith( mavenArtifactId ) && fileName.endsWith( JAR_EXTENSION ) && ( null == currentJar || currentJar.compareTo( fileName ) < 0 ) ) {
+				if (fileName.startsWith(mavenArtifactId) && fileName.endsWith(JAR_EXTENSION) && (null == currentJar || currentJar.compareTo(fileName) < 0)) {
 
 					currentJar = fileName;
 				}
 			}
 		}
-		catch ( final IOException e ) {
-			//Ignore any error during the process
+		catch (final IOException e) {
+			// Ignore any error during the process
 			currentJar = null;
 		}
 
-		log.exit( currentJar );
+		LOG.exit(currentJar);
 		return currentJar;
 	}
 
+	/**
+	 * Get the download status.
+	 * 
+	 * @return true if the download has been done
+	 */
 	public boolean isDownloadDone() {
 
 		return downloadDone;
 	}
 
+	/**
+	 * Enable the version checker.
+	 */
 	public void resetVersionCheckerDisabled() {
 
 		versionCheckerDisabled = false;
 	}
 
+	/**
+	 * Get the state of the version checker. True, if the user have disabled it.
+	 * 
+	 * @return true if the version checker is disabled
+	 */
 	public boolean isversionCheckerDisabled() {
 
 		return versionCheckerDisabled;
 	}
 
 	/**
-	 * Download a file/URL and write it to a destination file
-	 *
+	 * Download a file/URL and write it to a destination file.
+	 * 
 	 * @param inputStream source stream
 	 * @param destinationFile destination file
-	 * @throws IOException
+	 * @throws IOException in case of copy error
 	 */
-	private static void downloadFile( final InputStream inputStream, final String destinationFile ) throws IOException {
+	private static void downloadFile(final InputStream inputStream, final String destinationFile) throws IOException {
 
-		Files.copy( inputStream, Paths.get( destinationFile ) );
+		Files.copy(inputStream, Paths.get(destinationFile));
 	}
 
 	/**
-	 * Get the java executable
-	 *
+	 * Get the java executable.
+	 * 
 	 * @return absolte path to the java executable
 	 * @throws NoSuchFileException if the java executable is not found
 	 */
 	private static String getJavaExecutable() throws NoSuchFileException {
 
-		log.entry();
+		LOG.entry();
 
-		final String javaDirectory = System.getProperty( JAVA_HOME_PROPERTY );
+		final String javaDirectory = System.getProperty(JAVA_HOME_PROPERTY);
 
-		if ( javaDirectory == null ) {
-			throw new IllegalStateException( JAVA_HOME_PROPERTY );
+		if (javaDirectory == null) {
+			throw new IllegalStateException(JAVA_HOME_PROPERTY);
 		}
 
 		final String javaExecutableFilePath;
-		//Add .exe extension on Windows OS
-		if ( EnvironmentTools.isWindows() ) {
+		// Add .exe extension on Windows OS
+		if (EnvironmentTools.isWindows()) {
 			javaExecutableFilePath = javaDirectory + FileSystems.getDefault().getSeparator() + BIN_DIRECTORY_AND_JAVA + WINDOWS_EXE_EXTENSION;
 		}
 		else {
 			javaExecutableFilePath = javaDirectory + FileSystems.getDefault().getSeparator() + BIN_DIRECTORY_AND_JAVA;
 		}
 
-		//Check if the executable exists and is executable
-		final Path javaExecutablePath = Paths.get( javaExecutableFilePath );
-		if ( ! Files.exists( javaExecutablePath ) || ! Files.isExecutable( javaExecutablePath ) ) {
+		// Check if the executable exists and is executable
+		final Path javaExecutablePath = Paths.get(javaExecutableFilePath);
+		if (!Files.exists(javaExecutablePath) || !Files.isExecutable(javaExecutablePath)) {
 
-			final NoSuchFileException exception = new NoSuchFileException( javaExecutableFilePath );
-			log.exit( exception );
+			final NoSuchFileException exception = new NoSuchFileException(javaExecutableFilePath);
+			LOG.exit(exception);
 			throw exception;
 		}
 
-		log.exit( javaExecutableFilePath );
+		LOG.exit(javaExecutableFilePath);
 		return javaExecutableFilePath;
 	}
 }
