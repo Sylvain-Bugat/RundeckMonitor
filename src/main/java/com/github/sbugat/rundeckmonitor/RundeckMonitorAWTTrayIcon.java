@@ -33,10 +33,13 @@ import com.github.sbugat.rundeckmonitor.tools.SystemTools;
  * @author Sylvain Bugat
  * 
  */
-public class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
+public final class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
+
+	/** Size of the hidden dialog box for auto-hide popup-menu when unfocus tray icon. */
+	private static final int HIDDEN_DIALOG_SIZE = 10;
 
 	/** Tray Icon menu. */
-	final PopupMenu popupMenu;
+	private final PopupMenu popupMenu;
 
 	/** MenuItem for lasts late/failed jobs. */
 	private final Map<MenuItem, JobExecutionInfo> failedMenuItems = new LinkedHashMap<>();
@@ -124,7 +127,7 @@ public class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 		exitItem.addActionListener(exitListener);
 
 		final JDialog hiddenDialog = new JDialog();
-		hiddenDialog.setSize(10, 10);
+		hiddenDialog.setSize(HIDDEN_DIALOG_SIZE, HIDDEN_DIALOG_SIZE);
 
 		final RundeckMonitorAWTListenerAdapter listenerAdapter = new RundeckMonitorAWTListenerAdapter(hiddenDialog);
 		hiddenDialog.addWindowFocusListener(listenerAdapter);
@@ -244,8 +247,14 @@ public class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 	 */
 	private static final class RundeckMonitorAWTListenerAdapter extends MouseAdapter implements WindowFocusListener {
 
+		/** Diaglo linked to this custom listener/adapter. */
 		private final JDialog dialog;
 
+		/**
+		 * Copy dialog reference into the listener.
+		 * 
+		 * @param dialogArg dialog to copy
+		 */
 		private RundeckMonitorAWTListenerAdapter(final JDialog dialogArg) {
 			dialog = dialogArg;
 		}
