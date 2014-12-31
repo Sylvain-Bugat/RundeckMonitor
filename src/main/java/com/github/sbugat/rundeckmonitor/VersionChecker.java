@@ -36,6 +36,9 @@ public final class VersionChecker implements Runnable {
 	/** SLF4J XLogger. */
 	private static final XLogger LOG = XLoggerFactory.getXLogger(VersionChecker.class);
 
+	/** Precalculated one megabyte for indicating download size. */
+	private static final int ONE_MEGABYTE = 1_024 * 1_024;
+
 	/** Jar extension. */
 	private static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 	/** Tmp extension. */
@@ -145,10 +148,11 @@ public final class VersionChecker implements Runnable {
 	}
 
 	/**
-	 * 
+	 * Find a jar in release and if it is a newer version, ask to download it.
 	 * 
 	 * @param release GitHub last release to use
 	 * @param withDependenciesSuffix indicate if the jar to download have a dependencies suffix
+	 * @return true if a new release jar has been found
 	 * @throws IOException in case of reading error
 	 */
 	private boolean findAndDownloadReleaseJar(final RepositoryTag release, final boolean withDependenciesSuffix) throws IOException {
@@ -173,7 +177,7 @@ public final class VersionChecker implements Runnable {
 				if (entry.getName().matches(".*/" + TARGET_DIRECTORY + '/' + mavenArtifactId + "-[0-9\\.]*" + jarSuffix + JAR_EXTENSION)) { //$NON-NLS-1$ //$NON-NLS-2$
 
 					final Object[] options = { "Yes", "No", "Never ask me again" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					final int confirmDialogChoice = JOptionPane.showOptionDialog(null, "An update is available, download it? (" + entry.getCompressedSize() / 1_048_576 + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					final int confirmDialogChoice = JOptionPane.showOptionDialog(null, "An update is available, download it? (" + entry.getCompressedSize() / ONE_MEGABYTE + "MB)", "Rundeck Monitor update found!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					if (JOptionPane.YES_OPTION == confirmDialogChoice) {
 
 						final String jarFileBaseName = entry.getName().replaceFirst("^.*/", ""); //$NON-NLS-1$ //$NON-NLS-2$
