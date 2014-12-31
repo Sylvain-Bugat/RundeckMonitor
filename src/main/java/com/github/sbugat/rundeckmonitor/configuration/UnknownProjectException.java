@@ -6,8 +6,9 @@ package com.github.sbugat.rundeckmonitor.configuration;
  * @author Sylvain Bugat
  * 
  */
-public class UnknownProjectException extends Exception {
+public final class UnknownProjectException extends Exception {
 
+	/** Unique Serial ID. */
 	private static final long serialVersionUID = -2516928050086861224L;
 
 	/** Name of the unknown project. */

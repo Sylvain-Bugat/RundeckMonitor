@@ -6,8 +6,9 @@ package com.github.sbugat.rundeckmonitor.configuration;
  * @author Sylvain Bugat
  * 
  */
-public class MissingPropertyException extends Exception {
+public final class MissingPropertyException extends Exception {
 
+	/** Unique Serial ID. */
 	private static final long serialVersionUID = -4199859651106152630L;
 
 	/** Name of the missing property. */

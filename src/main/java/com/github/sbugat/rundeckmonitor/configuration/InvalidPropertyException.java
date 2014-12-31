@@ -6,8 +6,9 @@ package com.github.sbugat.rundeckmonitor.configuration;
  * @author Sylvain Bugat
  * 
  */
-public class InvalidPropertyException extends Exception {
+public final class InvalidPropertyException extends Exception {
 
+	/** Unique Serial ID. */
 	private static final long serialVersionUID = 4577273435503511931L;
 
 	/** Name of the invalid property. */
@@ -17,7 +18,7 @@ public class InvalidPropertyException extends Exception {
 	private final String propertyValue;
 
 	/**
-	 * Constructor copy property name and his value
+	 * Constructor copy property name and his value.
 	 * 
 	 * @param propertyArg property name
 	 * @param propertyValueArg value of the property
