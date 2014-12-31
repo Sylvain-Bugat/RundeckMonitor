@@ -28,56 +28,60 @@ import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 
 /**
- * Swing tray icon management class
- *
+ * Swing tray icon management class.
+ * 
  * @author Sylvain Bugat
- *
+ * 
  */
-public class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon{
+public final class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon {
 
-	/** Tray Icon menu*/
+	/** Tray Icon menu. */
 	private final JPopupMenu popupMenu;
 
-	/**MenuItem for lasts late/failed jobs*/
+	/** MenuItem for lasts late/failed jobs. */
 	private final Map<JMenuItem, JobExecutionInfo> failedMenuItems = new LinkedHashMap<>();
 
 	/**
-	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it
-	 *
+	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it.
+	 * 
 	 * @param rundeckMonitorConfigurationArg loaded configuration
 	 * @param rundeckMonitorStateArg state of the rundeck monitor
 	 */
-	public RundeckMonitorSwingTrayIcon( final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final RundeckMonitorState rundeckMonitorStateArg ) {
+	public RundeckMonitorSwingTrayIcon(final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final RundeckMonitorState rundeckMonitorStateArg) {
 
-		super( rundeckMonitorConfigurationArg, rundeckMonitorStateArg );
+		super(rundeckMonitorConfigurationArg, rundeckMonitorStateArg);
 
-		//Action listener to get job execution detail on the rundeck URL
+		// Action listener to get job execution detail on the rundeck URL
 		menuListener = new ActionListener() {
+
+			@Override
 			@SuppressWarnings("synthetic-access")
-			public void actionPerformed( final ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 
-				if( JMenuItem.class.isInstance( e.getSource() ) ){
+				if (JMenuItem.class.isInstance(e.getSource())) {
 
-					openBrowser( failedMenuItems.get( e.getSource() ) );
+					openBrowser(failedMenuItems.get(e.getSource()));
 				}
 			}
 		};
 
-		//Alert reset of the failed jobs state
+		// Alert reset of the failed jobs state
 		final ActionListener reinitListener = new ActionListener() {
-			@SuppressWarnings("synthetic-access")
-			public void actionPerformed( final ActionEvent e) {
-				rundeckMonitorState.setFailedJobs( false );
 
-				//Reset all failed icon
-				for( final Entry<JMenuItem,JobExecutionInfo> entry: failedMenuItems.entrySet() ) {
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void actionPerformed(final ActionEvent e) {
+				rundeckMonitorState.setFailedJobs(false);
+
+				// Reset all failed icon
+				for (final Entry<JMenuItem, JobExecutionInfo> entry : failedMenuItems.entrySet()) {
 
 					final JMenuItem menuItem = entry.getKey();
-					menuItem.setIcon( null );
-					menuItem.setFont( menuItem.getFont().deriveFont( Font.PLAIN ) );
+					menuItem.setIcon(null);
+					menuItem.setFont(menuItem.getFont().deriveFont(Font.PLAIN));
 				}
 
-				//Clear all new failed jobs
+				// Clear all new failed jobs
 				newLateProcess.clear();
 				newFailedProcess.clear();
 
@@ -85,191 +89,197 @@ public class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon{
 			}
 		};
 
-		//Popup menu
-		//SystemLookAndFeel
-		JPopupMenu.setDefaultLightWeightPopupEnabled( true );
+		// Popup menu
+		// SystemLookAndFeel
+		JPopupMenu.setDefaultLightWeightPopupEnabled(true);
 		popupMenu = new JPopupMenu();
 
-		for( int i = 0 ; i < rundeckMonitorConfiguration.getFailedJobNumber() ; i++ ){
+		for (int i = 0; i < rundeckMonitorConfiguration.getFailedJobNumber(); i++) {
 
 			final JMenuItem failedItem = new JMenuItem();
-			failedMenuItems.put( failedItem, null );
-			popupMenu.add( failedItem );
-			failedItem.addActionListener( menuListener );
+			failedMenuItems.put(failedItem, null);
+			popupMenu.add(failedItem);
+			failedItem.addActionListener(menuListener);
 		}
 
 		popupMenu.addSeparator();
 
-		final JMenuItem reinitItem = new JMenuItem( "Reset alert" ); //$NON-NLS-1$
-		popupMenu.add( reinitItem );
+		final JMenuItem reinitItem = new JMenuItem("Reset alert"); //$NON-NLS-1$
+		popupMenu.add(reinitItem);
 
 		popupMenu.addSeparator();
 
-		reinitItem.addActionListener( reinitListener );
-		final JMenuItem aboutItem = new JMenuItem( "About RundeckMonitor" ); //$NON-NLS-1$
-		popupMenu.add( aboutItem );
-		aboutItem.addActionListener( aboutListener );
-		aboutItem.setToolTipText( "Open " + RUNDECK_MONITOR_PROJECT_URL ); //$NON-NLS-1$
+		reinitItem.addActionListener(reinitListener);
+		final JMenuItem aboutItem = new JMenuItem("About RundeckMonitor"); //$NON-NLS-1$
+		popupMenu.add(aboutItem);
+		aboutItem.addActionListener(aboutListener);
+		aboutItem.setToolTipText("Open " + RUNDECK_MONITOR_PROJECT_URL); //$NON-NLS-1$
 
-		final JMenuItem configurationItem = new JMenuItem( "Edit configuration" ); //$NON-NLS-1$
-		popupMenu.add( configurationItem );
-		configurationItem.addActionListener( configurationListener );
+		final JMenuItem configurationItem = new JMenuItem("Edit configuration"); //$NON-NLS-1$
+		popupMenu.add(configurationItem);
+		configurationItem.addActionListener(configurationListener);
 
 		popupMenu.addSeparator();
 
-		final JMenuItem exitItem = new JMenuItem( "Quit" ); //$NON-NLS-1$
-		popupMenu.add( exitItem );
-		exitItem.addActionListener( exitListener );
+		final JMenuItem exitItem = new JMenuItem("Quit"); //$NON-NLS-1$
+		popupMenu.add(exitItem);
+		exitItem.addActionListener(exitListener);
 
-		//Add the icon  to the system tray
-		trayIcon = new TrayIcon( IMAGE_OK, rundeckMonitorConfiguration.getRundeckMonitorName() );
-		trayIcon.setImageAutoSize( true );
+		// Add the icon to the system tray
+		trayIcon = new TrayIcon(IMAGE_OK, rundeckMonitorConfiguration.getRundeckMonitorName());
+		trayIcon.setImageAutoSize(true);
 
-		trayIcon.addMouseListener( new MouseAdapter() {
+		trayIcon.addMouseListener(new MouseAdapter() {
 
-			public void mouseReleased( final MouseEvent e) {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
 
-				if( e.isPopupTrigger() ) {
-					popupMenu.setLocation( e.getX(), e.getY() );
-					hiddenDialog.setLocation( e.getX(), e.getY() );
+				if (e.isPopupTrigger()) {
+					popupMenu.setLocation(e.getX(), e.getY());
+					hiddenDialog.setLocation(e.getX(), e.getY());
 
-					popupMenu.setInvoker( hiddenDialog );
-					hiddenDialog.setVisible( true );
-					popupMenu.setVisible( true );
+					popupMenu.setInvoker(hiddenDialog);
+					hiddenDialog.setVisible(true);
+					popupMenu.setVisible(true);
 				}
 			}
 		});
 
-
-		hiddenDialog.addWindowFocusListener(new WindowFocusListener () {
+		hiddenDialog.addWindowFocusListener(new WindowFocusListener() {
 
 			@Override
-			public void windowLostFocus ( final WindowEvent e ) {
-				hiddenDialog.setVisible( false );
+			public void windowLostFocus(final WindowEvent e) {
+				hiddenDialog.setVisible(false);
 			}
 
 			@Override
-			public void windowGainedFocus ( final WindowEvent e ) {
-				//Nothing to do
+			public void windowGainedFocus(final WindowEvent e) {
+				// Nothing to do
 			}
 		});
 
-		trayIcon.addMouseListener( new MouseAdapter() {
+		trayIcon.addMouseListener(new MouseAdapter() {
 
-			public void mouseReleased( final MouseEvent e) {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
 
-				if( e.isPopupTrigger() ) {
-					popupMenu.setLocation( e.getX(), e.getY() );
-					hiddenDialog.setLocation( e.getX(), e.getY() );
+				if (e.isPopupTrigger()) {
+					popupMenu.setLocation(e.getX(), e.getY());
+					hiddenDialog.setLocation(e.getX(), e.getY());
 
-					popupMenu.setInvoker( hiddenDialog );
-					hiddenDialog.setVisible( true );
-					popupMenu.setVisible( true );
+					popupMenu.setInvoker(hiddenDialog);
+					hiddenDialog.setVisible(true);
+					popupMenu.setVisible(true);
 				}
 			}
 		});
 
 		try {
-			tray.add( trayIcon );
+			tray.add(trayIcon);
 		}
-		catch ( final AWTException e ) {
+		catch (final AWTException e) {
 
 			final StringWriter stringWriter = new StringWriter();
-			e.printStackTrace( new PrintWriter( stringWriter ) );
-			JOptionPane.showMessageDialog( null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
+			e.printStackTrace(new PrintWriter(stringWriter));
+			JOptionPane.showMessageDialog(null, e.getMessage() + System.lineSeparator() + stringWriter.toString(), "RundeckMonitor initialization error", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 
-			SystemTools.exit( SystemTools.EXIT_CODE_TRAY_ICON_ERROR );
+			SystemTools.exit(SystemTools.EXIT_CODE_TRAY_ICON_ERROR);
 		}
 	}
 
 	/**
-	 * Update the list of failed/late jobs
-	 *
+	 * Update the list of failed/late jobs.
+	 * 
 	 * @param listJobExecutionInfo list of failed and late jobs informations
 	 */
-	public void updateExecutionIdsList( final List<JobExecutionInfo> listJobExecutionInfo ) {
+	@Override
+	public void updateExecutionIdsList(final List<JobExecutionInfo> listJobExecutionInfo) {
 
-		int i=0;
+		int i = 0;
 
-		for( final Entry<JMenuItem,JobExecutionInfo> entry: failedMenuItems.entrySet() ) {
+		for (final Entry<JMenuItem, JobExecutionInfo> entry : failedMenuItems.entrySet()) {
 
-			if( i >= listJobExecutionInfo.size() ) {
+			if (i >= listJobExecutionInfo.size()) {
 				break;
 			}
 
-			final JobExecutionInfo jobExecutionInfo = listJobExecutionInfo.get( i );
+			final JobExecutionInfo jobExecutionInfo = listJobExecutionInfo.get(i);
 			final JMenuItem jMenuItem = entry.getKey();
 
-			entry.setValue( jobExecutionInfo );
-			final SimpleDateFormat formatter = new SimpleDateFormat( rundeckMonitorConfiguration.getDateFormat() );
+			entry.setValue(jobExecutionInfo);
+			final SimpleDateFormat formatter = new SimpleDateFormat(rundeckMonitorConfiguration.getDateFormat());
 			final String longExecution;
-			if( jobExecutionInfo.isLongExecution() ) {
+			if (jobExecutionInfo.isLongExecution()) {
 				longExecution = LONG_EXECUTION_MARKER;
 			}
 			else {
 				longExecution = StringUtils.EMPTY;
 			}
-			final String message = formatter.format( jobExecutionInfo.getStartedAt() ) + ": " +jobExecutionInfo.getDescription(); //$NON-NLS-1$
-			jMenuItem.setText( message + longExecution );
+			final String message = formatter.format(jobExecutionInfo.getStartedAt()) + ": " + jobExecutionInfo.getDescription(); //$NON-NLS-1$
+			jMenuItem.setText(message + longExecution);
 
-			//Add tooltip
+			// Add tooltip
 			final JobTabRedirection jobTabRedirection;
 
-			if( jobExecutionInfo.isLongExecution() ) {
+			if (jobExecutionInfo.isLongExecution()) {
 				jobTabRedirection = JobTabRedirection.SUMMARY;
 			}
 			else {
-				jobTabRedirection = JobTabRedirection.valueOf( rundeckMonitorConfiguration.getJobTabRedirection() );
+				jobTabRedirection = JobTabRedirection.valueOf(rundeckMonitorConfiguration.getJobTabRedirection());
 			}
-			jMenuItem.setToolTipText( "Open " + rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix() ); //$NON-NLS-1$
+			jMenuItem.setToolTipText("Open " + rundeckMonitorConfiguration.getRundeckUrl() + RUNDECK_JOB_EXECUTION_URL + jobTabRedirection.getAccessUrlPrefix() + '/' + jobExecutionInfo.getExecutionId() + jobTabRedirection.getAccessUrlSuffix()); //$NON-NLS-1$
 
-			if( jobExecutionInfo.isNewJob() ) {
+			if (jobExecutionInfo.isNewJob()) {
 
-				if( jobExecutionInfo.isLongExecution() ) {
-					trayIcon.displayMessage( NEW_LONG_EXECUTION_ALERT, message, TrayIcon.MessageType.WARNING );
-					newLateProcess.add( jobExecutionInfo.getExecutionId() );
+				if (jobExecutionInfo.isLongExecution()) {
+					trayIcon.displayMessage(NEW_LONG_EXECUTION_ALERT, message, TrayIcon.MessageType.WARNING);
+					newLateProcess.add(jobExecutionInfo.getExecutionId());
 				}
 				else {
-					trayIcon.displayMessage( NEW_FAILED_JOB_ALERT, message, TrayIcon.MessageType.ERROR );
-					newFailedProcess.add( jobExecutionInfo.getExecutionId() );
+					trayIcon.displayMessage(NEW_FAILED_JOB_ALERT, message, TrayIcon.MessageType.ERROR);
+					newFailedProcess.add(jobExecutionInfo.getExecutionId());
 				}
 			}
 
-			//Mark failed and late jobs with an icon and bold menuitem
-			if( newFailedProcess.contains( jobExecutionInfo.getExecutionId() ) ) {
-				jMenuItem.setFont( entry.getKey().getFont().deriveFont( Font.BOLD ) );
-				jMenuItem.setIcon( ICON_KO_SMALL );
+			// Mark failed and late jobs with an icon and bold menuitem
+			if (newFailedProcess.contains(jobExecutionInfo.getExecutionId())) {
+				jMenuItem.setFont(entry.getKey().getFont().deriveFont(Font.BOLD));
+				jMenuItem.setIcon(ICON_KO_SMALL);
 			}
-			else if( newLateProcess.contains( jobExecutionInfo.getExecutionId() ) ) {
-				jMenuItem.setFont( entry.getKey().getFont().deriveFont( Font.BOLD ) );
-				jMenuItem.setIcon( ICON_LATE_SMALL );
+			else if (newLateProcess.contains(jobExecutionInfo.getExecutionId())) {
+				jMenuItem.setFont(entry.getKey().getFont().deriveFont(Font.BOLD));
+				jMenuItem.setIcon(ICON_LATE_SMALL);
 			}
 			else {
-				jMenuItem.setFont( entry.getKey().getFont().deriveFont( Font.PLAIN ) );
-				jMenuItem.setIcon( null );
+				jMenuItem.setFont(entry.getKey().getFont().deriveFont(Font.PLAIN));
+				jMenuItem.setIcon(null);
 			}
 
 			i++;
 		}
 	}
 
+	/**
+	 * Called when configuration is reloaded, clear all menu items and reinitialize action listeners.
+	 */
+	@Override
 	public void reloadConfiguration() {
 
-		//Remove all old failedMenuItems from the popup menu
-		for( final JMenuItem failedItem : failedMenuItems.keySet() ) {
-			popupMenu.remove( failedItem );
-			failedItem.removeActionListener( menuListener );
+		// Remove all old failedMenuItems from the popup menu
+		for (final JMenuItem failedItem : failedMenuItems.keySet()) {
+			popupMenu.remove(failedItem);
+			failedItem.removeActionListener(menuListener);
 		}
 
 		failedMenuItems.clear();
 
-		//Add all new menu items to the popup menu
-		for( int i = 0 ; i < rundeckMonitorConfiguration.getFailedJobNumber() ; i++ ){
+		// Add all new menu items to the popup menu
+		for (int i = 0; i < rundeckMonitorConfiguration.getFailedJobNumber(); i++) {
 
 			final JMenuItem failedItem = new JMenuItem();
-			failedMenuItems.put( failedItem, null );
-			popupMenu.insert( failedItem, i );
-			failedItem.addActionListener( menuListener );
+			failedMenuItems.put(failedItem, null);
+			popupMenu.insert(failedItem, i);
+			failedItem.addActionListener(menuListener);
 		}
 
 		super.reloadConfiguration();
