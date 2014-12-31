@@ -110,7 +110,7 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 						oldApiVersion = version;
 					}
 				}
-				else if (version.getVersion().getVersionNumber() <= 12) {
+				else if (version.getVersion().getVersionNumber() <= RundeckAPIVersion.RUNDECK_APIVERSION_12.getVersion().getVersionNumber()) {
 
 					oldApiVersion = version;
 				}
