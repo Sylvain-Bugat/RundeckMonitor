@@ -25,21 +25,35 @@ import com.github.sbugat.rundeckmonitor.tools.RundeckClientTools;
  */
 public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanelDescriptor {
 
-	final Container container = new Container();
-	final GridBagLayout layout = new GridBagLayout();
+	/** Main container. */
+	private final Container container = new Container();
 
-	final JTextField rundeckMonitorName = new JTextField(20);
-	final JComboBox<RefreshDelay> rundeckMonitorRefreshDelay = new JComboBox<>();
-	final JComboBox<LateExecutionThreshold> rundeckMonitorLateExecutionThreshold = new JComboBox<>();
-	final JComboBox<FailedJobsNumber> rundeckMonitorFailedJobNumber = new JComboBox<>();
-	final JComboBox<DateFormat> rundeckMonitorDateFormat = new JComboBox<>();
-	final JComboBox<JobTabRedirection> rundeckMonitorJobTabRedirection = new JComboBox<>();
-	final JComboBox<InterfaceType> rundeckMonitorInterfaceType = new JComboBox<>();
+	/** RunDeck monitor name input. */
+	private final JTextField rundeckMonitorName = new JTextField(20);
+	/** Refresh delay input. */
+	private final JComboBox<RefreshDelay> rundeckMonitorRefreshDelay = new JComboBox<>();
+	/** Late threshold input. */
+	private final JComboBox<LateExecutionThreshold> rundeckMonitorLateExecutionThreshold = new JComboBox<>();
+	/** Number of displayed failed jobs input. */
+	private final JComboBox<FailedJobsNumber> rundeckMonitorFailedJobNumber = new JComboBox<>();
+	/** Date format input. */
+	private final JComboBox<DateFormat> rundeckMonitorDateFormat = new JComboBox<>();
+	/** Open a job redirection input. */
+	private final JComboBox<JobTabRedirection> rundeckMonitorJobTabRedirection = new JComboBox<>();
+	/** Interface type input. */
+	private final JComboBox<InterfaceType> rundeckMonitorInterfaceType = new JComboBox<>();
 
-	public MonitorConfigurationWizardPanelDescriptor(final ConfigurationWizardStep panelIdentifierArg, final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg) {
-		super(panelIdentifierArg, backArg, nextArg, rundeckMonitorConfigurationArg);
+	/**
+	 * Copy arguments and initialize the RunDeck monitor configuration wizard panel.
+	 * 
+	 * @param backArg previous panel
+	 * @param nextArg next panel
+	 * @param rundeckMonitorConfigurationArg RunDeck monitor common configuration
+	 */
+	public MonitorConfigurationWizardPanelDescriptor(final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg) {
+		super(ConfigurationWizardStep.MONITOR_STEP, backArg, nextArg, rundeckMonitorConfigurationArg);
 
-		container.setLayout(layout);
+		container.setLayout(new GridBagLayout());
 		final JLabel rundeckMonitorNameLabel = new JLabel("Tray-icon monitor name:"); //$NON-NLS-1$
 		final JLabel rundeckMonitorRefreshDelayLabel = new JLabel("Failed/late jobs refresh delay:"); //$NON-NLS-1$
 		final JLabel rundeckMonitorLateExecutionThresholdLabel = new JLabel("Late execution detection threshold:"); //$NON-NLS-1$
