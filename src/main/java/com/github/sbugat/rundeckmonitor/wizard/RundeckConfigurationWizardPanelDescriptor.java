@@ -53,10 +53,10 @@ public final class RundeckConfigurationWizardPanelDescriptor extends WizardPanel
 	public RundeckConfigurationWizardPanelDescriptor(final ConfigurationWizardStep backArg, final ConfigurationWizardStep nextArg, final RundeckMonitorConfiguration rundeckMonitorConfigurationArg) {
 		super(ConfigurationWizardStep.RUNDECK_STEP, backArg, nextArg, rundeckMonitorConfigurationArg);
 
-		rundeckUrlTextField.setText(rundeckMonitorConfiguration.getRundeckUrl());
-		rundeckAPITokenTextField.setText(rundeckMonitorConfiguration.getRundeckAPIKey());
-		rundeckLoginTextField.setText(rundeckMonitorConfiguration.getRundeckLogin());
-		rundeckPasswordTextField.setText(rundeckMonitorConfiguration.getRundeckPassword());
+		rundeckUrlTextField.setText(rundeckMonitorConfigurationArg.getRundeckUrl());
+		rundeckAPITokenTextField.setText(rundeckMonitorConfigurationArg.getRundeckAPIKey());
+		rundeckLoginTextField.setText(rundeckMonitorConfigurationArg.getRundeckLogin());
+		rundeckPasswordTextField.setText(rundeckMonitorConfigurationArg.getRundeckPassword());
 
 		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
 		final JLabel rundeckUrllabel = new JLabel("Rundeck URL:"); //$NON-NLS-1$
@@ -138,7 +138,7 @@ public final class RundeckConfigurationWizardPanelDescriptor extends WizardPanel
 		final RundeckClient rundeckClient;
 		try {
 			// Initialize the rundeck client with minimal rundeck version (1)
-			rundeckClient = RundeckClientTools.buildRundeckClient(rundeckMonitorConfiguration, true);
+			rundeckClient = RundeckClientTools.buildRundeckClient(getRundeckMonitorConfiguration(), true);
 			rundeckClient.ping();
 			rundeckClient.testAuth();
 		}
@@ -174,10 +174,10 @@ public final class RundeckConfigurationWizardPanelDescriptor extends WizardPanel
 			return false;
 		}
 
-		rundeckMonitorConfiguration.setRundeckUrl(rundeckUrlTextField.getText().replaceFirst("/+$", "")); //$NON-NLS-1$ //$NON-NLS-2$
-		rundeckMonitorConfiguration.setRundeckAPIKey(rundeckAPITokenTextField.getText());
-		rundeckMonitorConfiguration.setRundeckLogin(rundeckLoginTextField.getText());
-		rundeckMonitorConfiguration.setRundeckPassword(rundeckPasswordTextField.getText());
+		getRundeckMonitorConfiguration().setRundeckUrl(rundeckUrlTextField.getText().replaceFirst("/+$", "")); //$NON-NLS-1$ //$NON-NLS-2$
+		getRundeckMonitorConfiguration().setRundeckAPIKey(rundeckAPITokenTextField.getText());
+		getRundeckMonitorConfiguration().setRundeckLogin(rundeckLoginTextField.getText());
+		getRundeckMonitorConfiguration().setRundeckPassword(rundeckPasswordTextField.getText());
 
 		return true;
 	}

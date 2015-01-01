@@ -63,18 +63,18 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 		final JLabel rundeckMonitorInterfaceTypeLabel = new JLabel("Type of Java interface: "); //$NON-NLS-1$
 
 		// Fields initialization
-		if (null == rundeckMonitorConfiguration.getRundeckMonitorName() || rundeckMonitorConfiguration.getRundeckMonitorName().isEmpty()) {
+		if (null == rundeckMonitorConfigurationArg.getRundeckMonitorName() || rundeckMonitorConfigurationArg.getRundeckMonitorName().isEmpty()) {
 			rundeckMonitorName.setText(RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_NAME_DEFAULT_VALUE);
 		}
 		else {
-			rundeckMonitorName.setText(rundeckMonitorConfiguration.getRundeckMonitorName());
+			rundeckMonitorName.setText(rundeckMonitorConfigurationArg.getRundeckMonitorName());
 		}
 
 		RefreshDelay oldConfiguredRefreshDelay = null;
 		for (final RefreshDelay refreshDelay : RefreshDelay.values()) {
 
 			rundeckMonitorRefreshDelay.addItem(refreshDelay);
-			if (refreshDelay.getDelay() == rundeckMonitorConfiguration.getRefreshDelay()) {
+			if (refreshDelay.getDelay() == rundeckMonitorConfigurationArg.getRefreshDelay()) {
 				oldConfiguredRefreshDelay = refreshDelay;
 			}
 		}
@@ -90,7 +90,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 		for (final LateExecutionThreshold lateExecutionThreshold : LateExecutionThreshold.values()) {
 
 			rundeckMonitorLateExecutionThreshold.addItem(lateExecutionThreshold);
-			if (lateExecutionThreshold.getThreshold() == rundeckMonitorConfiguration.getLateThreshold()) {
+			if (lateExecutionThreshold.getThreshold() == rundeckMonitorConfigurationArg.getLateThreshold()) {
 				oldLateExecutionThreshold = lateExecutionThreshold;
 			}
 		}
@@ -106,7 +106,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 		for (final FailedJobsNumber failedJobsNumber : FailedJobsNumber.values()) {
 
 			rundeckMonitorFailedJobNumber.addItem(failedJobsNumber);
-			if (failedJobsNumber.getFailedJobsNumber() == rundeckMonitorConfiguration.getFailedJobNumber()) {
+			if (failedJobsNumber.getFailedJobsNumber() == rundeckMonitorConfigurationArg.getFailedJobNumber()) {
 				oldFailedJobsNumber = failedJobsNumber;
 			}
 		}
@@ -123,7 +123,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 
 			rundeckMonitorDateFormat.addItem(dateFormat);
 
-			if (dateFormat.getDateFormat().equals(rundeckMonitorConfiguration.getDateFormat())) {
+			if (dateFormat.getDateFormat().equals(rundeckMonitorConfigurationArg.getDateFormat())) {
 				oldDateFormat = dateFormat;
 			}
 		}
@@ -140,7 +140,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 
 			rundeckMonitorJobTabRedirection.addItem(jobTabRedirection);
 
-			if (jobTabRedirection.name().equals(rundeckMonitorConfiguration.getJobTabRedirection())) {
+			if (jobTabRedirection.name().equals(rundeckMonitorConfigurationArg.getJobTabRedirection())) {
 				oldJobTabRedirection = jobTabRedirection;
 			}
 		}
@@ -161,7 +161,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 
 					rundeckMonitorInterfaceType.addItem(interfaceType);
 
-					if (interfaceType.name().equals(rundeckMonitorConfiguration.getInterfaceType())) {
+					if (interfaceType.name().equals(rundeckMonitorConfigurationArg.getInterfaceType())) {
 						oldInterfaceType = interfaceType;
 					}
 				}
@@ -169,7 +169,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 			else {
 				rundeckMonitorInterfaceType.addItem(interfaceType);
 
-				if (interfaceType.name().equals(rundeckMonitorConfiguration.getInterfaceType())) {
+				if (interfaceType.name().equals(rundeckMonitorConfigurationArg.getInterfaceType())) {
 					oldInterfaceType = interfaceType;
 				}
 			}
@@ -248,7 +248,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 	public void aboutToDisplayPanel() {
 
 		// Initialize the rundeck client with the minimal rundeck version (1)
-		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(rundeckMonitorConfiguration, true);
+		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(getRundeckMonitorConfiguration(), true);
 
 		final String rundeckVersion = rundeckClient.getSystemInfo().getVersion();
 
@@ -259,7 +259,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 			if (rundeckVersion.compareTo(jobTabRedirection.getSinceRundeckVersion()) >= 0) {
 				rundeckMonitorJobTabRedirection.addItem(jobTabRedirection);
 
-				if (jobTabRedirection.name().equals(rundeckMonitorConfiguration.getJobTabRedirection())) {
+				if (jobTabRedirection.name().equals(getRundeckMonitorConfiguration().getJobTabRedirection())) {
 					oldJobTabRedirection = jobTabRedirection;
 				}
 			}
@@ -281,16 +281,16 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 	@Override
 	public boolean validate() {
 
-		rundeckMonitorConfiguration.setRundeckMonitorName(rundeckMonitorName.getText());
-		rundeckMonitorConfiguration.setRefreshDelay(rundeckMonitorRefreshDelay.getItemAt(rundeckMonitorRefreshDelay.getSelectedIndex()).getDelay());
-		rundeckMonitorConfiguration.setLateThreshold(rundeckMonitorLateExecutionThreshold.getItemAt(rundeckMonitorLateExecutionThreshold.getSelectedIndex()).getThreshold());
-		rundeckMonitorConfiguration.setFailedJobNumber(rundeckMonitorFailedJobNumber.getItemAt(rundeckMonitorFailedJobNumber.getSelectedIndex()).getFailedJobsNumber());
-		rundeckMonitorConfiguration.setDateFormat(rundeckMonitorDateFormat.getItemAt(rundeckMonitorDateFormat.getSelectedIndex()).getDateFormat());
-		rundeckMonitorConfiguration.setJobTabRedirection(rundeckMonitorJobTabRedirection.getItemAt(rundeckMonitorJobTabRedirection.getSelectedIndex()).name());
-		rundeckMonitorConfiguration.setInterfaceType(rundeckMonitorInterfaceType.getItemAt(rundeckMonitorInterfaceType.getSelectedIndex()).name());
+		getRundeckMonitorConfiguration().setRundeckMonitorName(rundeckMonitorName.getText());
+		getRundeckMonitorConfiguration().setRefreshDelay(rundeckMonitorRefreshDelay.getItemAt(rundeckMonitorRefreshDelay.getSelectedIndex()).getDelay());
+		getRundeckMonitorConfiguration().setLateThreshold(rundeckMonitorLateExecutionThreshold.getItemAt(rundeckMonitorLateExecutionThreshold.getSelectedIndex()).getThreshold());
+		getRundeckMonitorConfiguration().setFailedJobNumber(rundeckMonitorFailedJobNumber.getItemAt(rundeckMonitorFailedJobNumber.getSelectedIndex()).getFailedJobsNumber());
+		getRundeckMonitorConfiguration().setDateFormat(rundeckMonitorDateFormat.getItemAt(rundeckMonitorDateFormat.getSelectedIndex()).getDateFormat());
+		getRundeckMonitorConfiguration().setJobTabRedirection(rundeckMonitorJobTabRedirection.getItemAt(rundeckMonitorJobTabRedirection.getSelectedIndex()).name());
+		getRundeckMonitorConfiguration().setInterfaceType(rundeckMonitorInterfaceType.getItemAt(rundeckMonitorInterfaceType.getSelectedIndex()).name());
 
 		try {
-			rundeckMonitorConfiguration.saveMonitorConfigurationPropertieFile();
+			getRundeckMonitorConfiguration().saveMonitorConfigurationPropertieFile();
 		}
 		catch (final IOException e) {
 			return false;

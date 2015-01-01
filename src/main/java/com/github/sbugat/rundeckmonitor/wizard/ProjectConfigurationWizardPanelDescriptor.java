@@ -75,7 +75,7 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 	public void aboutToDisplayPanel() {
 
 		// Initialize the rundeck client with the minimal rundeck version (1)
-		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(rundeckMonitorConfiguration, true);
+		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(getRundeckMonitorConfiguration(), true);
 
 		rundeckProjectNameTextField.removeAllItems();
 		// Check if the configured project exists
@@ -85,14 +85,14 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 			final String currentProjectName = rundeckProject.getName();
 			rundeckProjectNameTextField.addItem(currentProjectName);
 
-			if (!currentProjectName.isEmpty() && currentProjectName.equals(rundeckMonitorConfiguration.getRundeckProject())) {
+			if (!currentProjectName.isEmpty() && currentProjectName.equals(getRundeckMonitorConfiguration().getRundeckProject())) {
 
 				existingOldConfiguredProject = true;
 			}
 		}
 
 		if (existingOldConfiguredProject) {
-			rundeckProjectNameTextField.setSelectedItem(rundeckMonitorConfiguration.getRundeckProject());
+			rundeckProjectNameTextField.setSelectedItem(getRundeckMonitorConfiguration().getRundeckProject());
 		}
 
 		final String rundeckVersion = rundeckClient.getSystemInfo().getVersion();
@@ -104,8 +104,8 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 			if (rundeckVersion.compareTo(version.getSinceReturnVersion()) >= 0) {
 				rundeckRundeckAPIVersionTextField.addItem(version);
 
-				if (rundeckMonitorConfiguration.getRundeckAPIversion() > 0) {
-					if (version.getVersion().getVersionNumber() == rundeckMonitorConfiguration.getRundeckAPIversion()) {
+				if (getRundeckMonitorConfiguration().getRundeckAPIversion() > 0) {
+					if (version.getVersion().getVersionNumber() == getRundeckMonitorConfiguration().getRundeckAPIversion()) {
 
 						oldApiVersion = version;
 					}
@@ -126,7 +126,7 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 	public boolean validate() {
 
 		// Initialize the rundeck client
-		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(rundeckMonitorConfiguration, true);
+		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(getRundeckMonitorConfiguration(), true);
 
 		// Check if the configured project exists
 		boolean existingProject = false;
@@ -143,8 +143,8 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 			return false;
 		}
 
-		rundeckMonitorConfiguration.setRundeckProject(rundeckProjectNameTextField.getItemAt(rundeckProjectNameTextField.getSelectedIndex()));
-		rundeckMonitorConfiguration.setRundeckAPIversion(rundeckRundeckAPIVersionTextField.getItemAt(rundeckRundeckAPIVersionTextField.getSelectedIndex()).getVersion().getVersionNumber());
+		getRundeckMonitorConfiguration().setRundeckProject(rundeckProjectNameTextField.getItemAt(rundeckProjectNameTextField.getSelectedIndex()));
+		getRundeckMonitorConfiguration().setRundeckAPIversion(rundeckRundeckAPIVersionTextField.getItemAt(rundeckRundeckAPIVersionTextField.getSelectedIndex()).getVersion().getVersionNumber());
 
 		return true;
 	}
