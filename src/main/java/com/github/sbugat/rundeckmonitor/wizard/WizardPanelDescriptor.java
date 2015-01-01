@@ -22,7 +22,7 @@ public abstract class WizardPanelDescriptor {
 	private final ConfigurationWizardStep next;
 
 	/** RunDeck monitor configuration. */
-	protected final RundeckMonitorConfiguration rundeckMonitorConfiguration;
+	private final RundeckMonitorConfiguration rundeckMonitorConfiguration;
 
 	/**
 	 * Copyr arguments to constants.
@@ -51,8 +51,17 @@ public abstract class WizardPanelDescriptor {
 	 * 
 	 * @return the panel identifier
 	 */
-	public ConfigurationWizardStep getPanelDescriptorIdentifier() {
+	public final ConfigurationWizardStep getPanelDescriptorIdentifier() {
 		return panelIdentifier;
+	}
+
+	/**
+	 * Get the RunDeck monitor main configuration.
+	 * 
+	 * @return monitor configuration
+	 */
+	public final RundeckMonitorConfiguration getRundeckMonitorConfiguration() {
+		return rundeckMonitorConfiguration;
 	}
 
 	/**
@@ -60,7 +69,7 @@ public abstract class WizardPanelDescriptor {
 	 * 
 	 * @return next panel
 	 */
-	public ConfigurationWizardStep getNext() {
+	public final ConfigurationWizardStep getNext() {
 		return next;
 	}
 
@@ -69,7 +78,7 @@ public abstract class WizardPanelDescriptor {
 	 * 
 	 * @return previous panel
 	 */
-	public ConfigurationWizardStep getBack() {
+	public final ConfigurationWizardStep getBack() {
 		return back;
 	}
 
@@ -81,12 +90,9 @@ public abstract class WizardPanelDescriptor {
 	}
 
 	/**
-	 * Default method to validate the wizard step, default return true.
+	 * Default method to validate the wizard step, must return true if input data are valid.
 	 * 
-	 * @return true by default
+	 * @return true if valid, false otherwise
 	 */
-	public boolean validate() {
-		// Default: return OK
-		return true;
-	}
+	public abstract boolean validate();
 }
