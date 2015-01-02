@@ -52,9 +52,9 @@ public final class RundeckMonitorConfigurationWizard {
 	/** Wizard main card layout for steps. */
 	private CardLayout cardLayout;
 
-	/** Back/previous step button of the wizard */
+	/** Back/previous step button of the wizard. */
 	private JButton backButton;
-	/** Next step button of the wizard */
+	/** Next step button of the wizard. */
 	private JButton nextButton;
 
 	/**
