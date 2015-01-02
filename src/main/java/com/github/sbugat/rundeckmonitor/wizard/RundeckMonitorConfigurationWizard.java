@@ -20,7 +20,7 @@ import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguratio
 import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 
 /**
- * Class of the configuration Wizard
+ * Class of the configuration Wizard.
  * 
  * @author Sylvain Bugat
  * 
@@ -30,18 +30,26 @@ public final class RundeckMonitorConfigurationWizard {
 	/** Configuration wizard frame title. */
 	private static final String WIZARD_FRAME_TITLE = "RundeckMonitor configuration wizard"; //$NON-NLS-1$
 
+	/** Back button label. */
 	private static final String BACK_BUTTON_LABEL = "Back"; //$NON-NLS-1$
+	/** Cancel button label. */
 	private static final String CANCEL_BUTTON_LABEL = "Cancel"; //$NON-NLS-1$
+	/** Finish button label. */
 	private static final String FINISH_BUTTON_LABEL = "Finish"; //$NON-NLS-1$
+	/** Next button label. */
 	private static final String NEXT_BUTTON_LABEL = "Next"; //$NON-NLS-1$
 
+	/** Wizard steps maps. */
 	private final Map<ConfigurationWizardStep, WizardPanelDescriptor> map = new HashMap<>();
+	/** Current wizard step. */
 	private ConfigurationWizardStep currentStep;
 
 	/** Configuration wizard main frame. */
 	private final JFrame wizardFrame;
 
+	/** Wizard main panel. */
 	private JPanel cardPanel;
+	/** Wizard main card layout for steps. */
 	private CardLayout cardLayout;
 
 	/** Back/previous step button of the wizard */
@@ -90,6 +98,11 @@ public final class RundeckMonitorConfigurationWizard {
 		wizardFrame.setVisible(true);
 	}
 
+	/**
+	 * Initialize the main card panel and listeners.
+	 * 
+	 * @param exitOnClose indicate if Cancel/close the wizard will exit
+	 */
 	private void initComponents(final boolean exitOnClose) {
 
 		final JPanel buttonPanel = new JPanel();
@@ -169,11 +182,22 @@ public final class RundeckMonitorConfigurationWizard {
 		wizardFrame.getContentPane().add(cardPanel, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Add a new wizard panel to the wizard.
+	 * 
+	 * @param panel panel to add
+	 */
 	public void registerWizardPanel(final WizardPanelDescriptor panel) {
 		cardPanel.add(panel.getPanelComponent(), panel.getPanelDescriptorIdentifier().toString());
 		map.put(panel.getPanelDescriptorIdentifier(), panel);
 	}
 
+	/**
+	 * Change the current panel to a new one with validation of the current if needed.
+	 * 
+	 * @param id identifier or the targeted Wizard step
+	 * @param next indicate if it's a next step
+	 */
 	public void setCurrentPanel(final ConfigurationWizardStep id, final boolean next) {
 
 		// If going to the next panel, validate it and don't advance if validation failed
