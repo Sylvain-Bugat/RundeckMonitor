@@ -67,7 +67,7 @@ public enum JobTabRedirection {
 	}
 
 	/**
-	 * Get the first version
+	 * Get the first version.
 	 * 
 	 * @return first version
 	 */
