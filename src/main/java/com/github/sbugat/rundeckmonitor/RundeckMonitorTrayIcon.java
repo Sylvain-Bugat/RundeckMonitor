@@ -220,7 +220,7 @@ public abstract class RundeckMonitorTrayIcon {
 	/**
 	 * Update the image of the tray icon.
 	 */
-	public void updateTrayIcon() {
+	public final void updateTrayIcon() {
 
 		LOG.entry();
 
@@ -264,7 +264,7 @@ public abstract class RundeckMonitorTrayIcon {
 	/**
 	 * remove the RundeckMonitor icon from the system tray.
 	 */
-	public void disposeTrayIcon() {
+	public final void disposeTrayIcon() {
 
 		LOG.entry();
 		tray.remove(trayIcon);
@@ -276,7 +276,7 @@ public abstract class RundeckMonitorTrayIcon {
 	 * 
 	 * @param jobExecutionInfo the job exeuction to open
 	 */
-	void openBrowser(final JobExecutionInfo jobExecutionInfo) {
+	final void openBrowser(final JobExecutionInfo jobExecutionInfo) {
 
 		LOG.entry();
 		final JobTabRedirection jobTabRedirection;
