@@ -22,8 +22,16 @@
 		<author>Sylvain Bugat</author>
 	</properties>
 	<body>
+		<release date='2015-01-04' description='RundeckMonitor version 1.9' version='1.9'>
+			<action type='add' dev='Sylvain-Bugat'>Add RunDeck Monitor site</action>
+			<action type='add' dev='Sylvain-Bugat'>Add logs with SLF4J/logback</action>
+			<action type='add' dev='Sylvain-Bugat'>Add Swing menu tooltip</action>
+			<action type='fix' dev='Sylvain-Bugat'>Technical PMD/findbugs/CheckStyle fixes</action>
+			<action type='fix' dev='Sylvain-Bugat'>Use updated lightweight RunDeck client</action>
+			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
+		</release>
 		<release date='2014-11-25' description='RundeckMonitor version 1.8' version='1.8'>
-			<action type='fix' dev='Sylvain-Bugat'>Rundeck client upgrade to fix CVE-2014-3577</action>
+			<action type='fix' dev='Sylvain-Bugat'>RunDeck client upgrade to fix CVE-2014-3577</action>
 			<action type='fix' dev='Sylvain-Bugat'>Dispose tray icon in case of error</action>
 			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
 		</release>
@@ -38,12 +46,12 @@
 			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
 		</release>
 		<release date='2014-08-24' description='RundeckMonitor version 1.5' version='1.5'>
-			<action type='fix' dev='Sylvain-Bugat'>Used API fixes with old rundeck versions</action>
+			<action type='fix' dev='Sylvain-Bugat'>Used API fixes with old RunDeck versions</action>
 		</release>
 		<release date='2014-08-21' description='RundeckMonitor version 1.4' version='1.4'>
 			<action type='add' dev='Sylvain-Bugat'>Configuration wizard improvements</action>
 			<action type='fix' dev='Sylvain-Bugat'>Error handling improvements</action>
-			<action type='fix' dev='Sylvain-Bugat'>Used API fixes with old rundeck versions</action>
+			<action type='fix' dev='Sylvain-Bugat'>Used API fixes with old RunDeck versions</action>
 			<action type='fix' dev='Sylvain-Bugat'>Menu listener after configuration reload</action>
 			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
 		</release>
@@ -61,7 +69,7 @@
 			<action type='add' dev='Sylvain-Bugat'>Add GitHub markdown readme</action>
 			<action type='add' dev='Sylvain-Bugat'>Add an about menu</action>
 			<action type='add' dev='Sylvain-Bugat'>Add long execution detection</action>
-			<action type='add' dev='Sylvain-Bugat'>Change rundeck client connection method</action>
+			<action type='add' dev='Sylvain-Bugat'>Change RunDeck client connection method</action>
 			<action type='add' dev='Sylvain-Bugat'>Add popup alert</action>
 			<action type='add' dev='Sylvain-Bugat'>Add automatic version checker using GitHub API</action>
 			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
