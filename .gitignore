@@ -1,4 +1,5 @@
 target/archive-tmp/
+target/checkstyle-cachefile
 target/classes/
 target/dependency-check.ser
 target/generated-sources/
