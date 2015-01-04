@@ -126,7 +126,7 @@
 				Is RunDeck Monitor vulnerable to CVE-2014-3577?
 			</question>
 			<answer>
-				<p>No RunDeck Monitor is no more vulnerable to <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. The <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest RunDeck Monitor version</a> (since <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.8">1.8</a>) uses <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">the fixed RunDeck java client</a> (12.0).</p>
+				<p>No RunDeck Monitor is no more vulnerable to <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. The <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest RunDeck Monitor version</a> (since <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.9">1.9</a>) uses <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">the fixed RunDeck java client</a> (12.0).</p>
 			</answer>
 		</faq>
 	</part>
