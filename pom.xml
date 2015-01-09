@@ -85,7 +85,7 @@
 		<doxia.version>1.6</doxia.version>
 
 		<!--  Log Frameworks Version  -->
-		<slf4j.version>1.7.9</slf4j.version>
+		<slf4j.version>1.7.10</slf4j.version>
 		<logback.version>1.1.2</logback.version>
 
 		<!-- Maven Lifecycle Plugins Version -->
