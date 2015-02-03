@@ -128,7 +128,7 @@ public final class RundeckConfigurationWizardPanelDescriptor extends WizardPanel
 			return false;
 		}
 
-		if (rundeckAPITokenTextField.getText().isEmpty() && rundeckLoginTextField.getText().isEmpty() || rundeckPasswordTextField.getText().isEmpty()) {
+		if (rundeckAPITokenTextField.getText().isEmpty() && (rundeckLoginTextField.getText().isEmpty() || rundeckPasswordTextField.getText().isEmpty())) {
 
 			JOptionPane.showMessageDialog(null, "Missing rundeck API token," + System.lineSeparator() + "or rundeck login/password parameters", "Missing parameters", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return false;
