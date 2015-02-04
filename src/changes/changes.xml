@@ -22,6 +22,9 @@
 		<author>Sylvain Bugat</author>
 	</properties>
 	<body>
+		<release date='2015-??-??' description='RundeckMonitor version 2.0' version='2.0'>
+			<action type='fix' dev='Sylvain-Bugat'>Configuration wizard API token authentication fix</action>
+		</release>
 		<release date='2015-01-04' description='RundeckMonitor version 1.9' version='1.9'>
 			<action type='add' dev='Sylvain-Bugat'>Add RunDeck Monitor site</action>
 			<action type='add' dev='Sylvain-Bugat'>Add logs with SLF4J/logback</action>
