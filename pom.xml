@@ -92,7 +92,7 @@
 		<maven.pluginclean.version>2.6.1</maven.pluginclean.version>
 		<maven.plugininstall.version>2.5.2</maven.plugininstall.version>
 		<maven.pluginsite.version>3.4</maven.pluginsite.version>
-		<maven.plugincompiler.version>3.2</maven.plugincompiler.version>
+		<maven.plugincompiler.version>3.3</maven.plugincompiler.version>
 		<maven.pluginsurefire.version>2.18.1</maven.pluginsurefire.version>
 		<maven.pluginjar.version>2.6</maven.pluginjar.version>
 		<maven.pluginresources.version>2.7</maven.pluginresources.version>
