@@ -106,7 +106,7 @@
 		<maven.pluginversions.version>2.1</maven.pluginversions.version>
 		<maven.pluginowasp.version>1.2.7</maven.pluginowasp.version>
 		<maven.pluginpmd.version>3.3</maven.pluginpmd.version>
-		<maven.pluginfindbugs.version>3.0.0</maven.pluginfindbugs.version>
+		<maven.pluginfindbugs.version>3.0.1</maven.pluginfindbugs.version>
 		<maven.plugincheckstyle.version>2.13</maven.plugincheckstyle.version>
 		<maven.pluginreports.version>2.7</maven.pluginreports.version>
 		<maven.plugintaglist.version>2.4</maven.plugintaglist.version>
