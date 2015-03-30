@@ -159,7 +159,7 @@
 	<build>
 		<plugins>
 
-			<!-- Compiler Plugins configuration -->
+			<!-- Compiler plugin configuration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -178,21 +178,21 @@
 				<inherited>true</inherited>
 			</plugin>
 
-			<!-- Install Plugins configuration -->
+			<!-- Install plugin configuration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
 				<version>${maven.plugininstall.version}</version>
 			</plugin>
 
-			<!-- Clean Plugins configuration -->
+			<!-- Clean plugin configuration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>${maven.pluginclean.version}</version>
 			</plugin>
 
-			<!-- Clean Plugins configuration -->
+			<!-- Site plugin configuration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
@@ -226,21 +226,21 @@
 				<version>${maven.pluginsurefire.version}</version>
 			</plugin>
 
-			<!-- Deploy Plugins configuration -->
+			<!-- Deploy plugin configuration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>${maven.plugindeploy.version}</version>
 			</plugin>
 
-			<!-- Resources Plugins configuration -->
+			<!-- Resources plugin configuration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>${maven.pluginresources.version}</version>
 			</plugin>
 
-			<!-- Jar Plugins configuration -->
+			<!-- Jar plugin configuration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -255,7 +255,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- Assembly Plugins configuration -->
+			<!-- Assembly plugin configuration -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
