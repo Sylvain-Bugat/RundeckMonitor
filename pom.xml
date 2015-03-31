@@ -453,4 +453,12 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	
+	<!-- GitHub Client external Eclipse release repository -->
+	<repositories>
+		<repository>
+			<id>egit-release</id>
+			<url>https://repo.eclipse.org/content/repositories/egit-releases</url>
+		</repository>
+	 </repositories>
 </project>
