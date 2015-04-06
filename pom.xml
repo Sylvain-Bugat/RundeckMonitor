@@ -67,6 +67,8 @@
 
 		<!-- Source Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Reporting Encoding -->
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- JDK/JRE Version -->
 		<maven.compiler.source>1.7</maven.compiler.source>
@@ -421,6 +423,7 @@
 					<xmlOutput>true</xmlOutput>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
 					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+					<jvmArgs>-Duser.language=en -Duser.country=US</jvmArgs>
 				</configuration>
 			</plugin>
 			<!-- CheckStyle -->
