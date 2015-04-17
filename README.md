@@ -105,6 +105,8 @@ Java interface type to use: SWING for Windows or AWT for other OS
 
 ## Compile and build
 
+**The minimum required version maven is 3.0.1**
+
 Clone the master repository with this command:
 
 	git clone https://github.com/Sylvain-Bugat/RundeckMonitor.git
