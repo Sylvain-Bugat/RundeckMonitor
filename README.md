@@ -1,5 +1,7 @@
 # RunDeckMonitor
 
+[![Build Status](https://travis-ci.org/Sylvain-Bugat/RundeckMonitor.svg?branch=master)](https://travis-ci.org/Sylvain-Bugat/RundeckMonitor)
+
 RunDeck monitor is a system tray icon tools that indicates failed and long execution on a RunDeck instance.
 
 ![RundeckMonitor screenshot](https://raw.githubusercontent.com/Sylvain-Bugat/RundeckMonitor/master/Screenshot.png)
