@@ -25,7 +25,9 @@ public enum RundeckAPIVersion {
 	/** API version 11. */
 	RUNDECK_APIVERSION_11(Version.V11, "2.1.0"), //$NON-NLS-1$
 	/** API version 12. */
-	RUNDECK_APIVERSION_12(Version.V12, "2.2.0"); //$NON-NLS-1$
+	RUNDECK_APIVERSION_12(Version.V12, "2.2.0"), //$NON-NLS-1$
+	/** API version 13. */
+	RUNDECK_APIVERSION_13(Version.V13, "2.5.0"); //$NON-NLS-1$
 
 	/** Rundeck API Version. */
 	private final Version version;
