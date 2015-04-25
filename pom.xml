@@ -106,7 +106,7 @@
 		<maven.pluginenforcer.version>1.4</maven.pluginenforcer.version>
 		<maven.pluginantrun.version>1.8</maven.pluginantrun.version>
 		<maven.plugindependency.version>2.10</maven.plugindependency.version>
-		<maven.pluginrelease.version>2.5.1</maven.pluginrelease.version>
+		<maven.pluginrelease.version>2.5.2</maven.pluginrelease.version>
 		<maven.pluginscmpublish.version>1.1</maven.pluginscmpublish.version>
 		<!-- Maven reporting plugins -->
 		<maven.pluginversions.version>2.1</maven.pluginversions.version>
@@ -496,7 +496,7 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	
+
 	<!-- GitHub Client external Eclipse release repository -->
 	<repositories>
 		<repository>
