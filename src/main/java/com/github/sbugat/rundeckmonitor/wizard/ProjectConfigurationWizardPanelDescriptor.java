@@ -75,7 +75,7 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 	public void aboutToDisplayPanel() {
 
 		// Initialize the rundeck client with the minimal rundeck version (1)
-		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(getRundeckMonitorConfiguration(), true);
+		final RundeckClient rundeckClient = RundeckClientTools.buildMinimalRundeckClient(getRundeckMonitorConfiguration());
 
 		rundeckProjectNameTextField.removeAllItems();
 		// Check if the configured project exists
@@ -110,7 +110,7 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 						oldApiVersion = version;
 					}
 				}
-				else if (version.getVersion().getVersionNumber() <= RundeckAPIVersion.RUNDECK_APIVERSION_12.getVersion().getVersionNumber()) {
+				else if (version.getVersion().getVersionNumber() <= RundeckAPIVersion.RUNDECK_APIVERSION_13.getVersion().getVersionNumber()) {
 
 					oldApiVersion = version;
 				}
@@ -126,11 +126,11 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 	public boolean validate() {
 
 		// Initialize the rundeck client
-		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(getRundeckMonitorConfiguration(), true);
+		final RundeckClient minimalRundeckClient = RundeckClientTools.buildMinimalRundeckClient(getRundeckMonitorConfiguration());
 
 		// Check if the configured project exists
 		boolean existingProject = false;
-		for (final RundeckProject rundeckProject : rundeckClient.getProjects()) {
+		for (final RundeckProject rundeckProject : minimalRundeckClient.getProjects()) {
 
 			if (rundeckProjectNameTextField.getSelectedItem().equals(rundeckProject.getName())) {
 				existingProject = true;
@@ -139,12 +139,23 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 		}
 
 		if (!existingProject) {
-			JOptionPane.showMessageDialog(null, "Unknown rundeck project," + System.lineSeparator() + "check and change this poject name:" + System.lineSeparator() + '"' + rundeckProjectNameTextField.getSelectedItem() + "\".", "RundeckMonitor wizard error", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			JOptionPane.showMessageDialog(null, "Unknown Rundeck project," + System.lineSeparator() + "check and change this project name:" + System.lineSeparator() + '"' + rundeckProjectNameTextField.getSelectedItem() + "\".", "RundeckMonitor wizard error", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			return false;
+		}
+
+		// Initialize the rundeck client
+		final int selectedRundeckAPIVersion = rundeckRundeckAPIVersionTextField.getItemAt(rundeckRundeckAPIVersionTextField.getSelectedIndex()).getVersion().getVersionNumber();
+
+		try {
+			RundeckClientTools.buildRundeckClient(selectedRundeckAPIVersion, getRundeckMonitorConfiguration());
+		}
+		catch (final Exception exception) {
+			JOptionPane.showMessageDialog(null, "Invalid Rundeck API version," + System.lineSeparator() + "check and change the selected Rundeck API version:" + System.lineSeparator() + '"' + rundeckRundeckAPIVersionTextField.getSelectedItem() + "\".", "RundeckMonitor wizard error", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			return false;
 		}
 
 		getRundeckMonitorConfiguration().setRundeckProject(rundeckProjectNameTextField.getItemAt(rundeckProjectNameTextField.getSelectedIndex()));
-		getRundeckMonitorConfiguration().setRundeckAPIversion(rundeckRundeckAPIVersionTextField.getItemAt(rundeckRundeckAPIVersionTextField.getSelectedIndex()).getVersion().getVersionNumber());
+		getRundeckMonitorConfiguration().setRundeckAPIversion(selectedRundeckAPIVersion);
 
 		return true;
 	}

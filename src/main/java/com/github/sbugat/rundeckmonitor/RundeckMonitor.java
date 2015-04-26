@@ -28,6 +28,7 @@ import com.github.sbugat.rundeckmonitor.configuration.MissingPropertyException;
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
 import com.github.sbugat.rundeckmonitor.configuration.UnknownProjectException;
 import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
+import com.github.sbugat.rundeckmonitor.tools.InvalidRundeckVersion;
 import com.github.sbugat.rundeckmonitor.tools.RundeckClientTools;
 import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 import com.github.sbugat.rundeckmonitor.wizard.InterfaceType;
@@ -80,8 +81,9 @@ public final class RundeckMonitor implements Runnable {
 	 * @throws InvalidPropertyException in case of loading configuration property error
 	 * @throws MissingPropertyException in case of loading configuration property error
 	 * @throws UnknownProjectException in case of unknown RunDeck project
+	 * @throws InvalidRundeckVersion if the Rundeck version is not supported
 	 */
-	public RundeckMonitor(final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final VersionChecker versionCheckerArg) throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException {
+	public RundeckMonitor(final RundeckMonitorConfiguration rundeckMonitorConfigurationArg, final VersionChecker versionCheckerArg) throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException, InvalidRundeckVersion {
 
 		LOG.entry();
 
@@ -122,8 +124,9 @@ public final class RundeckMonitor implements Runnable {
 	 * @throws MissingPropertyException in case of loading configuration property error
 	 * @throws InvalidPropertyException in case of loading configuration property error
 	 * @throws UnknownProjectException in case of unknown RunDeck project
+	 * @throws InvalidRundeckVersion if the Rundeck version is not supported
 	 */
-	public void reloadConfiguration() throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException {
+	public void reloadConfiguration() throws IOException, MissingPropertyException, InvalidPropertyException, UnknownProjectException, InvalidRundeckVersion {
 
 		LOG.entry();
 
@@ -153,14 +156,15 @@ public final class RundeckMonitor implements Runnable {
 	 * @throws MissingPropertyException when check configuration
 	 * @throws InvalidPropertyException when check configuration
 	 * @throws UnknownProjectException if the configured project is unknown
+	 * @throws InvalidRundeckVersion if the Rundeck version is not supported
 	 */
-	private void initRundeckClient() throws MissingPropertyException, InvalidPropertyException, UnknownProjectException {
+	private void initRundeckClient() throws MissingPropertyException, InvalidPropertyException, UnknownProjectException, InvalidRundeckVersion {
 
 		// Configuration checking
 		rundeckMonitorConfiguration.verifyConfiguration();
 
 		// Initialize the rundeck client with the API version
-		rundeckClient = RundeckClientTools.buildRundeckClient(rundeckMonitorConfiguration, false);
+		rundeckClient = RundeckClientTools.buildRundeckClient(rundeckMonitorConfiguration);
 
 		// Check if the configured project exists
 		boolean existingProject = false;
@@ -213,7 +217,7 @@ public final class RundeckMonitor implements Runnable {
 						LOG.exit(true);
 						return true;
 					}
-					catch (final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException e) {
+					catch (final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException | InvalidRundeckVersion e) {
 
 						// Set the tray icon as disconnected
 						rundeckMonitorState.setDisconnected(true);
@@ -442,6 +446,11 @@ public final class RundeckMonitor implements Runnable {
 
 			errorMessage = "Invalid login/password," + System.lineSeparator() + "check and change these parameters values:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_LOGIN + '"' + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_PASSWORD + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
+		// Invalid Rundeck version exception
+		else if (InvalidRundeckVersion.class.isInstance(exception)) {
+
+			errorMessage = "Invalid used Rundeck version," + System.lineSeparator() + "check the configured Rundeck at this address:" + System.lineSeparator() + '"' + RundeckMonitorConfiguration.RUNDECK_MONITOR_PROPERTY_URL + '"' + System.lineSeparator() + "\"."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		else {
 
 			final StringWriter stringWriter = new StringWriter();
@@ -523,8 +532,9 @@ public final class RundeckMonitor implements Runnable {
 				// Monitor and Version started without exception, end the launch thread
 				return;
 			}
-			catch (final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException e) {
+			catch (final IOException | MissingPropertyException | InvalidPropertyException | UnknownProjectException | RuntimeException | InvalidRundeckVersion e) {
 
+				LOG.error("Rundeck Monitor startup error:", e); //$NON-NLS-1$
 				if (!handleStartupException(e, true)) {
 					SystemTools.exit(SystemTools.EXIT_CODE_ERROR);
 				}

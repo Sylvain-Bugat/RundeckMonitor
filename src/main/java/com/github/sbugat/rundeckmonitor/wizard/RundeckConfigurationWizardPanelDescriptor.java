@@ -134,11 +134,16 @@ public final class RundeckConfigurationWizardPanelDescriptor extends WizardPanel
 			return false;
 		}
 
+		getRundeckMonitorConfiguration().setRundeckUrl(rundeckUrlTextField.getText().replaceFirst("/+$", "")); //$NON-NLS-1$ //$NON-NLS-2$
+		getRundeckMonitorConfiguration().setRundeckAPIKey(rundeckAPITokenTextField.getText());
+		getRundeckMonitorConfiguration().setRundeckLogin(rundeckLoginTextField.getText());
+		getRundeckMonitorConfiguration().setRundeckPassword(rundeckPasswordTextField.getText());
+
 		// Test authentication credentials
 		final RundeckClient rundeckClient;
 		try {
 			// Initialize the rundeck client with minimal rundeck version (1)
-			rundeckClient = RundeckClientTools.buildRundeckClient(getRundeckMonitorConfiguration(), true);
+			rundeckClient = RundeckClientTools.buildMinimalRundeckClient(getRundeckMonitorConfiguration());
 			rundeckClient.ping();
 			rundeckClient.testAuth();
 		}
@@ -173,11 +178,6 @@ public final class RundeckConfigurationWizardPanelDescriptor extends WizardPanel
 			JOptionPane.showMessageDialog(null, "Configured rundeck has no project," + System.lineSeparator() + "check and change this rundeck instance.", "Configuration error", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return false;
 		}
-
-		getRundeckMonitorConfiguration().setRundeckUrl(rundeckUrlTextField.getText().replaceFirst("/+$", "")); //$NON-NLS-1$ //$NON-NLS-2$
-		getRundeckMonitorConfiguration().setRundeckAPIKey(rundeckAPITokenTextField.getText());
-		getRundeckMonitorConfiguration().setRundeckLogin(rundeckLoginTextField.getText());
-		getRundeckMonitorConfiguration().setRundeckPassword(rundeckPasswordTextField.getText());
 
 		return true;
 	}

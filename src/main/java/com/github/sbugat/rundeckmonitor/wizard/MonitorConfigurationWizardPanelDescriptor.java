@@ -248,7 +248,7 @@ public final class MonitorConfigurationWizardPanelDescriptor extends WizardPanel
 	public void aboutToDisplayPanel() {
 
 		// Initialize the rundeck client with the minimal rundeck version (1)
-		final RundeckClient rundeckClient = RundeckClientTools.buildRundeckClient(getRundeckMonitorConfiguration(), true);
+		final RundeckClient rundeckClient = RundeckClientTools.buildMinimalRundeckClient(getRundeckMonitorConfiguration());
 
 		final String rundeckVersion = rundeckClient.getSystemInfo().getVersion();
 
