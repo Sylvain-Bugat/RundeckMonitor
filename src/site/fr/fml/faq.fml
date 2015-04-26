@@ -25,32 +25,32 @@
 
 		<faq id="api">
 			<question>
-				Quelle version de l'API RunDeck est utilisé par RunDeck Monitor ?
+				Quelle version de l'API Rundeck est utilisé par Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>RunDeck Monitor peut utiliser l'API de la version 5 à 12, toutes les fonctionnalités sont disponible avec ces versions. Le configurateur automatique ne propose que les API compatible avec la version de RunDeck utilisée :</p>
+				<p>Rundeck Monitor peut utiliser l'API de la version 5 à 12, toutes les fonctionnalités sont disponible avec ces versions. Le configurateur automatique ne propose que les API compatible avec la version de Rundeck utilisée :</p>
 				<ul>
-					<li>API v5 depuis RunDeck version 1.4.4</li>
-					<li>API v6 depuis RunDeck version 1.5.1</li>
-					<li>API v7 depuis RunDeck version 1.5.3</li>
-					<li>API v8 depuis RunDeck version 1.6.0</li>
-					<li>API v9 depuis RunDeck version 1.6.1</li>
-					<li>API v10 depuis RunDeck version 2.0.0</li>
-					<li>API v11 depuis RunDeck version 2.1.0</li>
-					<li>API v12 depuis RunDeck version 2.2.0</li>
+					<li>API v5 depuis Rundeck version 1.4.4</li>
+					<li>API v6 depuis Rundeck version 1.5.1</li>
+					<li>API v7 depuis Rundeck version 1.5.3</li>
+					<li>API v8 depuis Rundeck version 1.6.0</li>
+					<li>API v9 depuis Rundeck version 1.6.1</li>
+					<li>API v10 depuis Rundeck version 2.0.0</li>
+					<li>API v11 depuis Rundeck version 2.1.0</li>
+					<li>API v12 depuis Rundeck version 2.2.0</li>
 				</ul>
 			</answer>
 		</faq>
 
 		<faq id="client">
 			<question>
-				Comment RunDeck Monitor se connecte-t-il à RunDeck ?
+				Comment Rundeck Monitor se connecte-t-il à Rundeck ?
 			</question>
 			<answer>
-				<p>RunDeck Monitor utilise <a href="https://github.com/rundeck/rundeck-api-java-client">le client java officiel</a>. Les méthodes d'authentification possible sont :</p>
+				<p>Rundeck Monitor utilise <a href="https://github.com/rundeck/rundeck-api-java-client">le client java officiel</a>. Les méthodes d'authentification possible sont :</p>
 				<ul>
 					<li>Connexion avec un utilisateur et un mot de passe</li>
-					<li>Connexion avec un jeton d'authentifcation généré dans RunDeck</li>
+					<li>Connexion avec un jeton d'authentifcation généré dans Rundeck</li>
 				</ul>
 			</answer>
 		</faq>
@@ -61,41 +61,42 @@
 
 		<faq id="install">
 			<question>
-				Comment installer RunDeck Monitor ?
+				Comment installer Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>Il suffit de télécharger la dernière version du jar sur la<a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">dernière version de RunDeck Monitor</a> sur GitHub.</p>
+				<p>Il suffit de télécharger la dernière version du jar sur la<a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">dernière version de Rundeck Monitor</a> sur GitHub.</p>
 			</answer>
 		</faq>
 
 		<faq id="package">
 			<question>
-				Sous quel format RunDeck Monitor est disponible ?
+				Sous quel format Rundeck Monitor est disponible ?
 			</question>
 			<answer>
-				<p>RunDeck Monitor est disponible sous la forme d'un jar autonome intégrant toutes les dépendances nécessaires à son fonctionnement.</p>
+				<p>Rundeck Monitor est disponible sous la forme d'un jar autonome intégrant toutes les dépendances nécessaires à son fonctionnement.</p>
 			</answer>
 		</faq>
 
 		<faq id="jre">
 			<question>
-				Quelles versions de Java sont compatibles avec RunDeck Monitor ?
+				Quelles versions de Java sont compatibles avec Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>La version 1.7 de Java ou supérieure est requise pour pouvoir exécuter RunDeck Monitor.</p>
+				<p>La version 1.7 de Java ou supérieure est requise pour pouvoir exécuter Rundeck Monitor.</p>
 			</answer>
 		</faq>
 
 		<faq id="execution">
 			<question>
-				Comment exécuter RunDeck Monitor ?
+				Comment exécuter Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>Si les fichiers jar sont bien associé au programme Java, il suffit d'ouvrir le fichier pour lancer RunDeck Monitor.</p>
-				<p>Pour exécuter manuellement le fichier jar, il suffti d'entrer la commande suivante: <code>java -jar rundeck-monitor-X.Y.jar</code>. Ceci peut être scripté sur Linux/UNIX de cette manière:<br/>
+				<p>Si les fichiers jar sont bien associé au programme Java, il suffit d'ouvrir le fichier pour lancer Rundeck Monitor.</p>
+				<p>Pour exécuter manuellement le fichier jar, il suffit d'entrer la commande suivante: <code>./rundeck-monitor-X.Y.jar</code> ou <code>java -jar rundeck-monitor-X.Y.jar</code>. Sur Linux/UNIX le script intégré dans le jar peut être directement executé:<br/>
 					<code>
-						#!/usr/bin/env bash<br/>
-						java -jar rundeck-monitor-X.Y.jar &amp;<br/>
+						#!/bin/sh<br/>
+						<br/>
+						exec java  -jar "$0" "$@"<br/>
 					</code>
 				</p>
 			</answer>
@@ -103,13 +104,12 @@
 
 	</part>
 
-
 	<part id="http">
-		<title>Connexions HTTP à RunDeck depuis RunDeck Monitor</title>
+		<title>Connexions HTTP à Rundeck depuis Rundeck Monitor</title>
 
 		<faq id="proxy">
 			<question>
-				Est-il possible d'utiliser RunDeck Monitor derrière un serveur proxy HTTP ?
+				Est-il possible d'utiliser Rundeck Monitor derrière un serveur proxy HTTP ?
 			</question>
 			<answer>
 				<p>Oui c'est possible. Pour cela, il faut configurer la variable d'environnement <code>JAVA_OPTS</code> avec une valeur de la forme: <code>-Dhttp.proxyHost=my-proxy -Dhttp.proxyPort=80</code>. Pour plus d'information sur l'utilisation de proxy HTTP avec Java, consultez la <a href="http://download.oracle.com/javase/7/docs/technotes/guides/net/proxies.html">documentation Java</a>.</p>
@@ -123,10 +123,10 @@
 
 		<faq id="CVE-2014-3577">
 			<question>
-				Est-ce que RunDeck Monitor est vulnérable à la faille CVE-2014-3577?
+				Est-ce que Rundeck Monitor est vulnérable à la faille CVE-2014-3577?
 			</question>
 			<answer>
-				<p>Non, RunDeck Monitor n'est plus vulnérable à la faille <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. La <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">dernière version</a> (depuis la <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.9">1.9</a>) utilise <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">le client java intégrant la correction</a> (12.0).</p>
+				<p>Non, Rundeck Monitor n'est plus vulnérable à la faille <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. La <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">dernière version</a> (depuis la <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.9">1.9</a>) utilise <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">le client java intégrant la correction</a> (12.0).</p>
 			</answer>
 		</faq>
 	</part>

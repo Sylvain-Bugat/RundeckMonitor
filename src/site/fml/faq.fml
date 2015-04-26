@@ -25,29 +25,29 @@
 
 		<faq id="api">
 			<question>
-				Which version or RunDeck API is used by RunDeck Monitor ?
+				Which version or Rundeck API is used by Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>RunDeck Monitor can use RunDeck API from 5 to 12, it fully works with all these versions. The configuration wizard check the RunDeck version for using only compatible API version :</p>
+				<p>Rundeck Monitor can use Rundeck API from 5 to 12, it fully works with all these versions. The configuration wizard check the Rundeck version for using only compatible API version :</p>
 				<ul>
-					<li>API v5 since RunDeck version 1.4.4</li>
-					<li>API v6 since RunDeck version 1.5.1</li>
-					<li>API v7 since RunDeck version 1.5.3</li>
-					<li>API v8 since RunDeck version 1.6.0</li>
-					<li>API v9 since RunDeck version 1.6.1</li>
-					<li>API v10 since RunDeck version 2.0.0</li>
-					<li>API v11 since RunDeck version 2.1.0</li>
-					<li>API v12 since RunDeck version 2.2.0</li>
+					<li>API v5 since Rundeck version 1.4.4</li>
+					<li>API v6 since Rundeck version 1.5.1</li>
+					<li>API v7 since Rundeck version 1.5.3</li>
+					<li>API v8 since Rundeck version 1.6.0</li>
+					<li>API v9 since Rundeck version 1.6.1</li>
+					<li>API v10 since Rundeck version 2.0.0</li>
+					<li>API v11 since Rundeck version 2.1.0</li>
+					<li>API v12 since Rundeck version 2.2.0</li>
 				</ul>
 			</answer>
 		</faq>
 
 		<faq id="client">
 			<question>
-				How RunDeck Monitor is connecting to Rundeck ?
+				How Rundeck Monitor is connecting to Rundeck ?
 			</question>
 			<answer>
-				<p>RunDeck Monitor uses <a href="https://github.com/rundeck/rundeck-api-java-client">the official RunDeck java client</a>. Possible authentication methods are :</p>
+				<p>Rundeck Monitor uses <a href="https://github.com/rundeck/rundeck-api-java-client">the official Rundeck java client</a>. Possible authentication methods are :</p>
 				<ul>
 					<li>Connect with a user and a password</li>
 					<li>Connect with an API token</li>
@@ -56,33 +56,33 @@
 		</faq>
 	</part>
 
-		<part id="installation">
+	<part id="installation">
 		<title>Installation</title>
 
 		<faq id="install">
 			<question>
-				How to install RunDeck Monitor ?
+				How to install Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>Just download the attached jar in the <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest RunDeck Monitor release</a> on GitHub.</p>
+				<p>Just download the attached jar in the <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest Rundeck Monitor release</a> on GitHub.</p>
 			</answer>
 		</faq>
 
 		<faq id="package">
 			<question>
-				What are available packaging of RunDeck Monitor ?
+				What are available packaging of Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>RunDeck Monitor is only available as an autonomous jar which integrate all needed dependencies.</p>
+				<p>Rundeck Monitor is only available as an autonomous jar which integrate all needed dependencies.</p>
 			</answer>
 		</faq>
 
 		<faq id="jre">
 			<question>
-				Which java version is needed by RunDeck Monitor ?
+				Which java version is needed by Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>RunDeck Monitor needs java version 1.7 or greater to be executed.</p>
+				<p>Rundeck Monitor needs java version 1.7 or greater to be executed.</p>
 			</answer>
 		</faq>
 
@@ -91,25 +91,24 @@
 				How to execute Rundeck Monitor ?
 			</question>
 			<answer>
-				<p>If jar files are correctly associated with Java, just open the file to launch RunDeck Monitor.</p>
-				<p>To manually execute the jar file, just type the command: <code>java -jar rundeck-monitor-X.Y.jar</code>. It can be scripted like this on Linux/UNIX:<br/>
+				<p>If jar files are correctly associated with Java, just open the file to launch Rundeck Monitor.</p>
+				<p>To manually execute the jar file, just type the command: <code>./rundeck-monitor-X.Y.jar</code> or <code>java -jar rundeck-monitor-X.Y.jar</code>. On Linux/UNIX, this embedded script can be runned:<br/>
 					<code>
-						#!/usr/bin/env bash<br/>
-						java -jar rundeck-monitor-X.Y.jar &amp;<br/>
+						#!/bin/sh<br/>
+						<br/>
+						exec java  -jar "$0" "$@"<br/>
 					</code>
 				</p>
 			</answer>
 		</faq>
-
 	</part>
 
-
 	<part id="http">
-		<title>HTTP connections to RunDeck when using RunDeck Monitor</title>
+		<title>HTTP connections to Rundeck when using Rundeck Monitor</title>
 
 		<faq id="proxy">
 			<question>
-				Can i use RunDeck Monitor behind an http proxy server ?
+				Can i use Rundeck Monitor behind an http proxy server ?
 			</question>
 			<answer>
 				<p>Yes, you will need <code>JAVA_OPTS</code> environment variable with a value like <code>-Dhttp.proxyHost=my-proxy -Dhttp.proxyPort=80</code>. For more information, look at <a href="http://download.oracle.com/javase/7/docs/technotes/guides/net/proxies.html">the Java doc</a>.</p>
@@ -123,10 +122,10 @@
 
 		<faq id="CVE-2014-3577">
 			<question>
-				Is RunDeck Monitor vulnerable to CVE-2014-3577?
+				Is Rundeck Monitor vulnerable to CVE-2014-3577?
 			</question>
 			<answer>
-				<p>No RunDeck Monitor is no more vulnerable to <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. The <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest RunDeck Monitor version</a> (since <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.9">1.9</a>) uses <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">the fixed RunDeck java client</a> (12.0).</p>
+				<p>No Rundeck Monitor is no more vulnerable to <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3577">CVE-2014-3577</a>. The <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/latest">lastest Rundeck Monitor version</a> (since <a href="https://github.com/Sylvain-Bugat/RundeckMonitor/releases/tag/v1.9">1.9</a>) uses <a href="https://github.com/rundeck/rundeck-api-java-client/releases/tag/rundeck-api-java-client-12.0">the fixed Rundeck java client</a> (12.0).</p>
 			</answer>
 		</faq>
 	</part>
