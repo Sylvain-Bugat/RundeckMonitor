@@ -102,7 +102,7 @@ public final class RundeckClientTools {
 	/**
 	 * Build a Rundeck client with the API version and configuration arguments.
 	 * 
-	 * @rundeckAPIVersion Rundeck API version to use
+	 * @param rundeckAPIVersion Rundeck API version to use
 	 * @param rundeckMonitorConfiguration configuration to use
 	 * @return built rundeck client
 	 */

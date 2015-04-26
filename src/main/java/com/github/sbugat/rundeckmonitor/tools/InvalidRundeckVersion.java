@@ -12,7 +12,7 @@ public final class InvalidRundeckVersion extends Exception {
 	private static final long serialVersionUID = -9196136377007898216L;
 
 	/** Version of the Rundeck. */
-	final String rundeckVersion;
+	private final String rundeckVersion;
 
 	/**
 	 * Constructor copy detected Rundeck version.
