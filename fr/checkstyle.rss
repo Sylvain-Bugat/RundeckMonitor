@@ -19,13 +19,13 @@ under the License.
 -->
 <rss version="0.91">
   <channel>
-    <title>RunDeck Monitor - Checkstyle report</title>
+    <title>Rundeck Monitor - Checkstyle report</title>
     <link>http://sylvain-bugat.github.io/RundeckMonitor</link>
-    <description>RunDeck Monitor - Checkstyle report</description>
+    <description>Rundeck Monitor - Checkstyle report</description>
     <language>en-us</language>
     <copyright>&#169;2013 - 2015</copyright>
     <item>
-      <title>File: 32,
+      <title>File: 33,
              Errors: 37,
              Warnings: 0,
              Infos: 0
@@ -215,6 +215,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://sylvain-bugat.github.io/RundeckMonitor/checkstyle.html#com.github.sbugat.rundeckmonitor.wizard.DateFormat.java">com/github/sbugat/rundeckmonitor/wizard/DateFormat.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://sylvain-bugat.github.io/RundeckMonitor/checkstyle.html#com.github.sbugat.rundeckmonitor.tools.InvalidRundeckVersion.java">com/github/sbugat/rundeckmonitor/tools/InvalidRundeckVersion.java</a>
                 </td>
                 <td>
                   0
