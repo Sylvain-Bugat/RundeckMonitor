@@ -105,13 +105,13 @@
 		<maven.pluginassembly.version>2.5.4</maven.pluginassembly.version>
 		<maven.pluginshade.version>2.3</maven.pluginshade.version>
 		<maven.pluginexecutablejar.version>1.4.1</maven.pluginexecutablejar.version>
+		<maven.pluginversions.version>2.2</maven.pluginversions.version>
 		<maven.pluginenforcer.version>1.4</maven.pluginenforcer.version>
 		<maven.pluginantrun.version>1.8</maven.pluginantrun.version>
 		<maven.plugindependency.version>2.10</maven.plugindependency.version>
 		<maven.pluginrelease.version>2.5.2</maven.pluginrelease.version>
 		<maven.pluginscmpublish.version>1.1</maven.pluginscmpublish.version>
 		<!-- Maven reporting plugins -->
-		<maven.pluginversions.version>2.1</maven.pluginversions.version>
 		<maven.pluginowasp.version>1.2.7</maven.pluginowasp.version>
 		<maven.pluginpmd.version>3.4</maven.pluginpmd.version>
 		<maven.pluginfindbugs.version>3.0.1</maven.pluginfindbugs.version>
