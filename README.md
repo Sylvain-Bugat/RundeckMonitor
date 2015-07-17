@@ -1,6 +1,7 @@
 # RundeckMonitor
 
 [![Build Status](https://travis-ci.org/Sylvain-Bugat/RundeckMonitor.svg?branch=master)](https://travis-ci.org/Sylvain-Bugat/RundeckMonitor)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/sylvain-bugat/RundeckMonitor/v2.0/total.svg)](https://github.com/Sylvain-Bugat/RundeckMonitor/releases/download/v2.0/rundeck-monitor-2.0.jar)
 
 Rundeck Monitor is a system tray icon tools that indicates failed and long execution on a Rundeck instance.
 
