@@ -1,5 +1,6 @@
 # RundeckMonitor
 
+[![License](https://img.shields.io/github/license/Sylvain-Bugat/RundeckMonitor.svg)](https://github.com/Sylvain-Bugat/RundeckMonitor/blob/master/LICENSE)
 [![Build Status](https://img.shields.io/travis/Sylvain-Bugat/RundeckMonitor.svg)](https://travis-ci.org/Sylvain-Bugat/RundeckMonitor)
 [![Github Releases (by Release)](https://img.shields.io/github/release/sylvain-bugat/RundeckMonitor.svg?label=download)](https://github.com/Sylvain-Bugat/RundeckMonitor/releases/download/v2.0/rundeck-monitor-2.0.jar)
 
