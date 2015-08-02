@@ -22,7 +22,7 @@
 	<ignoreVersions>
 		<ignoreVersion type="regex">.*[\.-](?i)alpha[0-9]*$</ignoreVersion>
 		<ignoreVersion type="regex">.*[\.-](?i)b(eta)?-?[0-9]*$</ignoreVersion>
-		<ignoreVersion type="regex">.*[\.-](?i)rc?[0-9]*$</ignoreVersion>
+		<ignoreVersion type="regex">.*[\.-](?i)r[0-9]*$</ignoreVersion>
 		<ignoreVersion type="regex">.*[\.-](?i)draft.*$</ignoreVersion>
 		<ignoreVersion type="regex">.*[\.-](?i)m[0-9]*$</ignoreVersion>
 	</ignoreVersions>
