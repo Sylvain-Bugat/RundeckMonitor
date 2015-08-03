@@ -13,3 +13,4 @@ target/*.xml
 .project
 .settings
 doxia-github-markdown.properties
+/target

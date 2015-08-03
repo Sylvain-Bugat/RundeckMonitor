@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	Copyright 2014 Sylvain Bugat
+	Copyright 2015 Sylvain Bugat
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 -->
 <document xmlns="http://maven.apache.org/changes/1.0.0"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+			xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
 	<properties>
 		<title>Changelog</title>
 		<author>Sylvain Bugat</author>
 	</properties>
 	<body>
+		<release date='2015-??-??' description='RundeckMonitor version 2.1' version='2.1'>
+			<action type='fix' dev='Sylvain-Bugat'>Components upgrade</action>
+		</release>
 		<release date='2015-04-26' description='RundeckMonitor version 2.0' version='2.0'>
 			<action type='update' dev='Sylvain-Bugat'>Change packaging by using maven shade plugin</action>
 			<action type='fix' dev='Sylvain-Bugat' issue="6">Fix configuration wizard API token authentication</action>
