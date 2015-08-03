@@ -382,10 +382,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changes-plugin</artifactId>
 				<version>${maven.pluginchanges.version}</version>
+				<configuration>
+					<onlyMilestoneIssues>false</onlyMilestoneIssues>
+				</configuration>
 				<reportSets>
 					<reportSet>
 						<reports>
 							<report>changes-report</report>
+							<report>github-report</report>
 						</reports>
 					</reportSet>
 				</reportSets>
