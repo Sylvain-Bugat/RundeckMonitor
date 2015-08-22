@@ -78,7 +78,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 
 		<!-- Rundeck Java Client -->
-		<rundeck.client>13.0</rundeck.client>
+		<rundeck.client>13.1-SNAPSHOT</rundeck.client>
 
 		<!-- GitHub Client -->
 		<github.client>3.6.0.201411121045-m1</github.client>
@@ -106,7 +106,7 @@
 		<maven.pluginenforcer.version>1.4</maven.pluginenforcer.version>
 		<maven.pluginantrun.version>1.8</maven.pluginantrun.version>
 		<maven.plugindependency.version>2.10</maven.plugindependency.version>
-		<maven.pluginrelease.version>3.0-r1585899</maven.pluginrelease.version>
+		<maven.pluginrelease.version>2.5.2</maven.pluginrelease.version>
 		<maven.pluginscmpublish.version>1.1</maven.pluginscmpublish.version>
 		<!-- Maven reporting plugins -->
 		<maven.pluginowasp.version>1.2.7</maven.pluginowasp.version>
