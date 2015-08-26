@@ -119,6 +119,7 @@
 		<maven.pluginchangelog.version>2.3</maven.pluginchangelog.version>
 		<maven.pluginjavadoc.version>2.10.3</maven.pluginjavadoc.version>
 		<maven.pluginjxr.version>2.5</maven.pluginjxr.version>
+		<maven.pluginlinkcheck.version>1.2</maven.pluginlinkcheck.version>
 	</properties>
 
 	<dependencies>
@@ -496,6 +497,14 @@
 					<configLocation>checkstyle.xml</configLocation>
 				</configuration>
 			</plugin>
+
+			<!-- Linkcheck -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-linkcheck-plugin</artifactId>
+				<version>${maven.pluginlinkcheck.version}</version>
+			</plugin>
+
 			<!-- Javadoc -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
