@@ -404,6 +404,13 @@
 				<version>${maven.pluginchangelog.version}</version>
 			</plugin>
 
+			<!-- Inline sources report -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${maven.pluginjxr.version}</version>
+			</plugin>
+
 			<!-- TODO/FIXME tags -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -517,12 +524,6 @@
 						<link>http://rundeck.github.io/rundeck-api-java-client/apidocs</link>
 					</links>
 				</configuration>
-			</plugin>
-			<!-- Inline sources report -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>${maven.pluginjxr.version}</version>
 			</plugin>
 		</plugins>
 	</reporting>
