@@ -73,9 +73,13 @@
 		<!-- Maven version -->
 		<maven.version>3.0.5</maven.version>
 
-		<!-- JDK/JRE Version -->
+		<!-- Java version and compiler options-->
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.compilerVersion>${maven.compiler.source}</maven.compiler.compilerVersion>
+		<maven.compiler.optimize>true</maven.compiler.optimize>
+		<maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 
 		<!-- Rundeck Java Client -->
 		<rundeck.client>13.0</rundeck.client>
@@ -172,17 +176,10 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven.plugincompiler.version}</version>
 				<configuration>
-					<compilerVersion>${maven.compiler.source}</compilerVersion>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<showDeprecation>true</showDeprecation>
-					<showWarnings>true</showWarnings>
 					<compilerArgs>
 						<arg>-Xlint</arg>
 					</compilerArgs>
 				</configuration>
-				<inherited>true</inherited>
 			</plugin>
 
 			<!-- Install plugin configuration -->
