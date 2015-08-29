@@ -108,7 +108,7 @@
 		<maven.pluginshade.version>2.4.1</maven.pluginshade.version>
 		<maven.pluginexecutablejar.version>1.4.1</maven.pluginexecutablejar.version>
 		<maven.pluginversions.version>2.2</maven.pluginversions.version>
-		<maven.pluginenforcer.version>1.4</maven.pluginenforcer.version>
+		<maven.pluginenforcer.version>1.4.1</maven.pluginenforcer.version>
 		<maven.pluginantrun.version>1.8</maven.pluginantrun.version>
 		<maven.plugindependency.version>2.10</maven.plugindependency.version>
 		<maven.pluginrelease.version>2.5.2</maven.pluginrelease.version>
