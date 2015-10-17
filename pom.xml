@@ -86,7 +86,7 @@
 		<rundeck.client>13.0</rundeck.client>
 
 		<!-- GitHub Client -->
-		<github.client>3.6.0.201411121045-m1</github.client>
+		<github.client>3.6.2.201501210735-r</github.client>
 
 		<!-- Google GSON (used/required by GitHub Client)-->
 		<gson.client>2.4</gson.client>
