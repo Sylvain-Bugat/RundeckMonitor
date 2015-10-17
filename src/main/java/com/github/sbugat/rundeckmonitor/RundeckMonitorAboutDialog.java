@@ -10,12 +10,23 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
 
+/**
+ * Rundeck Monitor about dialog.
+ *
+ * @author Sylvain Bugat
+ *
+ */
 public class RundeckMonitorAboutDialog extends JFrame {
 
+	/** SLF4J XLogger. */
 	private static final XLogger LOG = XLoggerFactory.getXLogger(RundeckMonitorAboutDialog.class);
 
+	/** Serial UID. */
 	private static final long serialVersionUID = 8614361410937565222L;
 
+	/**
+	 * Create and display Rundeck Monitor about dialog.
+	 */
 	public RundeckMonitorAboutDialog() {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,10 +45,5 @@ public class RundeckMonitorAboutDialog extends JFrame {
 
 		pack();
 		setVisible(true);
-	}
-
-	public static void main(final String[] args) {
-
-		new RundeckMonitorAboutDialog();
 	}
 }

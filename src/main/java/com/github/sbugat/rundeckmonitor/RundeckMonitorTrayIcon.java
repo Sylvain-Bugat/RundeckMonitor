@@ -35,14 +35,17 @@ import com.github.sbugat.rundeckmonitor.wizard.RundeckMonitorConfigurationWizard
 
 /**
  * Tray icon common class with no-AWT/Swing components.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public abstract class RundeckMonitorTrayIcon {
 
 	/** SLF4J XLogger. */
 	private static final XLogger LOG = XLoggerFactory.getXLogger(RundeckMonitor.class);
+
+	/** Size of the hidden dialog for lost focus detection. */
+	private static final int HIDDEN_DIALOG_SIZE = 10;
 
 	/** URL to access job execution details. */
 	static final String RUNDECK_JOB_EXECUTION_URL = "/execution/"; //$NON-NLS-1$
@@ -110,7 +113,7 @@ public abstract class RundeckMonitorTrayIcon {
 
 	/**
 	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it.
-	 * 
+	 *
 	 * @param rundeckMonitorConfigurationArg loaded configuration
 	 * @param rundeckMonitorStateArg state of the rundeck monitor
 	 */
@@ -181,7 +184,7 @@ public abstract class RundeckMonitorTrayIcon {
 			};
 
 			hiddenDialog = new JDialog();
-			hiddenDialog.setSize(10, 10);
+			hiddenDialog.setSize(HIDDEN_DIALOG_SIZE, HIDDEN_DIALOG_SIZE);
 
 			hiddenDialog.addWindowFocusListener(new WindowFocusListener() {
 
@@ -212,7 +215,7 @@ public abstract class RundeckMonitorTrayIcon {
 
 	/**
 	 * Update the list of failed/late jobs.
-	 * 
+	 *
 	 * @param listJobExecutionInfo list of failed and late jobs informations
 	 */
 	public abstract void updateExecutionIdsList(final List<JobExecutionInfo> listJobExecutionInfo);
@@ -273,7 +276,7 @@ public abstract class RundeckMonitorTrayIcon {
 
 	/**
 	 * Open a browser page using the default browser to a job execution.
-	 * 
+	 *
 	 * @param jobExecutionInfo the job exeuction to open
 	 */
 	final void openBrowser(final JobExecutionInfo jobExecutionInfo) {
