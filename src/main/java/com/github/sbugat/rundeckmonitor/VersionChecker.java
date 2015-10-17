@@ -25,11 +25,11 @@ import com.github.sbugat.rundeckmonitor.tools.EnvironmentTools;
 
 /**
  * Simple generic version checker on GitHub, inpect target jar and local jar build date to determinated if an update is available. If one is found, download the full jar and replace the original jar via a double restart.
- * 
+ *
  * The checker use an independant thread to check and download the file. The main thread have to check is the download is done and order to restart the program.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class VersionChecker implements Runnable {
 
@@ -78,7 +78,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Initialize the version checker with jar artifact and suffixnames and path to GitHub.
-	 * 
+	 *
 	 * @param gitHubUserArg GitHub user
 	 * @param gitHubRepositoryArg GitHub repository
 	 * @param mavenArtifactIdArg maven artifact id
@@ -149,7 +149,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Find a jar in release and if it is a newer version, ask to download it.
-	 * 
+	 *
 	 * @param release GitHub last release to use
 	 * @param withDependenciesSuffix indicate if the jar to download have a dependencies suffix
 	 * @return true if a new release jar has been found
@@ -207,7 +207,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Restart the RunDeck monitor and use the newer jar file.
-	 * 
+	 *
 	 * @return true if a java file has been launched on the new jar file
 	 */
 	public boolean restart() {
@@ -250,16 +250,20 @@ public final class VersionChecker implements Runnable {
 
 			for (final Path path : directoryStream) {
 
-				final String fileName = path.getFileName().toString();
-				if (fileName.startsWith(mavenArtifactId)) {
+				final Path fileNamePath = path.getFileName();
 
-					if (fileName.endsWith(JAR_EXTENSION) && null != currentJar && currentJar.compareTo(fileName) > 0) {
+				if (null != fileNamePath) {
+					final String fileName = fileNamePath.toString();
+					if (fileName.startsWith(mavenArtifactId)) {
 
-						deleteJar(path);
-					}
-					else if (fileName.endsWith(JAR_EXTENSION + TMP_EXTENSION)) {
+						if (fileName.endsWith(JAR_EXTENSION) && null != currentJar && currentJar.compareTo(fileName) > 0) {
 
-						deleteJar(path);
+							deleteJar(path);
+						}
+						else if (fileName.endsWith(JAR_EXTENSION + TMP_EXTENSION)) {
+
+							deleteJar(path);
+						}
 					}
 				}
 			}
@@ -274,7 +278,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Delete a jar file.
-	 * 
+	 *
 	 * @param jarFileToDelete file to delete
 	 */
 	private static void deleteJar(final Path jarFileToDelete) {
@@ -297,7 +301,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Return the current executed jar.
-	 * 
+	 *
 	 * @return the name of the current executed jar
 	 */
 	private String currentJar() {
@@ -309,10 +313,13 @@ public final class VersionChecker implements Runnable {
 
 			for (final Path path : directoryStream) {
 
-				final String fileName = path.getFileName().toString();
-				if (fileName.startsWith(mavenArtifactId) && fileName.endsWith(JAR_EXTENSION) && (null == currentJar || currentJar.compareTo(fileName) < 0)) {
+				final Path fileNamePath = path.getFileName();
+				if (null != fileNamePath) {
+					final String fileName = fileNamePath.toString();
+					if (fileName.startsWith(mavenArtifactId) && fileName.endsWith(JAR_EXTENSION) && (null == currentJar || currentJar.compareTo(fileName) < 0)) {
 
-					currentJar = fileName;
+						currentJar = fileName;
+					}
 				}
 			}
 		}
@@ -327,7 +334,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Get the download status.
-	 * 
+	 *
 	 * @return true if the download has been done
 	 */
 	public boolean isDownloadDone() {
@@ -345,7 +352,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Get the state of the version checker. True, if the user have disabled it.
-	 * 
+	 *
 	 * @return true if the version checker is disabled
 	 */
 	public boolean isversionCheckerDisabled() {
@@ -355,7 +362,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Download a file/URL and write it to a destination file.
-	 * 
+	 *
 	 * @param inputStream source stream
 	 * @param destinationFile destination file
 	 * @throws IOException in case of copy error
@@ -367,7 +374,7 @@ public final class VersionChecker implements Runnable {
 
 	/**
 	 * Get the java executable.
-	 * 
+	 *
 	 * @return absolte path to the java executable
 	 * @throws NoSuchFileException if the java executable is not found
 	 */
