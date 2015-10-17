@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.wizard;
 
 /**
  * Possible value of Java interface type.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public enum InterfaceType {
 
@@ -18,7 +18,7 @@ public enum InterfaceType {
 
 	/**
 	 * Type of a GUI interface.
-	 * 
+	 *
 	 * @param interfaceTypeArg displayed String of an interface type
 	 */
 	private InterfaceType(final String interfaceTypeArg) {
@@ -28,7 +28,7 @@ public enum InterfaceType {
 
 	/**
 	 * return the String to display for this interface type.
-	 * 
+	 *
 	 * @return interface type
 	 */
 	public String getInterfaceType() {

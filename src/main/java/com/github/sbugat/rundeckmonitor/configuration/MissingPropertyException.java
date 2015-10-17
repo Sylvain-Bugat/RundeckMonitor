@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.configuration;
 
 /**
  * Exception to use when a mandatory property is missing.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class MissingPropertyException extends Exception {
 
@@ -16,7 +16,7 @@ public final class MissingPropertyException extends Exception {
 
 	/**
 	 * Constructor copy the missing property name.
-	 * 
+	 *
 	 * @param propertyArg missing property name
 	 */
 	public MissingPropertyException(final String propertyArg) {
@@ -25,7 +25,7 @@ public final class MissingPropertyException extends Exception {
 
 	/**
 	 * Get the missing property name.
-	 * 
+	 *
 	 * @return missing property name
 	 */
 	public String getProperty() {

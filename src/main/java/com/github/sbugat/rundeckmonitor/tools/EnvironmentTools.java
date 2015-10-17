@@ -7,9 +7,9 @@ import org.slf4j.ext.XLoggerFactory;
 
 /**
  * Tools class to detect Operating System type.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class EnvironmentTools {
 
@@ -30,7 +30,7 @@ public final class EnvironmentTools {
 
 	/**
 	 * Check if the operating system is a windows based on a property, otherwise it's a Linux/Mac-OS.
-	 * 
+	 *
 	 * @return true if the OS is a windows*
 	 */
 	public static boolean isWindows() {

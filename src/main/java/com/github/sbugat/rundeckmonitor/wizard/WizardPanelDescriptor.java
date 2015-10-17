@@ -6,9 +6,9 @@ import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguratio
 
 /**
  * Generic wizard panel with a next and previous step.
- * 
+ *
  * @author Sylvain bugat
- * 
+ *
  */
 public abstract class WizardPanelDescriptor {
 
@@ -26,7 +26,7 @@ public abstract class WizardPanelDescriptor {
 
 	/**
 	 * Copyr arguments to constants.
-	 * 
+	 *
 	 * @param panelIdentifierArg panel identifier
 	 * @param backArg previous panel or null if none
 	 * @param nextArg next panel or null if none
@@ -41,14 +41,14 @@ public abstract class WizardPanelDescriptor {
 
 	/**
 	 * Get the main component of a panel.
-	 * 
+	 *
 	 * @return the main component
 	 */
 	public abstract Component getPanelComponent();
 
 	/**
 	 * Get the panel identifier.
-	 * 
+	 *
 	 * @return the panel identifier
 	 */
 	public final ConfigurationWizardStep getPanelDescriptorIdentifier() {
@@ -57,7 +57,7 @@ public abstract class WizardPanelDescriptor {
 
 	/**
 	 * Get the RunDeck monitor main configuration.
-	 * 
+	 *
 	 * @return monitor configuration
 	 */
 	public final RundeckMonitorConfiguration getRundeckMonitorConfiguration() {
@@ -66,7 +66,7 @@ public abstract class WizardPanelDescriptor {
 
 	/**
 	 * Return the next wizard panel or null.
-	 * 
+	 *
 	 * @return next panel
 	 */
 	public final ConfigurationWizardStep getNext() {
@@ -75,7 +75,7 @@ public abstract class WizardPanelDescriptor {
 
 	/**
 	 * Return the previous wizard panel or null.
-	 * 
+	 *
 	 * @return previous panel
 	 */
 	public final ConfigurationWizardStep getBack() {
@@ -91,7 +91,7 @@ public abstract class WizardPanelDescriptor {
 
 	/**
 	 * Default method to validate the wizard step, must return true if input data are valid.
-	 * 
+	 *
 	 * @return true if valid, false otherwise
 	 */
 	public abstract boolean validate();

@@ -10,9 +10,9 @@ import com.github.sbugat.rundeckmonitor.wizard.RundeckAPIVersion;
 
 /**
  * Tools class for building rundeck clients.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class RundeckClientTools {
 
@@ -28,7 +28,7 @@ public final class RundeckClientTools {
 
 	/**
 	 * Build a minimal Rundeck client with the argument configuration to test connection and authentication. The generated Rundeck client use Rundeck API version 1.
-	 * 
+	 *
 	 * @param rundeckMonitorConfiguration configuration to use
 	 * @return minimal built rundeck client using Rundeck API verison 1
 	 */
@@ -44,7 +44,7 @@ public final class RundeckClientTools {
 
 	/**
 	 * Build a Rundeck client with the argument configuration.
-	 * 
+	 *
 	 * @param rundeckMonitorConfiguration configuration to use
 	 * @return built rundeck client
 	 * @throws InvalidRundeckVersion if the detected Rundeck version don't support API version 5 (before version 1.4.4)
@@ -101,7 +101,7 @@ public final class RundeckClientTools {
 
 	/**
 	 * Build a Rundeck client with the API version and configuration arguments.
-	 * 
+	 *
 	 * @param rundeckAPIVersion Rundeck API version to use
 	 * @param rundeckMonitorConfiguration configuration to use
 	 * @return built rundeck client

@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor;
 
 /**
  * Class containing the current state of the monitor.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class RundeckMonitorState {
 
@@ -19,7 +19,7 @@ public final class RundeckMonitorState {
 
 	/**
 	 * Get the failed flag.
-	 * 
+	 *
 	 * @return failed flag
 	 */
 	public boolean isFailedJobs() {
@@ -28,7 +28,7 @@ public final class RundeckMonitorState {
 
 	/**
 	 * Set the failed flag.
-	 * 
+	 *
 	 * @param failedJobsArg failed flag
 	 */
 	public void setFailedJobs(final boolean failedJobsArg) {
@@ -37,7 +37,7 @@ public final class RundeckMonitorState {
 
 	/**
 	 * Get the long/late flag.
-	 * 
+	 *
 	 * @return long/late flag
 	 */
 	public boolean isLateJobs() {
@@ -46,7 +46,7 @@ public final class RundeckMonitorState {
 
 	/**
 	 * Set the long/late flag.
-	 * 
+	 *
 	 * @param lateJobsArg long/late flag
 	 */
 	public void setLateJobs(final boolean lateJobsArg) {
@@ -55,7 +55,7 @@ public final class RundeckMonitorState {
 
 	/**
 	 * Get the disconnected flag.
-	 * 
+	 *
 	 * @return true if disconnected
 	 */
 	public boolean isDisconnected() {
@@ -64,7 +64,7 @@ public final class RundeckMonitorState {
 
 	/**
 	 * Set the disconnected state.
-	 * 
+	 *
 	 * @param disconnectedArg disconnected state
 	 */
 	public void setDisconnected(final boolean disconnectedArg) {

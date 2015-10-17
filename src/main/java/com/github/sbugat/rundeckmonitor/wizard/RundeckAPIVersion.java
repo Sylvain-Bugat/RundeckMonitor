@@ -4,9 +4,9 @@ import org.rundeck.api.RundeckClient.Version;
 
 /**
  * Possible API version usable with rundeck monitor.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public enum RundeckAPIVersion {
 
@@ -36,7 +36,7 @@ public enum RundeckAPIVersion {
 
 	/**
 	 * Copy arguments tp constants.
-	 * 
+	 *
 	 * @param versionArg API version
 	 * @param sinceRundeckVersionArg first RunDeck version using this API version
 	 */
@@ -48,7 +48,7 @@ public enum RundeckAPIVersion {
 
 	/**
 	 * Get the API version.
-	 * 
+	 *
 	 * @return API version
 	 */
 	public Version getVersion() {
@@ -57,7 +57,7 @@ public enum RundeckAPIVersion {
 
 	/**
 	 * Get the first RunDeck version using this API version.
-	 * 
+	 *
 	 * @return RunDeck version
 	 */
 	public String getSinceReturnVersion() {
@@ -66,7 +66,7 @@ public enum RundeckAPIVersion {
 
 	/**
 	 * Return the version and the first API version.
-	 * 
+	 *
 	 * @return displayed String
 	 */
 	@Override

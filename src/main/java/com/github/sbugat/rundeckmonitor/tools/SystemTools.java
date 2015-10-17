@@ -5,33 +5,25 @@ import org.slf4j.ext.XLoggerFactory;
 
 /**
  * Tools class to do System class calls.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class SystemTools {
 
 	/** SLF4J XLogger. */
 	private static final XLogger LOG = XLoggerFactory.getXLogger(SystemTools.class);
 
-	/**
-	 * Normal return code.
-	 */
+	/** Normal return code. */
 	public static final int EXIT_CODE_OK = 0;
 
-	/**
-	 * Error return code.
-	 */
+	/** Error return code. */
 	public static final int EXIT_CODE_ERROR = 1;
 
-	/**
-	 * Unsupported tray icon by the system return code.
-	 */
+	/** Unsupported tray icon by the system return code. */
 	public static final int EXIT_CODE_TRAY_ICON_UNSUPPORTED = 2;
 
-	/**
-	 * tray icon initialization error return code.
-	 */
+	/*** tray icon initialization error return code. */
 	public static final int EXIT_CODE_TRAY_ICON_ERROR = 3;
 
 	/**
@@ -43,7 +35,7 @@ public final class SystemTools {
 
 	/**
 	 * Log and call System.exit method.
-	 * 
+	 *
 	 * @param returnCode return code of the java program, argument to System.exit( returnCode )
 	 */
 	public static void exit(final int returnCode) {

@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.wizard;
 
 /**
  * Possible value of the late execution threshold for the wizard.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public enum LateExecutionThreshold {
 
@@ -32,7 +32,7 @@ public enum LateExecutionThreshold {
 
 	/**
 	 * Copy arguments to constants.
-	 * 
+	 *
 	 * @param thresholdArg threshold
 	 * @param descriptionArg associated description
 	 */
@@ -44,7 +44,7 @@ public enum LateExecutionThreshold {
 
 	/**
 	 * Get the threshold.
-	 * 
+	 *
 	 * @return threshold
 	 */
 	public int getThreshold() {
@@ -53,7 +53,7 @@ public enum LateExecutionThreshold {
 
 	/**
 	 * Return the description of a threshold.
-	 * 
+	 *
 	 * @return description of the threshold
 	 */
 	@Override

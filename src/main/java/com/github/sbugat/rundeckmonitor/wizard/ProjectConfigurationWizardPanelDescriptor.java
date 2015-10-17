@@ -18,9 +18,9 @@ import com.github.sbugat.rundeckmonitor.tools.RundeckClientTools;
 
 /**
  * Project wizard panel.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanelDescriptor {
 
@@ -35,7 +35,7 @@ public final class ProjectConfigurationWizardPanelDescriptor extends WizardPanel
 
 	/**
 	 * Copy arguments and initialize the RunDeck project configuration wizard panel.
-	 * 
+	 *
 	 * @param backArg previous panel
 	 * @param nextArg next panel
 	 * @param rundeckMonitorConfigurationArg RunDeck monitor common configuration

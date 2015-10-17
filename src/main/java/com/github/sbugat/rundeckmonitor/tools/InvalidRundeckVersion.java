@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.tools;
 
 /**
  * Exception to use when the detected Rundeck version is invalid.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class InvalidRundeckVersion extends Exception {
 
@@ -16,7 +16,7 @@ public final class InvalidRundeckVersion extends Exception {
 
 	/**
 	 * Constructor copy detected Rundeck version.
-	 * 
+	 *
 	 * @param rundeckVersionArg Rundeck version
 	 */
 	public InvalidRundeckVersion(final String rundeckVersionArg) {
@@ -25,7 +25,7 @@ public final class InvalidRundeckVersion extends Exception {
 
 	/**
 	 * Get the invalid Rundeck version.
-	 * 
+	 *
 	 * @return Rundeck version
 	 */
 	public String getRundeckVersion() {

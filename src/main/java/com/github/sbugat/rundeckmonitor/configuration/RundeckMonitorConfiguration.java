@@ -17,9 +17,9 @@ import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 
 /**
  * Configurationloading class of the RunDeck Monitor.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class RundeckMonitorConfiguration {
 
@@ -124,7 +124,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Copy constructor.
-	 * 
+	 *
 	 * @param rundeckMonitorConfiguration configuration to copy
 	 */
 	public RundeckMonitorConfiguration(final RundeckMonitorConfiguration rundeckMonitorConfiguration) {
@@ -147,7 +147,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Load configuration.
-	 * 
+	 *
 	 * @throws IOException in case of loading configuration error
 	 */
 	public void loadConfigurationPropertieFile() throws IOException {
@@ -186,7 +186,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Check loaded configuration.
-	 * 
+	 *
 	 * @throws InvalidPropertyException in case of loading configuration property error
 	 * @throws MissingPropertyException in case of loading configuration property error
 	 */
@@ -230,7 +230,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Check a property value.
-	 * 
+	 *
 	 * @param property property loaded (can be null)
 	 * @param propertyName name of the loaded property
 	 * @throws MissingPropertyException if the property is null
@@ -248,7 +248,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Get an optional integer property.
-	 * 
+	 *
 	 * @param properties loaded properties
 	 * @param propertyName property name to get
 	 * @param defaultValue value to set if the property is missing or is invalid
@@ -272,7 +272,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Get an optional boolean property.
-	 * 
+	 *
 	 * @param properties loaded properties
 	 * @param propertyName property name to get
 	 * @param defaultValue value to set if the property is missing or is invalid
@@ -285,7 +285,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Save the current loaded configuration to the configuration file.
-	 * 
+	 *
 	 * @throws IOException in case of writing error
 	 */
 	public void saveMonitorConfigurationPropertieFile() throws IOException {
@@ -338,7 +338,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Check if the configuration file exists and is readable.
-	 * 
+	 *
 	 * @return true if the configuration file exists and can be read
 	 */
 	public static boolean propertiesFileExists() {
@@ -349,7 +349,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Check if the configuration file has been updated.
-	 * 
+	 *
 	 * @param date date of the last configuration loading
 	 * @return true if the configuration file is newer than the date
 	 */
@@ -374,7 +374,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck URL.
-	 * 
+	 *
 	 * @return RunDeck URL
 	 */
 	public String getRundeckUrl() {
@@ -383,7 +383,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck API key.
-	 * 
+	 *
 	 * @return RunDeck API key
 	 */
 	public String getRundeckAPIKey() {
@@ -392,7 +392,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck login.
-	 * 
+	 *
 	 * @return RunDeck login
 	 */
 	public String getRundeckLogin() {
@@ -401,7 +401,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck paswword.
-	 * 
+	 *
 	 * @return RunDeck paswword
 	 */
 	public String getRundeckPassword() {
@@ -410,7 +410,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck project.
-	 * 
+	 *
 	 * @return RunDeck project
 	 */
 	public String getRundeckProject() {
@@ -419,7 +419,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor name.
-	 * 
+	 *
 	 * @return RunDeck monitor name
 	 */
 	public String getRundeckMonitorName() {
@@ -428,7 +428,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor refresh delay.
-	 * 
+	 *
 	 * @return RunDeck monitor refresh delay
 	 */
 	public int getRefreshDelay() {
@@ -437,7 +437,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor late threshold.
-	 * 
+	 *
 	 * @return RunDeck monitor late threshold
 	 */
 	public int getLateThreshold() {
@@ -446,7 +446,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor failed job number.
-	 * 
+	 *
 	 * @return RunDeck monitor failed job number
 	 */
 	public int getFailedJobNumber() {
@@ -455,7 +455,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor date format.
-	 * 
+	 *
 	 * @return RunDeck monitor date format
 	 */
 	public String getDateFormat() {
@@ -464,7 +464,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor API version.
-	 * 
+	 *
 	 * @return RunDeck monitor API version
 	 */
 	public int getRundeckAPIversion() {
@@ -473,7 +473,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor job tab redirection.
-	 * 
+	 *
 	 * @return RunDeck monitor job tab redirection
 	 */
 	public String getJobTabRedirection() {
@@ -482,7 +482,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor GUI type.
-	 * 
+	 *
 	 * @return RunDeck monitor GUI type
 	 */
 	public String getInterfaceType() {
@@ -491,7 +491,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Return the RunDeck monitor version checker flag.
-	 * 
+	 *
 	 * @return true if the version checker is enabled
 	 */
 	public boolean isVersionCheckerEnabled() {
@@ -500,7 +500,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck URL.
-	 * 
+	 *
 	 * @param rundeckUrlArg RunDeck URL to set
 	 */
 	public void setRundeckUrl(final String rundeckUrlArg) {
@@ -509,7 +509,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck API key.
-	 * 
+	 *
 	 * @param rundeckAPIKeyArg API key to set
 	 */
 	public void setRundeckAPIKey(final String rundeckAPIKeyArg) {
@@ -518,7 +518,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck login.
-	 * 
+	 *
 	 * @param rundeckLoginArg login to set
 	 */
 	public void setRundeckLogin(final String rundeckLoginArg) {
@@ -527,7 +527,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck password.
-	 * 
+	 *
 	 * @param rundeckPasswordArg password to set
 	 */
 	public void setRundeckPassword(final String rundeckPasswordArg) {
@@ -536,7 +536,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck project.
-	 * 
+	 *
 	 * @param rundeckProjectArg project to set
 	 */
 	public void setRundeckProject(final String rundeckProjectArg) {
@@ -545,7 +545,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck monitor name.
-	 * 
+	 *
 	 * @param rundeckMonitorNameArg monitor name to set
 	 */
 	public void setRundeckMonitorName(final String rundeckMonitorNameArg) {
@@ -554,7 +554,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck monitor refresh delay.
-	 * 
+	 *
 	 * @param refreshDelayArg refresh delay to set
 	 */
 	public void setRefreshDelay(final int refreshDelayArg) {
@@ -563,7 +563,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck monitor late threshold.
-	 * 
+	 *
 	 * @param lateThresholdArg late threashold to set
 	 */
 	public void setLateThreshold(final int lateThresholdArg) {
@@ -572,7 +572,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck monitor failed job number.
-	 * 
+	 *
 	 * @param failedJobNumberArg failed job number to set
 	 */
 	public void setFailedJobNumber(final int failedJobNumberArg) {
@@ -581,7 +581,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck monitor date format.
-	 * 
+	 *
 	 * @param dateFormatArg date format to set
 	 */
 	public void setDateFormat(final String dateFormatArg) {
@@ -590,7 +590,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck monitor API version.
-	 * 
+	 *
 	 * @param rundeckAPIversionArg API version to set
 	 */
 	public void setRundeckAPIversion(final int rundeckAPIversionArg) {
@@ -599,7 +599,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck monitor job tab redirection.
-	 * 
+	 *
 	 * @param jobTabRedirectionArg job tab redirection to set
 	 */
 	public void setJobTabRedirection(final String jobTabRedirectionArg) {
@@ -608,7 +608,7 @@ public final class RundeckMonitorConfiguration {
 
 	/**
 	 * Set the RunDeck monitor GUI type.
-	 * 
+	 *
 	 * @param interfaceTypeArg GUI type to set
 	 */
 	public void setInterfaceType(final String interfaceTypeArg) {

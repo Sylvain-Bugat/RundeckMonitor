@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.wizard;
 
 /**
  * Possible value of the refresh delay for the wizard.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public enum RefreshDelay {
 
@@ -28,7 +28,7 @@ public enum RefreshDelay {
 
 	/**
 	 * RefreshDelay constructor copye arguments into constant values.
-	 * 
+	 *
 	 * @param delayArg delay to set
 	 * @param descriptionArg descriptino to set
 	 */
@@ -40,7 +40,7 @@ public enum RefreshDelay {
 
 	/**
 	 * Get the refresh delay.
-	 * 
+	 *
 	 * @return refresh delay
 	 */
 	public Integer getDelay() {
@@ -49,7 +49,7 @@ public enum RefreshDelay {
 
 	/**
 	 * Return the description to be displayed.
-	 * 
+	 *
 	 * @return displayed String
 	 */
 	@Override

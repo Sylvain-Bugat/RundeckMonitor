@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.wizard;
 
 /**
  * Steps of the configuration wizard.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public enum ConfigurationWizardStep {
 

@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.github.sbugat.rundeckmonitor.configuration.RundeckMonitorConfiguration;
@@ -21,9 +22,9 @@ import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 
 /**
  * Class of the configuration Wizard.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class RundeckMonitorConfigurationWizard {
 
@@ -59,7 +60,7 @@ public final class RundeckMonitorConfigurationWizard {
 
 	/**
 	 * Initialize a new configuration wizard.
-	 * 
+	 *
 	 * @param rundeckMonitorConfiguration RunDeck monitor configuration
 	 * @param exitOnClose indicate if the program must exit if the wizard is closed
 	 */
@@ -72,7 +73,7 @@ public final class RundeckMonitorConfigurationWizard {
 			wizardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
 		else {
-			wizardFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			wizardFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		}
 
 		// Initialize displayed components
@@ -100,7 +101,7 @@ public final class RundeckMonitorConfigurationWizard {
 
 	/**
 	 * Initialize the main card panel and listeners.
-	 * 
+	 *
 	 * @param exitOnClose indicate if Cancel/close the wizard will exit
 	 */
 	private void initComponents(final boolean exitOnClose) {
@@ -184,7 +185,7 @@ public final class RundeckMonitorConfigurationWizard {
 
 	/**
 	 * Add a new wizard panel to the wizard.
-	 * 
+	 *
 	 * @param panel panel to add
 	 */
 	public void registerWizardPanel(final WizardPanelDescriptor panel) {
@@ -194,7 +195,7 @@ public final class RundeckMonitorConfigurationWizard {
 
 	/**
 	 * Change the current panel to a new one with validation of the current if needed.
-	 * 
+	 *
 	 * @param id identifier or the targeted Wizard step
 	 * @param next indicate if it's a next step
 	 */

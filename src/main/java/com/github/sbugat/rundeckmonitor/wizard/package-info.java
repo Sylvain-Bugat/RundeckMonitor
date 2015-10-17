@@ -5,4 +5,3 @@
  *
  */
 package com.github.sbugat.rundeckmonitor.wizard;
-

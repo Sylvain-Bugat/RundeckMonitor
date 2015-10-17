@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.wizard;
 
 /**
  * Possible value of possible failed and late jobs numbers for the wizard.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public enum FailedJobsNumber {
 
@@ -46,7 +46,7 @@ public enum FailedJobsNumber {
 
 	/**
 	 * Copy the failed job number argument.
-	 * 
+	 *
 	 * @param failedJobsNumberArg failed job number to set
 	 */
 	private FailedJobsNumber(final int failedJobsNumberArg) {
@@ -56,7 +56,7 @@ public enum FailedJobsNumber {
 
 	/**
 	 * Get the failed job number.
-	 * 
+	 *
 	 * @return failed job number
 	 */
 	public Integer getFailedJobsNumber() {
@@ -65,7 +65,7 @@ public enum FailedJobsNumber {
 
 	/**
 	 * Convert the faild job number to a String.
-	 * 
+	 *
 	 * @return displayed String
 	 */
 	@Override

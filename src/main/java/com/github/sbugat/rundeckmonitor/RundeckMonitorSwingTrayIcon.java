@@ -29,9 +29,9 @@ import com.github.sbugat.rundeckmonitor.wizard.JobTabRedirection;
 
 /**
  * Swing tray icon management class.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon {
 
@@ -43,7 +43,7 @@ public final class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon {
 
 	/**
 	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it.
-	 * 
+	 *
 	 * @param rundeckMonitorConfigurationArg loaded configuration
 	 * @param rundeckMonitorStateArg state of the rundeck monitor
 	 */
@@ -189,7 +189,7 @@ public final class RundeckMonitorSwingTrayIcon extends RundeckMonitorTrayIcon {
 
 	/**
 	 * Update the list of failed/late jobs.
-	 * 
+	 *
 	 * @param listJobExecutionInfo list of failed and late jobs informations
 	 */
 	@Override

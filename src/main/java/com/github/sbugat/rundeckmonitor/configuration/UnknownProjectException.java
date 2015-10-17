@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.configuration;
 
 /**
  * Exception to use when an unknow project is configured.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class UnknownProjectException extends Exception {
 
@@ -16,7 +16,7 @@ public final class UnknownProjectException extends Exception {
 
 	/**
 	 * Exception constructor of an unknown project error.
-	 * 
+	 *
 	 * @param projectNameArg unknown project name
 	 */
 	public UnknownProjectException(final String projectNameArg) {
@@ -25,7 +25,7 @@ public final class UnknownProjectException extends Exception {
 
 	/**
 	 * Get the unknown project name.
-	 * 
+	 *
 	 * @return unknown project name
 	 */
 	public String getProjectName() {

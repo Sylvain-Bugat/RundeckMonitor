@@ -5,9 +5,9 @@ import java.util.Date;
 
 /**
  * Possible standard date format for the wizard.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public enum DateFormat {
 
@@ -25,7 +25,7 @@ public enum DateFormat {
 
 	/**
 	 * Enumeration constructor with an example of the format with the system date.
-	 * 
+	 *
 	 * @param dateFormatArg date format
 	 */
 	private DateFormat(final String dateFormatArg) {
@@ -38,7 +38,7 @@ public enum DateFormat {
 
 	/**
 	 * Get the date format.
-	 * 
+	 *
 	 * @return the date format.
 	 */
 	public String getDateFormat() {
@@ -47,7 +47,7 @@ public enum DateFormat {
 
 	/**
 	 * Return a String to display this date format.
-	 * 
+	 *
 	 * @return String to display
 	 */
 	@Override

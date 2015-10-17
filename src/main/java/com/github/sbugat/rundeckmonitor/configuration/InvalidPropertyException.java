@@ -2,9 +2,9 @@ package com.github.sbugat.rundeckmonitor.configuration;
 
 /**
  * Exception to use when a property is invalid (value type mismatch or value mismatch).
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class InvalidPropertyException extends Exception {
 
@@ -19,7 +19,7 @@ public final class InvalidPropertyException extends Exception {
 
 	/**
 	 * Constructor copy property name and his value.
-	 * 
+	 *
 	 * @param propertyArg property name
 	 * @param propertyValueArg value of the property
 	 */
@@ -30,7 +30,7 @@ public final class InvalidPropertyException extends Exception {
 
 	/**
 	 * Get the property name.
-	 * 
+	 *
 	 * @return property name
 	 */
 	public String getProperty() {
@@ -39,7 +39,7 @@ public final class InvalidPropertyException extends Exception {
 
 	/**
 	 * Get the property value.
-	 * 
+	 *
 	 * @return property value
 	 */
 	public String getPropertyValue() {

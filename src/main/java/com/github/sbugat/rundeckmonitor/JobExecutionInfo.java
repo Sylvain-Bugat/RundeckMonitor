@@ -4,9 +4,9 @@ import java.util.Date;
 
 /**
  * A runDeck execution information class.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class JobExecutionInfo {
 
@@ -27,7 +27,7 @@ public final class JobExecutionInfo {
 
 	/**
 	 * Constructor to copy all arguments into new JobExecutionInfo object.
-	 * 
+	 *
 	 * @param executionIdArg RunDeck identifier of the execution
 	 * @param startedAtArg starting date of the execution
 	 * @param descriptionArg description of the execution
@@ -44,7 +44,7 @@ public final class JobExecutionInfo {
 
 	/**
 	 * Return the RunDeck execution identifier.
-	 * 
+	 *
 	 * @return RunDeck execution identifier
 	 */
 	public Long getExecutionId() {
@@ -53,7 +53,7 @@ public final class JobExecutionInfo {
 
 	/**
 	 * Return the RunDeck execution starting date.
-	 * 
+	 *
 	 * @return RunDeck execution starting date
 	 */
 	public Date getStartedAt() {
@@ -62,7 +62,7 @@ public final class JobExecutionInfo {
 
 	/**
 	 * Return the RunDeck job description.
-	 * 
+	 *
 	 * @return RunDeck job description
 	 */
 	public String getDescription() {
@@ -71,7 +71,7 @@ public final class JobExecutionInfo {
 
 	/**
 	 * Return the long execution flag.
-	 * 
+	 *
 	 * @return long execution flag
 	 */
 	public boolean isLongExecution() {
@@ -80,7 +80,7 @@ public final class JobExecutionInfo {
 
 	/**
 	 * Return the new execution flag.
-	 * 
+	 *
 	 * @return new execution flag
 	 */
 	public boolean isNewJob() {

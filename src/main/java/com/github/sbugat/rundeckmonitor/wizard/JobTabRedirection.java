@@ -2,17 +2,17 @@ package com.github.sbugat.rundeckmonitor.wizard;
 
 /**
  * Enumeration of possible execution default redirection.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public enum JobTabRedirection {
 
 	/** Summary of an execution. */
 	SUMMARY("show", "", "Execution summary", "1.0"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	//REPORT( "show", "#state", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	//LOG_OUTPUT( "show", "#output", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	//DEFINITION( "show", "", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	// REPORT( "show", "#state", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	// LOG_OUTPUT( "show", "#output", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	// DEFINITION( "show", "", "summary" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	/** Display all logs of an execution as textual format. */
 	RENDER_OUTPUT_TXT("downloadOutput", "?view=inline&formatted=false&stripansi=true", "View raw log", "2.0"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	/** Display all logs of an execution as html format. */
@@ -34,7 +34,7 @@ public enum JobTabRedirection {
 
 	/**
 	 * Copy all arguments.
-	 * 
+	 *
 	 * @param accessUrlPrefixArg URL prefix
 	 * @param accessUrlSuffixArg URL suffix
 	 * @param descriptionArg description
@@ -50,7 +50,7 @@ public enum JobTabRedirection {
 
 	/**
 	 * get the URL prefix.
-	 * 
+	 *
 	 * @return URL prefix
 	 */
 	public String getAccessUrlPrefix() {
@@ -59,7 +59,7 @@ public enum JobTabRedirection {
 
 	/**
 	 * Get the URL suffix.
-	 * 
+	 *
 	 * @return URL suffix
 	 */
 	public String getAccessUrlSuffix() {
@@ -68,7 +68,7 @@ public enum JobTabRedirection {
 
 	/**
 	 * Get the first version.
-	 * 
+	 *
 	 * @return first version
 	 */
 	public String getSinceRundeckVersion() {
@@ -77,7 +77,7 @@ public enum JobTabRedirection {
 
 	/**
 	 * Get a redirection description.
-	 * 
+	 *
 	 * @return redirection description
 	 */
 	@Override

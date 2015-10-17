@@ -29,9 +29,9 @@ import com.github.sbugat.rundeckmonitor.tools.SystemTools;
 
 /**
  * Tray icon management class.
- * 
+ *
  * @author Sylvain Bugat
- * 
+ *
  */
 public final class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 
@@ -46,7 +46,7 @@ public final class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 
 	/**
 	 * Initialize the tray icon for the rundeckMonitor if the OS is compatible with it.
-	 * 
+	 *
 	 * @param rundeckMonitorConfigurationArg loaded configuration
 	 * @param rundeckMonitorStateArg state of the rundeck monitor
 	 */
@@ -153,7 +153,7 @@ public final class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 
 	/**
 	 * Update the list of failed/late jobs.
-	 * 
+	 *
 	 * @param listJobExecutionInfo list of failed and late jobs informations
 	 */
 	@Override
@@ -241,9 +241,9 @@ public final class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 
 	/**
 	 * Mouse Adapter and WindowsFocusListener to auto-hide the hidden dialog.
-	 * 
+	 *
 	 * @author Sylvain Bugat
-	 * 
+	 *
 	 */
 	private static final class RundeckMonitorAWTListenerAdapter extends MouseAdapter implements WindowFocusListener {
 
@@ -252,7 +252,7 @@ public final class RundeckMonitorAWTTrayIcon extends RundeckMonitorTrayIcon {
 
 		/**
 		 * Copy dialog reference into the listener.
-		 * 
+		 *
 		 * @param dialogArg dialog to copy
 		 */
 		private RundeckMonitorAWTListenerAdapter(final JDialog dialogArg) {
