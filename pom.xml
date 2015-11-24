@@ -89,7 +89,7 @@
 		<github.client>4.1.0.201509280440-r</github.client>
 
 		<!-- Google GSON (used/required by GitHub Client)-->
-		<gson.client>2.4</gson.client>
+		<gson.client>2.5</gson.client>
 
 		<!--  Log Frameworks Version  -->
 		<slf4j.version>1.7.13</slf4j.version>
