@@ -114,7 +114,7 @@
 		<maven.pluginrelease.version>2.5.3</maven.pluginrelease.version>
 		<maven.pluginscmpublish.version>1.1</maven.pluginscmpublish.version>
 		<!-- Maven reporting plugins -->
-		<maven.pluginowasp.version>1.3.2</maven.pluginowasp.version>
+		<maven.pluginowasp.version>1.3.3</maven.pluginowasp.version>
 		<maven.pluginpmd.version>3.5</maven.pluginpmd.version>
 		<maven.pluginfindbugs.version>3.0.3</maven.pluginfindbugs.version>
 		<maven.plugincheckstyle.version>2.17</maven.plugincheckstyle.version>
