@@ -83,7 +83,7 @@
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 
 		<!-- Rundeck Java Client -->
-		<rundeck.client>13.0</rundeck.client>
+		<rundeck.client>13.1</rundeck.client>
 
 		<!-- GitHub Client -->
 		<github.client>4.2.0.201601211800-r</github.client>
