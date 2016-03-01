@@ -93,7 +93,7 @@
 
 		<!--  Log Frameworks Version  -->
 		<slf4j.version>1.7.18</slf4j.version>
-		<logback.version>1.1.5</logback.version>
+		<logback.version>1.1.6</logback.version>
 
 		<!-- Maven Lifecycle Plugins Version -->
 		<maven.pluginclean.version>3.0.0</maven.pluginclean.version>
