@@ -120,7 +120,7 @@
 		<maven.plugincheckstyle.version>2.17</maven.plugincheckstyle.version>
 		<maven.pluginreports.version>2.9</maven.pluginreports.version>
 		<maven.plugintaglist.version>2.4</maven.plugintaglist.version>
-		<maven.pluginchanges.version>2.11</maven.pluginchanges.version>
+		<maven.pluginchanges.version>2.12</maven.pluginchanges.version>
 		<maven.pluginchangelog.version>2.3</maven.pluginchangelog.version>
 		<maven.pluginjavadoc.version>2.10.3</maven.pluginjavadoc.version>
 		<maven.pluginjxr.version>2.5</maven.pluginjxr.version>
