@@ -116,7 +116,7 @@
 		<!-- Maven reporting plugins -->
 		<maven.pluginowasp.version>1.4.0</maven.pluginowasp.version>
 		<maven.pluginpmd.version>3.6</maven.pluginpmd.version>
-		<maven.pluginfindbugs.version>3.0.3</maven.pluginfindbugs.version>
+		<maven.pluginfindbugs.version>3.0.4</maven.pluginfindbugs.version>
 		<maven.plugincheckstyle.version>2.17</maven.plugincheckstyle.version>
 		<maven.pluginreports.version>2.9</maven.pluginreports.version>
 		<maven.plugintaglist.version>2.4</maven.plugintaglist.version>
